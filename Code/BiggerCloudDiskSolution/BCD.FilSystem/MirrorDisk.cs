@@ -6,9 +6,23 @@ using System.Text;
 namespace BCD.FilSystem
 {
     using Dokan;
+    using System.IO;
 
     public class MirrorDisk : DokanOperations
     {
+        /// <summary>
+        /// 实际磁盘存储目录
+        /// </summary>
+        string _root;
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="root">实际磁盘存储目录</param>
+        public MirrorDisk(string root)
+        {
+            _root = root;
+        }
 
         public int CreateFile(string filename, System.IO.FileAccess access, System.IO.FileShare share, System.IO.FileMode mode, System.IO.FileOptions options, DokanFileInfo info)
         {
@@ -25,12 +39,7 @@ namespace BCD.FilSystem
             throw new NotImplementedException();
         }
 
-        public int Cleanup(string filename, DokanFileInfo info)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int CloseFile(string filename, DokanFileInfo info)
+        public int DeleteFile(string filename, DokanFileInfo info)
         {
             throw new NotImplementedException();
         }
@@ -40,13 +49,22 @@ namespace BCD.FilSystem
             throw new NotImplementedException();
         }
 
-
-        public int DeleteDirectory(string filename, DokanFileInfo info)
+        public int OpenDirectory(string filename, DokanFileInfo info)
         {
-            throw new NotImplementedException();
+            if (filename == _root)
+                return DokanNet.DOKAN_SUCCESS;
+
+            if (Directory.Exists(filename))
+            {
+                return DokanNet.DOKAN_SUCCESS;
+            }
+            else
+            {
+                return DokanNet.ERROR_FILE_NOT_FOUND;
+            }
         }
 
-        public int DeleteFile(string filename, DokanFileInfo info)
+        public int DeleteDirectory(string filename, DokanFileInfo info)
         {
             throw new NotImplementedException();
         }
@@ -61,17 +79,7 @@ namespace BCD.FilSystem
             throw new NotImplementedException();
         }
 
-        public int LockFile(string filename, long offset, long length, DokanFileInfo info)
-        {
-            throw new NotImplementedException();
-        }
-
         public int MoveFile(string filename, string newname, bool replace, DokanFileInfo info)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int OpenDirectory(string filename, DokanFileInfo info)
         {
             throw new NotImplementedException();
         }
@@ -101,19 +109,35 @@ namespace BCD.FilSystem
             throw new NotImplementedException();
         }
 
-        public int UnlockFile(string filename, long offset, long length, DokanFileInfo info)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Unmount(DokanFileInfo info)
-        {
-            throw new NotImplementedException();
-        }
-
         public int WriteFile(string filename, byte[] buffer, ref uint writtenBytes, long offset, DokanFileInfo info)
         {
             throw new NotImplementedException();
         }
+
+        public int Cleanup(string filename, DokanFileInfo info)
+        {
+            return DokanNet.DOKAN_SUCCESS;
+        }
+
+        public int CloseFile(string filename, DokanFileInfo info)
+        {
+            return DokanNet.DOKAN_SUCCESS;
+        }
+
+        public int UnlockFile(string filename, long offset, long length, DokanFileInfo info)
+        {
+            return DokanNet.DOKAN_SUCCESS;
+        }
+
+        public int Unmount(DokanFileInfo info)
+        {
+            return DokanNet.DOKAN_SUCCESS;
+        }
+
+        public int LockFile(string filename, long offset, long length, DokanFileInfo info)
+        {
+            return DokanNet.DOKAN_SUCCESS;
+        }
+
     }
 }
