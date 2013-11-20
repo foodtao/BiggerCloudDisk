@@ -26,9 +26,53 @@ namespace BCD.FilSystem
             _root = root;
         }
 
-        public int CreateFile(string filename, System.IO.FileAccess access, System.IO.FileShare share, System.IO.FileMode mode, System.IO.FileOptions options, DokanFileInfo info)
+        public int CreateFile(string filename, System.IO.FileAccess access, 
+            System.IO.FileShare share, System.IO.FileMode mode, System.IO.FileOptions options, DokanFileInfo info)
         {
-            throw new NotImplementedException();
+            if (filename == "\\") return DokanNet.DOKAN_SUCCESS;
+            var path = _root + filename;
+
+            if (string.IsNullOrEmpty(Path.GetExtension(path)))
+            {
+                Directory.CreateDirectory(path);
+                return DokanNet.DOKAN_SUCCESS;
+            }
+
+            switch (mode)
+            {
+                case  FileMode.Append:
+                    if (!File.Exists(path))
+                        File.Create(path);
+                    return DokanNet.DOKAN_SUCCESS;
+                case FileMode.Create:
+                    if (!File.Exists(path))
+                        File.Create(path);
+                    return DokanNet.DOKAN_SUCCESS;
+                case FileMode.CreateNew:
+                    if (File.Exists(path))
+                        return DokanNet.ERROR_FILE_EXISTS;
+                    File.Create(path);
+                    return DokanNet.DOKAN_SUCCESS;
+                case FileMode.Open:
+                    if (!File.Exists(path))
+                        File.Create(path);
+                    return DokanNet.DOKAN_SUCCESS;
+                case FileMode.OpenOrCreate:
+                    if (!File.Exists(path))
+                        File.Create(path);
+                    return DokanNet.DOKAN_SUCCESS;
+                case FileMode.Truncate:
+                    if (!File.Exists(path))
+                    {
+                        using (var fs = File.Create(path))
+                        {
+                            fs.SetLength(0);
+                        }
+                    }
+                    return DokanNet.DOKAN_SUCCESS;
+            }
+
+            return DokanNet.DOKAN_SUCCESS;
         }
 
         public int FindFiles(string filename, System.Collections.ArrayList files, DokanFileInfo info)
@@ -156,14 +200,62 @@ namespace BCD.FilSystem
 
         public int MoveFile(string filename, string newname, bool replace, DokanFileInfo info)
         {
-            throw new NotImplementedException();
+            var newPath = _root + newname;
+            var path = _root + filename;
+
+            if (string.IsNullOrEmpty(Path.GetExtension(newPath)))
+            {
+                if (File.Exists(path))
+                {
+                    var name = Path.GetFileName(path);
+                    var dirInfo = new DirectoryInfo(newPath);
+                    var file = dirInfo.GetFiles().FirstOrDefault(p => p.Name == name);
+                    if (file != null)
+                    {
+                        if (replace)
+                        {
+                            File.Delete(file.FullName);
+                            File.Move(path, newPath);
+                        }
+                    }
+                    else
+                    {
+                        File.Move(path, newPath);
+                    }
+                }
+                else if (Directory.Exists(filename))
+                {
+                    var parentFolderName = path.Substring(path.LastIndexOf("\\") + 1, path.Length);
+                    var dirInfo = new DirectoryInfo(newPath);
+                    var folder = dirInfo.GetDirectories().FirstOrDefault(p => p.Name == parentFolderName);
+                    if (folder != null)
+                    {
+                        if (replace)
+                        {
+                            Directory.Delete(folder.FullName);
+                            Directory.Move(path, newPath);
+                        }
+                        else
+                        {
+                            Directory.Move(path, newPath);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                File.Move(path, newPath);
+            }
+
+            return DokanNet.DOKAN_SUCCESS;
+
         }
 
         public int ReadFile(string filename, byte[] buffer, ref uint readBytes, long offset, DokanFileInfo info)
         {
             var path = _root + filename;
             if (File.Exists(path)) return DokanNet.ERROR_FILE_NOT_FOUND;
-            using (var stream=File.OpenRead(path))
+            using (var stream = File.OpenRead(path))
             {
                 stream.Seek(offset, SeekOrigin.Begin);
                 readBytes = (uint)stream.Read(buffer, 0, buffer.Length);
