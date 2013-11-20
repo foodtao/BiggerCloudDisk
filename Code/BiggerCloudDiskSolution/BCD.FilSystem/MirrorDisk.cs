@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace BCD.FilSystem
 {
-    using System.Security.AccessControl;
-
     using Dokan;
     using System.IO;
 
@@ -15,7 +12,7 @@ namespace BCD.FilSystem
         /// <summary>
         /// 实际磁盘存储目录
         /// </summary>
-        string _root;
+        readonly string _root;
 
         /// <summary>
         /// 构造函数
@@ -26,8 +23,8 @@ namespace BCD.FilSystem
             _root = root;
         }
 
-        public int CreateFile(string filename, System.IO.FileAccess access, 
-            System.IO.FileShare share, System.IO.FileMode mode, System.IO.FileOptions options, DokanFileInfo info)
+        public int CreateFile(string filename, FileAccess access, 
+            FileShare share, FileMode mode, FileOptions options, DokanFileInfo info)
         {
             if (filename == "\\") return DokanNet.DOKAN_SUCCESS;
             var path = _root + filename;
@@ -171,10 +168,7 @@ namespace BCD.FilSystem
             {
                 return DokanNet.DOKAN_SUCCESS;
             }
-            else
-            {
-                return DokanNet.ERROR_FILE_NOT_FOUND;
-            }
+            return DokanNet.ERROR_FILE_NOT_FOUND;
         }
 
         public int DeleteDirectory(string filename, DokanFileInfo info)
@@ -329,7 +323,7 @@ namespace BCD.FilSystem
             return DokanNet.DOKAN_SUCCESS;
         }
 
-        public int SetFileAttributes(string filename, System.IO.FileAttributes attr, DokanFileInfo info)
+        public int SetFileAttributes(string filename, FileAttributes attr, DokanFileInfo info)
         {
             return -DokanNet.DOKAN_ERROR;
         }
@@ -376,11 +370,11 @@ namespace BCD.FilSystem
 
         private void GetALlDirectoryInfo(string path, ref List<DirectoryInfo> dirs)
         {
-            DirectoryInfo dir = new DirectoryInfo(path);
-            var dir_temps = dir.GetDirectories();
-            if (dir_temps.Length > 0)
+            var dir = new DirectoryInfo(path);
+            var dirTemps = dir.GetDirectories();
+            if (dirTemps.Length > 0)
             {
-                foreach (var dirTemp in dir_temps)
+                foreach (var dirTemp in dirTemps)
                 {
                     dirs.Add(dirTemp);
                     this.GetALlDirectoryInfo(dirTemp.FullName, ref dirs);
