@@ -1,8 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
-MinimumVisualStudioVersion = 10.0.40219.1
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BCD.WinApp", "BCD.WinApp\BCD.WinApp.csproj", "{DC117EFB-D6E7-4AC7-831B-E45A97C96524}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BCD.FilSystem", "BCD.FilSystem\BCD.FilSystem.csproj", "{6AEB65D8-44AA-4F5E-903B-5F4CEE8C6C6D}"
