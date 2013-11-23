@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CloudDisk\CloudDiskCapacityModel.cs" />
+    <Compile Include="CloudDisk\CloudDiskTypeModel.cs" />
     <Compile Include="CloudDisk\CloudFileInfoModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

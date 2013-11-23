@@ -17,6 +17,11 @@ namespace BCD.Model.CloudDisk
         public string ID { get; set; }
 
         /// <summary>
+        /// 所属网盘
+        /// </summary>
+        public CloudDiskType DiskType { get; set; }
+
+        /// <summary>
         /// 文件大小的字符串描述
         /// </summary>
         public string Size { get; set; }
