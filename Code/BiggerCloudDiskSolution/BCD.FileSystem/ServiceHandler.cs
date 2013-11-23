@@ -9,6 +9,8 @@ namespace BCD.FileSystem
     using System.IO;
     using System.Threading;
 
+    using BCD.Model.CloudDisk;
+
     public class ServiceHandler
     {
         /// <summary>
@@ -59,16 +61,94 @@ namespace BCD.FileSystem
         /// </summary>
         public static void CheckFile()
         {
-            try
+            while (true)
             {
-                Thread.Sleep(10 * 1000);
-                MemoryFileManager.GetInstance().GetAllFiles();
+                try
+                {
+                    Thread.Sleep(10 * 1000);
 
 
+                    //var root = "G:\\temp";
+                    //var files = MemoryFileManager.GetInstance().GetAllFiles();
+                    //CloudDiskManager cloudDiskManager = new CloudDiskManager();
+                    //if (files != null && files.Count > 0)
+                    //{
+                    //    files = files.OrderBy(p => p.FilePath).ToList();
+                    //    foreach (var file in files)
+                    //    {
+                    //        try
+                    //        {
+                    //            var cloudFile = cloudDiskManager.GetCloudFileInfo(
+                    //                CloudDiskType.NOT_SPECIFIED, file.FilePath);
+                    //            if (cloudFile == null)
+                    //            {
+                    //                if (file.FileType == FileTypeEnum.Directory
+                    //                    && file.FileStatus != FileStatusEnum.Remove)
+                    //                {
+                    //                    cloudDiskManager.CreateDirectory(file.FilePath);
+                    //                    file.FileStatus = FileStatusEnum.Normal;
+                    //                    MemoryFileManager.GetInstance().SetFile(file);
+                    //                }
+                    //                else if (file.FileType == FileTypeEnum.File
+                    //                         && file.FileStatus != FileStatusEnum.Remove)
+                    //                {
+                    //                    var fileInfo = new FileInfo(root + file.FilePath);
+                    //                    var buffer = new byte[fileInfo.Length];
+                    //                    fileInfo.OpenRead().Read(buffer, 0, (int)fileInfo.Length);
+                    //                    cloudDiskManager.UploadFile(
+                    //                        CloudFileUploadType.Create, file.FilePath, buffer);
+                    //                    file.FileStatus = FileStatusEnum.Normal;
+                    //                    MemoryFileManager.GetInstance().SetFile(file);
+                    //                }
+                    //            }
+                    //            else
+                    //            {
+                    //                if (file.FileStatus == FileStatusEnum.Remove)
+                    //                {
+                    //                    if (file.FileType == FileTypeEnum.Directory)
+                    //                    {
+                    //                        cloudDiskManager.DeleteDirectory(file.FilePath);
+                    //                        MemoryFileManager.GetInstance().RemoveFile(file.FilePath);
+                    //                    }
+                    //                    else if (file.FileType == FileTypeEnum.File)
+                    //                    {
+                    //                        cloudDiskManager.DeleteFile(CloudDiskType.NOT_SPECIFIED, file.FilePath);
+                    //                        MemoryFileManager.GetInstance().RemoveFile(file.FilePath);
+                    //                    }
+                    //                }
+                    //                else
+                    //                {
+                    //                    if (file.LastModifyDate > cloudFile.LastModifiedDate
+                    //                        && file.FileStatus == FileStatusEnum.Append)
+                    //                    {
+                    //                        var fileInfo = new FileInfo(root + file.FilePath);
+                    //                        var buffer = new byte[fileInfo.Length];
+                    //                        fileInfo.OpenRead().Read(buffer, 0, (int)fileInfo.Length);
+                    //                        cloudDiskManager.UploadFile(
+                    //                            CloudFileUploadType.Create, file.FilePath, buffer);
+                    //                        file.FileStatus = FileStatusEnum.Normal;
+                    //                        MemoryFileManager.GetInstance().SetFile(file);
+                    //                    }
+                    //                    else if (file.LastModifyDate > cloudFile.LastModifiedDate)
+                    //                    {
+                    //                        var cloudbyte = cloudDiskManager.DownloadFile(CloudDiskType.NOT_SPECIFIED, file.FilePath);
 
+                    //                        File.Delete();
+                    //                    }
+                    //                }
+                    //            }
+                    //        }
+                    //        catch
+                    //        {
+                                
+                    //        }
+                    //    }
+                    //}
+                }
+                catch
+                { }
+                Thread.Sleep(60 * 1000);
             }
-            catch
-            {}
         }
 
         public static int CreateDir(string dirName)

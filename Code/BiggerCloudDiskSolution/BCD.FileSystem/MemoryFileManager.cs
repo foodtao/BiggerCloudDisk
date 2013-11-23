@@ -224,7 +224,7 @@ namespace BCD.FileSystem
             }
         }
 
-        private static void GetALlDirectoryInfo(string path, ref List<DirectoryInfo> dirs)
+        public static void GetALlDirectoryInfo(string path, ref List<DirectoryInfo> dirs)
         {
             var dir = new DirectoryInfo(path);
             var dir_temps = dir.GetDirectories();
