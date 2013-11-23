@@ -8,6 +8,7 @@ using BCD.Utility;
 using System.Xml;
 using System.Net;
 using System.Web;
+using System.IO;
 
 namespace BCD.DiskInterface.Sina
 {
@@ -113,7 +114,7 @@ namespace BCD.DiskInterface.Sina
         {
             try
             {
-                string url = "https://api.weipan.cn/2/metadata/basic/sandbox";
+                string url = "https://api.weipan.cn/2/metadata/sandbox";
                 WebRequestHelper helper = new WebRequestHelper(url);
                 var result = helper.Get(url + "?access_token=" + _accessToken);
                 CloudFileInfoModel m = new CloudFileInfoModel();
@@ -164,16 +165,17 @@ namespace BCD.DiskInterface.Sina
 
         public Model.CloudDisk.CloudFileInfoModel UploadFile(byte[] fileContent, string filePath)
         {
-            //string url = "https://upload-vdisk.sina.com.cn/2/files/basic/sandbox";
-            //var request = new WebRequestHelper(url);
-            //url=url+"";
-            //var boundary = Guid.NewGuid().ToString();
+            string url = "https://upload-vdisk.sina.com.cn/2/files/sandbox";
+            var contentEncoding = "UTF-8";//"iso-8859-1";
+            var request = new WebRequestHelper(url);
+            url = url + filePath + "?access_token=" + _accessToken;
+            var boundary = Guid.NewGuid().ToString();
 
-            //var header = string.Format("--{0}", boundary);
-            //var footer = string.Format("--{0}--", boundary);
+            var header = string.Format("--{0}", boundary);
+            var footer = string.Format("--{0}--", boundary);
 
-            //var contents = new StringBuilder();
-            //request.ContentType = string.Format("multipart/form-data; boundary={0}", boundary);
+            var contents = new StringBuilder();
+            request.ContentType = string.Format("multipart/form-data; boundary={0}", boundary);
             //contents.AppendLine(header);
             //contents.AppendLine(String.Format("Content-Disposition: form-data; name=\"{0}\"", "status"));
             //contents.AppendLine("Content-Type: text/plain; charset=US-ASCII");
@@ -190,19 +192,51 @@ namespace BCD.DiskInterface.Sina
             //contents.AppendLine(this.appKey);
 
 
-            //contents.AppendLine(header);
-            //string fileHeader = string.Format("Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"", "pic", filepath);
-            //string fileData = System.Text.Encoding.GetEncoding(contentEncoding).GetString(File.ReadAllBytes(@filepath));
+            contents.AppendLine(header);
+            string fileHeader = string.Format("Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"", "file", filePath);
+            string fileData = System.Text.Encoding.GetEncoding(contentEncoding).GetString(fileContent);
 
-            //contents.AppendLine(fileHeader);
-            //contents.AppendLine("Content-Type: application/octet-stream; charset=UTF-8");
-            //contents.AppendLine("Content-Transfer-Encoding: binary");
-            //contents.AppendLine();
-            //contents.AppendLine(fileData);
-            //contents.AppendLine(footer);
+            contents.AppendLine(fileHeader);
+            contents.AppendLine("Content-Type: application/octet-stream; charset=UTF-8");
+            contents.AppendLine("Content-Transfer-Encoding: binary");
+            contents.AppendLine();
+            contents.AppendLine(fileData);
+            contents.AppendLine(footer);
 
-            //request.Post()
-            throw new NotImplementedException();
+            try
+            {
+                var result = request.Post(url, null, null, null, contents.ToString());
+
+                object json = JsonHelper.DeserializeObject(result);
+                Dictionary<string, object> dict = (Dictionary<string, object>)json;
+                CloudFileInfoModel fileInfo = new CloudFileInfoModel();
+
+                fileInfo.Bytes = Convert.ToDouble(dict["bytes"].ToString());
+                fileInfo.Path = dict["path"].ToString();
+
+                return fileInfo;
+            }
+            catch (WebException webEx)
+            {
+                HttpWebResponse errorResponse = webEx.Response as HttpWebResponse;
+                string ex_txt = "";
+                string strContentEncoding = "utf-8";
+
+                System.IO.StreamReader sr = new StreamReader(webEx.Response.GetResponseStream(), System.Text.Encoding.GetEncoding(strContentEncoding));
+
+                ex_txt = sr.ReadToEnd();
+
+                if (errorResponse.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    //
+                    throw new Exception("上传文件时出错!可能是权限不足!" + ex_txt);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return null;
         }
 
         public byte[] DownloadFile(string remotePath)

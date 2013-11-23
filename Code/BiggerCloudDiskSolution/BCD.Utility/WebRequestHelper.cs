@@ -493,6 +493,7 @@ namespace BCD.Utility
                 System.IO.StreamReader sr = new StreamReader(wex.Response.GetResponseStream(), System.Text.Encoding.GetEncoding(strContentEncoding));
 
                 ex_txt = sr.ReadToEnd();
+                throw wex;
                 //_log.Error("Post:'" + url + "' Òì³£:" + wex.Message + "." + ex_txt); //+ "|InnerEx:" + ex.InnerException.Message);
             }
             catch (Exception ex)

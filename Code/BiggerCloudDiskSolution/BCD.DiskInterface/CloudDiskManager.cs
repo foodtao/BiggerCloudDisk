@@ -96,14 +96,37 @@ namespace BCD.DiskInterface
             try
             {
                 //CloudDiskType type = GetDiskTypeByURL(remotePath);
-                ICloudDiskAPI oneApi;
-                if (IsDiskTypeLoaded(type, out oneApi))
+                
+                if (type == CloudDiskType.NOT_SPECIFIED)
                 {
-                    m = oneApi.GetCloudFileInfo(remotePath);
+                    //未指定类型,必须便利查找属于哪个网盘
+                    foreach (ICloudDiskAPI api in _loadedCloudDiskApi) 
+                    {
+                        m = api.GetCloudFileInfo(remotePath);
+                        if (m != null) 
+                        {
+                            //第一个找到就返回
+                            return m;
+                        }
+                    }
+                    if (m == null)
+                    {
+                        //全部遍历了依然没有找到
+                        throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
+                    }
                 }
                 else
                 {
-                    throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
+                    //指定类型的
+                    ICloudDiskAPI oneApi;
+                    if (IsDiskTypeLoaded(type, out oneApi))
+                    {
+                        m = oneApi.GetCloudFileInfo(remotePath);
+                    }
+                    else
+                    {
+                        throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
+                    }
                 }
             }
             catch (Exception ex)
@@ -361,19 +384,19 @@ namespace BCD.DiskInterface
             switch (model)
             {
                 case CloudDiskOptimizationTypeModel.AVAILABLE_BIGGEST:
-                    GetAvailableBiggestCloudDisk(); //可用空间最大的网盘.
+                    result = GetAvailableBiggestCloudDisk(); //可用空间最大的网盘.
                     break;
                 case CloudDiskOptimizationTypeModel.BIGGEST:
-                    GetAvailableBiggestCloudDisk();
+                    result = GetAvailableBiggestCloudDisk();
                     break;
                 case CloudDiskOptimizationTypeModel.FASTEST:
-                    GetAvailableBiggestCloudDisk();
+                    result = GetAvailableBiggestCloudDisk();
                     break;
                 case CloudDiskOptimizationTypeModel.OTHER:
-                    GetAvailableBiggestCloudDisk();
+                    result = GetAvailableBiggestCloudDisk();
                     break;
                 default:
-                    GetAvailableBiggestCloudDisk();
+                    result = GetAvailableBiggestCloudDisk();
                     break;
             }
             return result;
