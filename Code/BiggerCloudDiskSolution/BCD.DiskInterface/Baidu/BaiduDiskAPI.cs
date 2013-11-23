@@ -52,7 +52,7 @@ namespace BCD.DiskInterface.Baidu
             throw new NotImplementedException();
         }
 
-        public Model.CloudDisk.CloudFileInfoModel UploadFile(byte[] fileContent)
+        public Model.CloudDisk.CloudFileInfoModel UploadFile(byte[] fileContent, string filePath)
         {
             throw new NotImplementedException();
         }

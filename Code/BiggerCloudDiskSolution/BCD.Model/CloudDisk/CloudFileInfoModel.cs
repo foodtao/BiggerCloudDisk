@@ -80,5 +80,10 @@ namespace BCD.Model.CloudDisk
         /// 如果是文件夹,则这里是目录下的文件信息
         /// </summary>
         public List<CloudFileInfoModel> Contents { get; set; }
+
+        /// <summary>
+        /// File name
+        /// </summary>
+        public string name { get; set; }
     }
 }

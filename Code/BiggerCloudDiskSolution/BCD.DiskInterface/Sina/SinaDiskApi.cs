@@ -126,7 +126,7 @@ namespace BCD.DiskInterface.Sina
             }
         }
 
-        public Model.CloudDisk.CloudFileInfoModel UploadFile(byte[] fileContent)
+        public Model.CloudDisk.CloudFileInfoModel UploadFile(byte[] fileContent,string filePath)
         {
             throw new NotImplementedException();
         }

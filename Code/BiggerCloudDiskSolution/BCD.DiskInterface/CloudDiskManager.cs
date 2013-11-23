@@ -125,7 +125,7 @@ namespace BCD.DiskInterface
                 ICloudDiskAPI api = GetOptimizedDisk(CloudDiskOptimizationTypeModel.AVAILABLE_BIGGEST);
                 if (api != null)
                 {
-                    uploaded = api.UploadFile(fileContent);
+                    uploaded = api.UploadFile(fileContent, filePath);
                 }
                 else
                 {
@@ -140,7 +140,7 @@ namespace BCD.DiskInterface
                 {
                     if (api.GetCloudFileInfo(filePath) != null)
                     {
-                        uploaded = api.UploadFile(fileContent);
+                        uploaded = api.UploadFile(fileContent, filePath);
                     }
                 }
             }

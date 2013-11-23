@@ -66,7 +66,7 @@ namespace BCD.DiskInterface
         /// </summary>
         /// <param name="fileContent">文件内容</param>
         /// <returns></returns>
-        CloudFileInfoModel UploadFile(byte[] fileContent);
+        CloudFileInfoModel UploadFile(byte[] fileContent, string filePath);
 
 
         /// <summary>
