@@ -9,7 +9,9 @@ using System.Windows.Forms;
 
 namespace BCD.WinApp
 {
+    using BCD.DiskInterface;
     using BCD.FileSystem;
+    using BCD.Model.CloudDisk;
 
     using Dokan;
 
@@ -21,6 +23,7 @@ namespace BCD.WinApp
             MountDisk();
 
             MemoryFileManagerThead.Start();
+            ServiceHandler.Start();
         }
 
         private void MountDisk()
@@ -40,7 +43,10 @@ namespace BCD.WinApp
 
         private void btnSetUserSina_Click(object sender, EventArgs e)
         {
-            var a = MemoryFileManager.GetInstance().GetAllFiles();
+            //var a = MemoryFileManager.GetInstance().GetAllFiles();
+            //var b = 1;
+            CloudDiskManager cloudDiskManager = new CloudDiskManager();
+            var a = cloudDiskManager.GetCloudFileInfo(CloudDiskType.KINGSOFT, "BiggerCloudDisk");
             var b = 1;
         }
 
