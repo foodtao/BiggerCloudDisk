@@ -19,14 +19,14 @@ namespace BCD.FilSystem
         public int RemoveDir(string dirName)
         {
             var client = new CloudDiskManager();
-            var result = client.DeleteFile(dirName);
+            var result = client.DeleteDirectory(dirName);
             return 1;
         }
 
         public int CreateFile(byte[] fileContent)
         {
             var client = new CloudDiskManager();
-            client.UploadFile(fileContent);
+            //client.UploadFile(fileContent);
             return 1;
         }
 
