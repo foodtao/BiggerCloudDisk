@@ -31,6 +31,16 @@ namespace BCD.Utility
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static object DeserializeObject(string value)
+        {
+            return JsonConvert.DeserializeObject(value);
+        }
+
+        /// <summary>
         /// 将Json字符串转换为Xml
         /// </summary>
         /// <param name="value"></param>

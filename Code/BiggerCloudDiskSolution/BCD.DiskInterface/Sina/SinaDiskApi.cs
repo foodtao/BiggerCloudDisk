@@ -5,6 +5,7 @@ using System.Text;
 using System.Configuration;
 using BCD.Model.CloudDisk;
 using BCD.Utility;
+using System.Xml;
 
 namespace BCD.DiskInterface.Sina
 {
@@ -35,7 +36,7 @@ namespace BCD.DiskInterface.Sina
         /// 获取本网盘的类型
         /// </summary>
         /// <returns></returns>
-        public CloudDiskType GetDiskType() 
+        public CloudDiskType GetDiskType()
         {
             return CloudDiskType.SINA;
         }
@@ -65,23 +66,64 @@ namespace BCD.DiskInterface.Sina
 
         public Model.CloudDisk.AccessTokenModel GetAccessToken()
         {
-            WebRequestHelper helper = new WebRequestHelper("https://auth.sina.com.cn/");
-            var result =
-                helper.Post("https://auth.sina.com.cn/oauth2/access_token/client_id=" + _appKey + "&client_secret=" + _appSecret
-                + "&grant_type=refresh_token&access_token=" + _accessToken);
             AccessTokenModel m = new AccessTokenModel();
-            m.FullText = result;
+            try
+            {
+                WebRequestHelper helper = new WebRequestHelper("https://auth.sina.com.cn/");
+                var result =
+                    helper.Post("https://auth.sina.com.cn/oauth2/access_token/client_id=" + _appKey + "&client_secret=" + _appSecret
+                    + "&grant_type=refresh_token&access_token=" + _accessToken);
+                m.FullText = result;
+                SinaResponseAccessTokenJsonEntity json = JsonHelper.DeserializeObject<SinaResponseAccessTokenJsonEntity>(result);
+                m.AccessToken = json.access_token;
+                m.Expire = json.expires_in;
+                m.DiskType = CloudDiskType.SINA;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             return m;
         }
 
         public Model.CloudDisk.SingleCloudDiskCapacityModel GetCloudDiskCapacityInfo()
         {
-            throw new NotImplementedException();
+            try
+            {
+                string url = "https://api.weipan.cn/2/account/info";
+                SingleCloudDiskCapacityModel m = new SingleCloudDiskCapacityModel();
+                WebRequestHelper helper = new WebRequestHelper(url);
+                var result = helper.Get(url + "?access_token=" + _accessToken);
+                XmlNode node = JsonHelper.DeserializeToXmlNode(result);
+                m.TotalByte = Convert.ToDouble(node.SelectSingleNode("root").SelectSingleNode("quota_info").SelectSingleNode("quota").ToString());
+                var comsumed = Convert.ToDouble(node.SelectSingleNode("root").SelectSingleNode("quota_info").SelectSingleNode("consumed").ToString());
+                m.TotalAvailableByte = m.TotalByte - comsumed;
+                return m;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public Model.CloudDisk.CloudFileInfoModel GetCloudFileInfo(string remotePath)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string url = "https://api.weipan.cn/2/metadata/basic/sandbox";
+                WebRequestHelper helper = new WebRequestHelper(url);
+                var result = helper.Get(url + "?access_token=" + _accessToken);
+                CloudFileInfoModel m = new CloudFileInfoModel();
+                return m;
+            }
+            catch (System.Net.WebException webEx) 
+            {
+                throw webEx;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public Model.CloudDisk.CloudFileInfoModel UploadFile(byte[] fileContent)
@@ -104,7 +146,7 @@ namespace BCD.DiskInterface.Sina
             throw new NotImplementedException();
         }
 
-        public int DeleteDirectory(string remotePath) 
+        public int DeleteDirectory(string remotePath)
         {
             throw new NotImplementedException();
         }
