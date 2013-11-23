@@ -32,6 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -41,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Baidu\BaiduDiskAPI.cs" />
+    <Compile Include="CloudDiskFactory.cs" />
     <Compile Include="CloudDiskManager.cs" />
     <Compile Include="ICloudDiskAPI.cs" />
     <Compile Include="Kingsoft\KingsoftDiskAPI.cs" />
@@ -52,9 +54,15 @@
       <Project>{7d2e87a6-ae65-4c1e-b78f-b2297d6729a3}</Project>
       <Name>BCD.Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BCD.Utility\BCD.Utility.csproj">
+      <Project>{54948308-4541-430b-996f-21a97370295e}</Project>
+      <Name>BCD.Utility</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

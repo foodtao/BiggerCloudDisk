@@ -13,6 +13,12 @@ namespace BCD.DiskInterface
     public interface ICloudDiskAPI
     {
         /// <summary>
+        /// 获取本网盘的类型
+        /// </summary>
+        /// <returns></returns>
+        CloudDiskType GetDiskType();
+
+        /// <summary>
         /// 获取保存在本地app.config里的app key
         /// </summary>
         /// <returns>app key</returns>
@@ -32,8 +38,9 @@ namespace BCD.DiskInterface
 
         /// <summary>
         /// 将获取或者刷新获得的access token写入本地文件
+        /// <param name="newToken">新获得的token</param>
         /// </summary>
-        void WriteLocalAccessToken();
+        void WriteLocalAccessToken(AccessTokenModel newToken);
 
         /// <summary>
         /// 从远程api或者或者刷新access token
@@ -45,7 +52,7 @@ namespace BCD.DiskInterface
         /// 获取网盘容量信息
         /// </summary>
         /// <returns></returns>
-        CloudDiskCapacityModel GetCloudDiskCapacityInfo();
+        SingleCloudDiskCapacityModel GetCloudDiskCapacityInfo();
 
         /// <summary>
         /// 获取一个远程文件的信息
@@ -77,11 +84,19 @@ namespace BCD.DiskInterface
         CloudFileInfoModel CreateDirectory(string dir);
 
         /// <summary>
-        /// 删除文件,文件夹
+        /// 删除文件
         /// </summary>
         /// <param name="remotePath"></param>
         /// <returns></returns>
         int DeleteFile(string remotePath);
+
+        /// <summary>
+        /// 删除文件夹
+        /// </summary>
+        /// <param name="remotePath"></param>
+        /// <returns></returns>
+        int DeleteDirectory(string remotePath);
+
 
         /// <summary>
         /// 移动远程文件
