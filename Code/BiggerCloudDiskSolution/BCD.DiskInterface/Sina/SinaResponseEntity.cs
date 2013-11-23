@@ -20,4 +20,23 @@ namespace BCD.DiskInterface.Sina
         public string time_left { get; set; }
         public string uid { get; set; }
     }
+
+    public class SinaResponseFileInfoJsonEntity
+    {
+        public string size { get; set; }
+        public string hash { get; set; }
+        public string rev { get; set; }
+        public string thumb_exists { get; set; }
+        public string bytes { get; set; }
+        public string modified { get; set; }
+        public string path { get; set; }
+        public string is_dir { get; set; }
+        public string root { get; set; }
+        public string icon { get; set; }
+        public string revision { get; set; }
+        public string is_deleted { get; set; }
+        public string md5 { get; set; }
+        public string sha1 { get; set; }
+        public List<SinaResponseFileInfoJsonEntity> contents { get; set; }
+    }
 }

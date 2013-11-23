@@ -6,6 +6,8 @@ using System.Configuration;
 using BCD.Model.CloudDisk;
 using BCD.Utility;
 using System.Xml;
+using System.Net;
+using System.Web;
 
 namespace BCD.DiskInterface.Sina
 {
@@ -82,6 +84,7 @@ namespace BCD.DiskInterface.Sina
             catch (Exception ex)
             {
                 throw ex;
+
             }
             return m;
         }
@@ -114,20 +117,91 @@ namespace BCD.DiskInterface.Sina
                 WebRequestHelper helper = new WebRequestHelper(url);
                 var result = helper.Get(url + "?access_token=" + _accessToken);
                 CloudFileInfoModel m = new CloudFileInfoModel();
+                var fileInfo = JsonHelper.DeserializeObject<SinaResponseFileInfoJsonEntity>(result);
+
+                m.Bytes = Convert.ToDouble(fileInfo.bytes);
+                m.DiskType = CloudDiskType.SINA;
+                m.Path = fileInfo.path;
+                m.IsDir = Convert.ToBoolean(fileInfo.is_dir);
+                m.LastModifiedDate = Convert.ToDateTime(fileInfo.modified);
+                m.MD5 = fileInfo.md5;
+                m.SHA1 = fileInfo.sha1;
+                if (fileInfo.contents != null) 
+                {
+                    m.Contents = new List<CloudFileInfoModel>();
+                }
+                foreach (var oneDir in fileInfo.contents) 
+                {
+                    CloudFileInfoModel subDir = new CloudFileInfoModel();
+                    subDir.Bytes = Convert.ToDouble(oneDir.bytes);
+                    subDir.Path = oneDir.path;
+                    subDir.IsDir = Convert.ToBoolean(oneDir.is_dir);
+                    subDir.LastModifiedDate = Convert.ToDateTime(oneDir.modified);
+                    subDir.MD5 = oneDir.md5;
+                    subDir.SHA1 = oneDir.sha1;
+
+                    m.Contents.Add(subDir);
+                }
                 return m;
             }
-            catch (System.Net.WebException webEx) 
+            catch (System.Net.WebException webEx)
             {
-                throw webEx;
+                HttpWebResponse errorResponse = webEx.Response as HttpWebResponse;
+                if (errorResponse.StatusCode == HttpStatusCode.NotFound)
+                {
+                    //
+                    return null;
+                }
+                //webEx.Status == System.Net.WebExceptionStatus.CacheEntryNotFound
+                //throw webEx;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+            return null;
         }
 
         public Model.CloudDisk.CloudFileInfoModel UploadFile(byte[] fileContent,string filePath)
         {
+            //string url = "https://upload-vdisk.sina.com.cn/2/files/basic/sandbox";
+            //var request = new WebRequestHelper(url);
+            //url=url+"";
+            //var boundary = Guid.NewGuid().ToString();
+
+            //var header = string.Format("--{0}", boundary);
+            //var footer = string.Format("--{0}--", boundary);
+
+            //var contents = new StringBuilder();
+            //request.ContentType = string.Format("multipart/form-data; boundary={0}", boundary);
+            //contents.AppendLine(header);
+            //contents.AppendLine(String.Format("Content-Disposition: form-data; name=\"{0}\"", "status"));
+            //contents.AppendLine("Content-Type: text/plain; charset=US-ASCII");
+            //contents.AppendLine("Content-Transfer-Encoding: 8bit");
+            //contents.AppendLine();
+            //contents.AppendLine(HttpUtility.UrlEncode(status));
+
+
+            //contents.AppendLine(header);
+            //contents.AppendLine(string.Format("Content-Disposition: form-data; name=\"{0}\"", "source"));
+            //contents.AppendLine("Content-Type: text/plain; charset=US-ASCII");
+            //contents.AppendLine("Content-Transfer-Encoding: 8bit");
+            //contents.AppendLine();
+            //contents.AppendLine(this.appKey);
+
+
+            //contents.AppendLine(header);
+            //string fileHeader = string.Format("Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"", "pic", filepath);
+            //string fileData = System.Text.Encoding.GetEncoding(contentEncoding).GetString(File.ReadAllBytes(@filepath));
+
+            //contents.AppendLine(fileHeader);
+            //contents.AppendLine("Content-Type: application/octet-stream; charset=UTF-8");
+            //contents.AppendLine("Content-Transfer-Encoding: binary");
+            //contents.AppendLine();
+            //contents.AppendLine(fileData);
+            //contents.AppendLine(footer);
+
+            //request.Post()
             throw new NotImplementedException();
         }
 

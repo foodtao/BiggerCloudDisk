@@ -41,6 +41,7 @@ namespace BCD.Utility
         }
 
         /// <summary>
+        /// 
         /// 将Json字符串转换为Xml
         /// </summary>
         /// <param name="value"></param>
