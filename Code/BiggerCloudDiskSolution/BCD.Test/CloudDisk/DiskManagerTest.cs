@@ -22,7 +22,7 @@ namespace BCD.Test.CloudDisk
         public void Upload()
         {
             CloudDiskManager m = new CloudDiskManager();
-            var bytes = File.ReadAllBytes("c:\\1.jpg");
+            var bytes = File.ReadAllBytes("c:\\1.txt");
             var result = m.UploadFile(CloudFileUploadType.Create, "/1.txt", bytes);
         }
 
@@ -30,7 +30,14 @@ namespace BCD.Test.CloudDisk
         public void GetDirInfo()
         {
             CloudDiskManager m = new CloudDiskManager();
-            var result = m.GetCloudFileInfo(CloudDiskType.SINA, "/");
+            var result = m.GetCloudFileInfo(CloudDiskType.SINA, "/DiskSpeedTest.png");
+        }
+
+        [TestMethod]
+        public void DownLoad()
+        {
+            CloudDiskManager m = new CloudDiskManager();
+            var result = m.DownloadFile(CloudDiskType.NOT_SPECIFIED, "/1.txt");
         }
     }
 }

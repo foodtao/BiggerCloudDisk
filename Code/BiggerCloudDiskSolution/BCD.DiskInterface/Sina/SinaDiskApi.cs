@@ -116,7 +116,7 @@ namespace BCD.DiskInterface.Sina
             {
                 string url = "https://api.weipan.cn/2/metadata/sandbox";
                 WebRequestHelper helper = new WebRequestHelper(url);
-                var result = helper.Get(url + "?access_token=" + _accessToken);
+                var result = helper.Get(url + remotePath + "?access_token=" + _accessToken);
                 CloudFileInfoModel m = new CloudFileInfoModel();
                 var fileInfo = JsonHelper.DeserializeObject<SinaResponseFileInfoJsonEntity>(result);
 
@@ -130,19 +130,20 @@ namespace BCD.DiskInterface.Sina
                 if (fileInfo.contents != null)
                 {
                     m.Contents = new List<CloudFileInfoModel>();
-                }
-                foreach (var oneDir in fileInfo.contents)
-                {
-                    CloudFileInfoModel subDir = new CloudFileInfoModel();
-                    subDir.Bytes = Convert.ToDouble(oneDir.bytes);
-                    subDir.Path = oneDir.path;
-                    subDir.IsDir = Convert.ToBoolean(oneDir.is_dir);
-                    subDir.LastModifiedDate = Convert.ToDateTime(oneDir.modified);
-                    subDir.MD5 = oneDir.md5;
-                    subDir.SHA1 = oneDir.sha1;
+                    foreach (var oneDir in fileInfo.contents)
+                    {
+                        CloudFileInfoModel subDir = new CloudFileInfoModel();
+                        subDir.Bytes = Convert.ToDouble(oneDir.bytes);
+                        subDir.Path = oneDir.path;
+                        subDir.IsDir = Convert.ToBoolean(oneDir.is_dir);
+                        subDir.LastModifiedDate = Convert.ToDateTime(oneDir.modified);
+                        subDir.MD5 = oneDir.md5;
+                        subDir.SHA1 = oneDir.sha1;
 
-                    m.Contents.Add(subDir);
+                        m.Contents.Add(subDir);
+                    }
                 }
+                
                 return m;
             }
             catch (System.Net.WebException webEx)
@@ -168,6 +169,7 @@ namespace BCD.DiskInterface.Sina
             string url = "https://upload-vdisk.sina.com.cn/2/files/sandbox";
             var contentEncoding = "UTF-8";//"iso-8859-1";
             var request = new WebRequestHelper(url);
+            string fileName = filePath.Substring(filePath.LastIndexOf("/") + 1);
             url = url + filePath + "?access_token=" + _accessToken;
             var boundary = Guid.NewGuid().ToString();
 
@@ -175,7 +177,7 @@ namespace BCD.DiskInterface.Sina
             var footer = string.Format("--{0}--", boundary);
 
             var contents = new StringBuilder();
-            request.ContentType = string.Format("multipart/form-data; boundary={0}", boundary);
+
             //contents.AppendLine(header);
             //contents.AppendLine(String.Format("Content-Disposition: form-data; name=\"{0}\"", "status"));
             //contents.AppendLine("Content-Type: text/plain; charset=US-ASCII");
@@ -191,28 +193,41 @@ namespace BCD.DiskInterface.Sina
             //contents.AppendLine();
             //contents.AppendLine(this.appKey);
 
-
-            contents.AppendLine(header);
-            string fileHeader = string.Format("Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"", "file", filePath);
+            string fileHeader = string.Format("Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"", "file", fileName);
             string fileData = System.Text.Encoding.GetEncoding(contentEncoding).GetString(fileContent);
 
+            request.ContentType = string.Format("multipart/form-data; boundary={0}", boundary);
+
+            contents.AppendLine(header);
+            contents.AppendLine(String.Format("Content-Disposition: form-data; name=\"{0}\"", "FileName"));
+            contents.AppendLine();
+            contents.AppendLine(fileName);
+
+            contents.AppendLine(header);
             contents.AppendLine(fileHeader);
-            contents.AppendLine("Content-Type: application/octet-stream; charset=UTF-8");
-            contents.AppendLine("Content-Transfer-Encoding: binary");
+            contents.AppendLine("Content-Type: application/octet-stream;");
+            //contents.AppendLine("Content-Length:" + fileContent.LongLength.ToString());
+            //contents.AppendLine("Content-Transfer-Encoding: binary");
             contents.AppendLine();
             contents.AppendLine(fileData);
             contents.AppendLine(footer);
+            //contents.AppendLine();
 
             try
             {
                 var result = request.Post(url, null, null, null, contents.ToString());
 
-                object json = JsonHelper.DeserializeObject(result);
-                Dictionary<string, object> dict = (Dictionary<string, object>)json;
+                var entity = JsonHelper.DeserializeObject<SinaResponseFileInfoJsonEntity>(result);
+
                 CloudFileInfoModel fileInfo = new CloudFileInfoModel();
 
-                fileInfo.Bytes = Convert.ToDouble(dict["bytes"].ToString());
-                fileInfo.Path = dict["path"].ToString();
+                fileInfo.Bytes = Convert.ToDouble(entity.bytes);
+                fileInfo.Path = entity.path;
+                fileInfo.LastModifiedDate = Convert.ToDateTime(entity.modified);
+                fileInfo.MD5 = entity.md5;
+                fileInfo.SHA1 = entity.sha1;
+                fileInfo.RootPath = entity.root;
+                fileInfo.DiskType = CloudDiskType.SINA;
 
                 return fileInfo;
             }
@@ -241,7 +256,12 @@ namespace BCD.DiskInterface.Sina
 
         public byte[] DownloadFile(string remotePath)
         {
-            throw new NotImplementedException();
+            string url = "https://api.weipan.cn/2/files/sandbox";
+            var request = new WebRequestHelper(url);
+            string fileName = remotePath.Substring(remotePath.LastIndexOf("/") + 1);
+            url = url + remotePath + "?access_token=" + _accessToken;
+            var result = request.Get(url);
+            return System.Text.Encoding.ASCII.GetBytes(result);
         }
 
         public Model.CloudDisk.CloudFileInfoModel CreateDirectory(string dir)
