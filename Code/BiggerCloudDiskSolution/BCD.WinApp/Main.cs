@@ -23,7 +23,7 @@ namespace BCD.WinApp
             options.MountPoint = "n:\\";
             options.VolumeLabel = "我的超云盘";
 
-            DokanNet.DokanMain(options, new MirrorDisk("G:\\temp"));
+            DokanNet.DokanMain(options, new MirrorDisk("c:\\dev"));
 
             InitializeComponent();
         }

@@ -125,6 +125,8 @@ namespace BCD.FilSystem
         {
             var path = this.GetPath(filename);
             Directory.CreateDirectory(path);
+            var client = new ServiceHandler();
+            var result = client.CreateDir(path);
             return DokanNet.DOKAN_SUCCESS;
         }
 
@@ -140,6 +142,8 @@ namespace BCD.FilSystem
         {
             var path = this.GetPath(filename);
             if (Directory.Exists(path)) Directory.Delete(path);
+            var client = new ServiceHandler();
+            var result = client.RemoveDir(path);
             return DokanNet.DOKAN_SUCCESS;
         }
 
