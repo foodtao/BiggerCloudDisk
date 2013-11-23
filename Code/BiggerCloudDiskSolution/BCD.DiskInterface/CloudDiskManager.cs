@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BCD.Model.CloudDisk;
+using BCD.DiskInterface.Sina;
+using BCD.DiskInterface.Baidu;
+using BCD.DiskInterface.Kingsoft;
 
 namespace BCD.DiskInterface
 {
@@ -12,13 +15,21 @@ namespace BCD.DiskInterface
     /// </summary>
     public class CloudDiskManager
     {
+        private SinaDiskApi _sinaApi = new SinaDiskApi();
+        private BaiduDiskAPI _baiduApi = new BaiduDiskAPI();
+        private KingsoftDiskAPI _kingsoftApi = new KingsoftDiskAPI();
+
         /// <summary>
         /// 获取网盘空间信息
         /// </summary>
         /// <returns>包括总空间,可用空间在内的信息</returns>
-        public CloudDiskCapacityModel GetCloudDiskCapacityInfo() 
+        public CloudDiskCapacityModel GetCloudDiskCapacityInfo()
         {
             CloudDiskCapacityModel m = new CloudDiskCapacityModel();
+            var sinaC = _sinaApi.GetCloudDiskCapacityInfo();
+            var baiduC = _baiduApi.GetCloudDiskCapacityInfo();
+            var kingsoftC = _kingsoftApi.GetCloudDiskCapacityInfo();
+
             return m;
         }
 
@@ -27,7 +38,7 @@ namespace BCD.DiskInterface
         /// </summary>
         /// <param name="remotePath">远程文件的完整路径</param>
         /// <returns></returns>
-        public CloudFileInfoModel GetCloudFileInfo(string remotePath) 
+        public CloudFileInfoModel GetCloudFileInfo(string remotePath)
         {
             CloudFileInfoModel m = new CloudFileInfoModel();
             return m;
@@ -38,7 +49,7 @@ namespace BCD.DiskInterface
         /// </summary>
         /// <param name="fileContent">文件内容</param>
         /// <returns></returns>
-        public CloudFileInfoModel UploadFile(byte[] fileContent) 
+        public CloudFileInfoModel UploadFile(byte[] fileContent)
         {
             CloudFileInfoModel uploaded = new CloudFileInfoModel();
             return uploaded;
@@ -49,7 +60,7 @@ namespace BCD.DiskInterface
         /// </summary>
         /// <param name="remotePath">远程文件地址</param>
         /// <returns>文件字节内容</returns>
-        public byte[] DownloadFile(string remotePath) 
+        public byte[] DownloadFile(string remotePath)
         {
             byte[] fileContent = null;
             return fileContent;
@@ -60,7 +71,7 @@ namespace BCD.DiskInterface
         /// </summary>
         /// <param name="dir">文件夹相对路径</param>
         /// <returns></returns>
-        public List<CloudFileInfoModel> CreateDirectory(string dir) 
+        public List<CloudFileInfoModel> CreateDirectory(string dir)
         {
             List<CloudFileInfoModel> list = new List<CloudFileInfoModel>();
             return list;
@@ -71,7 +82,7 @@ namespace BCD.DiskInterface
         /// </summary>
         /// <param name="remotePath"></param>
         /// <returns></returns>
-        public int DeleteFile(string remotePath) 
+        public int DeleteFile(string remotePath)
         {
             return 0;
         }
@@ -87,6 +98,16 @@ namespace BCD.DiskInterface
         {
             CloudFileInfoModel m = new CloudFileInfoModel();
             return m;
+        }
+
+        /// <summary>
+        /// 定期刷新令牌
+        /// </summary>
+        /// <returns>所有网盘的新令牌</returns>
+        public IList<AccessTokenModel> RefreshAccessToken()
+        {
+            IList<AccessTokenModel> result = new List<AccessTokenModel>();
+            return result;
         }
     }
 }
