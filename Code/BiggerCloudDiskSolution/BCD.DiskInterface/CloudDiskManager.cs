@@ -85,18 +85,18 @@ namespace BCD.DiskInterface
         /// 获取一个远程文件的信息
         /// </summary>
         /// <param name="type">网盘类型</param>
-        /// <param name="remotePath">远程文件的完整路径</param>
+        /// <param name="remotePath">远程文件的相对路径</param>
         /// <returns></returns>
         public CloudFileInfoModel GetCloudFileInfo(CloudDiskType type, string remotePath)
         {
-            CloudFileInfoModel m = new CloudFileInfoModel();
+            CloudFileInfoModel m = null;
             try
             {
                 //CloudDiskType type = GetDiskTypeByURL(remotePath);
                 ICloudDiskAPI oneApi;
                 if (IsDiskTypeLoaded(type, out oneApi))
                 {
-                    oneApi.GetCloudFileInfo(remotePath);
+                    m = oneApi.GetCloudFileInfo(remotePath);
                 }
                 else
                 {
@@ -113,20 +113,38 @@ namespace BCD.DiskInterface
         /// <summary>
         /// 上传一个文件,具体上传至哪个网盘由内部决定,有可能会抛出异常,异常在外面处理
         /// </summary>
+        /// <param name="type">上传类型,新增或者更新</param>
+        /// <param name="filePath">文件相对路径,含文件名</param>
         /// <param name="fileContent">文件内容</param>
         /// <returns></returns>
-        public CloudFileInfoModel UploadFile(byte[] fileContent)
+        public CloudFileInfoModel UploadFile(CloudFileUploadType type, string filePath, byte[] fileContent)
         {
             CloudFileInfoModel uploaded = new CloudFileInfoModel();
-            ICloudDiskAPI api = GetOptimizedDisk(CloudDiskOptimizationTypeModel.AVAILABLE_BIGGEST);
-            if (api != null)
+            if (type == CloudFileUploadType.Create)
             {
-                uploaded = api.UploadFile(fileContent);
+                ICloudDiskAPI api = GetOptimizedDisk(CloudDiskOptimizationTypeModel.AVAILABLE_BIGGEST);
+                if (api != null)
+                {
+                    uploaded = api.UploadFile(fileContent);
+                }
+                else
+                {
+                    throw new Exception("没有可用的网盘可供上传!");
+                }
             }
-            else
+            //修改
+            if (type == CloudFileUploadType.Update)
             {
-                throw new Exception("没有可用的网盘可供上传!");
+                //遍历所有网盘
+                foreach (ICloudDiskAPI api in _loadedCloudDiskApi) 
+                {
+                    if (api.GetCloudFileInfo(filePath) != null) 
+                    {
+                        uploaded = api.UploadFile(fileContent);
+                    }
+                }
             }
+
             return uploaded;
         }
 
@@ -264,7 +282,7 @@ namespace BCD.DiskInterface
             foreach (ICloudDiskAPI api in _loadedCloudDiskApi)
             {
                 var oneToken = api.GetAccessToken();
-                api.WriteLocalAccessToken(oneToken.AccessToken);
+                api.WriteLocalAccessToken(oneToken);
                 result.Add(oneToken);
             }
             return result;

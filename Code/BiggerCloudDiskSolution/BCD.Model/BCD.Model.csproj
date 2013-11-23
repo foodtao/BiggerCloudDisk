@@ -45,6 +45,7 @@
     <Compile Include="CloudDisk\CloudDiskOptimizationTypeModel.cs" />
     <Compile Include="CloudDisk\CloudDiskTypeModel.cs" />
     <Compile Include="CloudDisk\CloudFileInfoModel.cs" />
+    <Compile Include="CloudDisk\CloudFileUploadTypeModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
