@@ -21,7 +21,7 @@ namespace BCD.WinApp
             DokanOptions options = new DokanOptions();
             options.ThreadCount = 1;
             options.DebugMode = true;
-            //options.MountPoint = "n:\\";
+            options.MountPoint = "n:\\";
             options.VolumeLabel = "我的超云盘";
 
             DokanNet.DokanMain(options, new MirrorDisk("G:\\temp"));
