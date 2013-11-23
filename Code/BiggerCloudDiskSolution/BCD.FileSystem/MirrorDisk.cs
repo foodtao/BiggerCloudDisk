@@ -26,222 +26,287 @@ namespace BCD.FileSystem
         public int CreateFile(string filename, FileAccess access, 
             FileShare share, FileMode mode, FileOptions options, DokanFileInfo info)
         {
-            string path = GetPath(filename);
-            if (Directory.Exists(path))
+            try
             {
-                info.IsDirectory = true;
+                string path = GetPath(filename);
+                if (Directory.Exists(path))
+                {
+                    info.IsDirectory = true;
+                    return DokanNet.DOKAN_SUCCESS;
+                }
+                switch (mode)
+                {
+                    case FileMode.Append:
+                        return DokanNet.DOKAN_SUCCESS;
+                    case FileMode.Create:
+                        if (!File.Exists(path))
+                        {
+                            FileStream fs = File.Create(path);
+                            fs.Close();
+                            //MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.File, FileStatusEnum.Create);
+                        }
+                        return DokanNet.DOKAN_SUCCESS;
+                    case FileMode.CreateNew:
+                        if (!File.Exists(path))
+                        {
+                            FileStream fs = File.Create(path);
+                            fs.Close();
+                            //MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.File, FileStatusEnum.Create);
+                        }
+                        return DokanNet.DOKAN_SUCCESS;
+                    case FileMode.Open:
+                        return DokanNet.DOKAN_SUCCESS;
+                    case FileMode.OpenOrCreate:
+                        return DokanNet.DOKAN_SUCCESS;
+
+                }
+                return -DokanNet.ERROR_FILE_NOT_FOUND;
+            }
+            catch 
+            {
                 return DokanNet.DOKAN_SUCCESS;
             }
-            switch (mode)
-            {
-                case FileMode.Append:
-                    return DokanNet.DOKAN_SUCCESS;
-                case FileMode.Create:
-                    if (!File.Exists(path))
-                    {
-                        FileStream fs = File.Create(path);
-                        fs.Close();
-                        MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.File, FileStatusEnum.Create);
-                    }
-                    return DokanNet.DOKAN_SUCCESS;
-                case FileMode.CreateNew:
-                    if (!File.Exists(path))
-                    {
-                        FileStream fs = File.Create(path);
-                        fs.Close();
-                        MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.File, FileStatusEnum.Create);
-                    }
-                    return DokanNet.DOKAN_SUCCESS;
-                case FileMode.Open:
-                    return DokanNet.DOKAN_SUCCESS;
-                case FileMode.OpenOrCreate:
-                    return DokanNet.DOKAN_SUCCESS;
-
-            }
-            return -DokanNet.ERROR_FILE_NOT_FOUND;
         }
 
         public int FindFiles(string filename, System.Collections.ArrayList files, DokanFileInfo info)
         {
-            string path = GetPath(filename);
-            if (Directory.Exists(path))
+            try
             {
-                var d = new DirectoryInfo(path);
-                FileSystemInfo[] entries = d.GetFileSystemInfos();
-                foreach (FileSystemInfo f in entries)
+                string path = GetPath(filename);
+                if (Directory.Exists(path))
                 {
-                    var fi = new FileInformation();
-                    fi.Attributes = f.Attributes;
-                    fi.CreationTime = f.CreationTime;
-                    fi.LastAccessTime = f.LastAccessTime;
-                    fi.LastWriteTime = f.LastWriteTime;
-                    fi.Length = (f is DirectoryInfo) ? 0 : ((FileInfo)f).Length;
-                    fi.FileName = f.Name;
-                    files.Add(fi);
+                    var d = new DirectoryInfo(path);
+                    FileSystemInfo[] entries = d.GetFileSystemInfos();
+                    foreach (FileSystemInfo f in entries)
+                    {
+                        var fi = new FileInformation();
+                        fi.Attributes = f.Attributes;
+                        fi.CreationTime = f.CreationTime;
+                        fi.LastAccessTime = f.LastAccessTime;
+                        fi.LastWriteTime = f.LastWriteTime;
+                        fi.Length = (f is DirectoryInfo) ? 0 : ((FileInfo)f).Length;
+                        fi.FileName = f.Name;
+                        files.Add(fi);
+                    }
+                    return DokanNet.DOKAN_SUCCESS;
                 }
-                return DokanNet.DOKAN_SUCCESS;
+                else
+                {
+                    return -1;
+                }
             }
-            else
+            catch (Exception)
             {
-                return -1;
+                return DokanNet.DOKAN_SUCCESS;
             }
         }
 
         public int GetFileInformation(string filename, FileInformation fileinfo, DokanFileInfo info)
         {
-            string path = GetPath(filename);
-            if (File.Exists(path))
+            try
             {
-                var f = new FileInfo(path);
+                string path = GetPath(filename);
+                if (File.Exists(path))
+                {
+                    var f = new FileInfo(path);
 
-                fileinfo.Attributes = f.Attributes;
-                fileinfo.CreationTime = f.CreationTime;
-                fileinfo.LastAccessTime = f.LastAccessTime;
-                fileinfo.LastWriteTime = f.LastWriteTime;
-                fileinfo.Length = f.Length;
-                return DokanNet.DOKAN_SUCCESS;
-            }
-            else if (Directory.Exists(path))
-            {
-                var f = new DirectoryInfo(path);
+                    fileinfo.Attributes = f.Attributes;
+                    fileinfo.CreationTime = f.CreationTime;
+                    fileinfo.LastAccessTime = f.LastAccessTime;
+                    fileinfo.LastWriteTime = f.LastWriteTime;
+                    fileinfo.Length = f.Length;
+                    return DokanNet.DOKAN_SUCCESS;
+                }
+                else if (Directory.Exists(path))
+                {
+                    var f = new DirectoryInfo(path);
 
-                fileinfo.Attributes = f.Attributes;
-                fileinfo.CreationTime = f.CreationTime;
-                fileinfo.LastAccessTime = f.LastAccessTime;
-                fileinfo.LastWriteTime = f.LastWriteTime;
-                fileinfo.Length = 0;
-                return DokanNet.DOKAN_SUCCESS;
+                    fileinfo.Attributes = f.Attributes;
+                    fileinfo.CreationTime = f.CreationTime;
+                    fileinfo.LastAccessTime = f.LastAccessTime;
+                    fileinfo.LastWriteTime = f.LastWriteTime;
+                    fileinfo.Length = 0;
+                    return DokanNet.DOKAN_SUCCESS;
+                }
+                else
+                {
+                    return DokanNet.ERROR_FILE_NOT_FOUND;
+                }
             }
-            else
+            catch (Exception)
             {
-                return DokanNet.ERROR_FILE_NOT_FOUND;
+                return DokanNet.DOKAN_SUCCESS;
             }
         }
 
         public int DeleteFile(string filename, DokanFileInfo info)
         {
-            var path = this.GetPath(filename);
-            if (File.Exists(path)) File.Delete(path);
-            MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.File, FileStatusEnum.Remove);
-            return DokanNet.DOKAN_SUCCESS;
+            try
+            {
+                var path = this.GetPath(filename);
+                if (File.Exists(path)) File.Delete(path);
+                //MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.File, FileStatusEnum.Remove);
+                return DokanNet.DOKAN_SUCCESS;
+            }
+            catch (Exception)
+            {
+                return DokanNet.DOKAN_SUCCESS;
+            }
         }
 
         public int CreateDirectory(string filename, DokanFileInfo info)
         {
-            var path = this.GetPath(filename);
-            Directory.CreateDirectory(path);
-            var client = new ServiceHandler();
-            var result = client.CreateDir(path);
-            MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.Directory, FileStatusEnum.Create);
-            return DokanNet.DOKAN_SUCCESS;
+            try
+            {
+                var path = this.GetPath(filename);
+                Directory.CreateDirectory(path);
+                //var client = new ServiceHandler();
+                //var result = client.CreateDir(path);
+                //MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.Directory, FileStatusEnum.Create);
+                return DokanNet.DOKAN_SUCCESS;
+            }
+            catch
+            {
+                return DokanNet.DOKAN_SUCCESS;
+            }
         }
 
         public int OpenDirectory(string filename, DokanFileInfo info)
         {
-            if (Directory.Exists(GetPath(filename)))
+            try
+            {
+                if (Directory.Exists(GetPath(filename)))
+                    return DokanNet.DOKAN_SUCCESS;
+                else
+                    return -DokanNet.ERROR_PATH_NOT_FOUND;
+            }
+            catch (Exception)
+            {
                 return DokanNet.DOKAN_SUCCESS;
-            else
-                return -DokanNet.ERROR_PATH_NOT_FOUND;
+            }
         }
 
         public int DeleteDirectory(string filename, DokanFileInfo info)
         {
-            var path = this.GetPath(filename);
-            if (Directory.Exists(path)) Directory.Delete(path);
-            var client = new ServiceHandler();
-            var result = client.RemoveDir(path);
-            MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.Directory, FileStatusEnum.Remove);
-            return DokanNet.DOKAN_SUCCESS;
+            try
+            {
+                var path = this.GetPath(filename);
+                if (Directory.Exists(path)) Directory.Delete(path);
+                //var client = new ServiceHandler();
+                //var result = client.RemoveDir(path);
+                //MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.Directory, FileStatusEnum.Remove);
+                return DokanNet.DOKAN_SUCCESS;
+            }
+            catch (Exception)
+            {
+                return DokanNet.DOKAN_SUCCESS;
+            }
         }
 
         public int GetDiskFreeSpace(ref ulong freeBytesAvailable, ref ulong totalBytes, ref ulong totalFreeBytes, DokanFileInfo info)
         {
-            CloudDiskManager diskManager = new CloudDiskManager();
-            totalBytes = (ulong)diskManager.GetCloudDiskCapacityInfo().TotalAvailableByte * 1024 * 1024;
-            freeBytesAvailable = (ulong)diskManager.GetCloudDiskCapacityInfo().TotalAvailableByte * 1024 * 1024;
-            totalFreeBytes = (ulong)diskManager.GetCloudDiskCapacityInfo().TotalAvailableByte * 1024 * 1024;
+            try
+            {
+                CloudDiskManager diskManager = new CloudDiskManager();
+                totalBytes = (ulong)diskManager.GetCloudDiskCapacityInfo().TotalAvailableByte * 1024 * 1024;
+                freeBytesAvailable = (ulong)diskManager.GetCloudDiskCapacityInfo().TotalAvailableByte * 1024 * 1024;
+                totalFreeBytes = (ulong)diskManager.GetCloudDiskCapacityInfo().TotalAvailableByte * 1024 * 1024;
 
-            if (totalBytes == 0)
+                if (totalBytes == 0)
+                {
+                    totalBytes = 1024 * 1024 * 1024;
+                }
+                if (freeBytesAvailable == 0)
+                {
+                    freeBytesAvailable = 1024 * 1024 * 1024;
+                }
+                if (totalFreeBytes == 0)
+                {
+                    totalFreeBytes = 1024 * 1024 * 1024;
+                }
+            }
+            catch
             {
                 totalBytes = 1024 * 1024 * 1024;
-            }
-            if (freeBytesAvailable == 0)
-            {
-                freeBytesAvailable = 512 * 1024 * 1024;
-            }
-            if (totalFreeBytes == 0)
-            {
-                totalFreeBytes = 512 * 1024 * 1024;
+                freeBytesAvailable = 1024 * 1024 * 1024;
+                totalFreeBytes = 1024 * 1024 * 1024;
             }
             return 0;
         }
 
         public int MoveFile(string filename, string newname, bool replace, DokanFileInfo info)
         {
-            if (filename == "\\") return DokanNet.DOKAN_SUCCESS;
-            var newPath = this.GetPath(newname);
-            var path = this.GetPath(filename);
-
-            if (string.IsNullOrEmpty(Path.GetExtension(newPath)))
+            try
             {
-                if (File.Exists(path))
-                {
-                    var name = Path.GetFileName(path);
-                    var dirInfo = new DirectoryInfo(newPath);
-                    var file = dirInfo.GetFiles().FirstOrDefault(p => p.Name == name);
-                    if (file != null)
-                    {
-                        if (replace)
-                        {
-                            File.Delete(file.FullName);
-                            File.Move(path, newPath);
-                        }
-                    }
-                    else
-                    {
-                        File.Move(path, newPath);
-                    }
-                    MemoryFileManager.GetInstance().SetFile(
-                        path, FileTypeEnum.File, FileStatusEnum.Remove);
+                if (filename == "\\") return DokanNet.DOKAN_SUCCESS;
+                var newPath = this.GetPath(newname);
+                var path = this.GetPath(filename);
 
-                    MemoryFileManager.GetInstance().SetFile(
-                        newPath, FileTypeEnum.File, FileStatusEnum.Create);
-                }
-                else if (Directory.Exists(filename))
+                if (string.IsNullOrEmpty(Path.GetExtension(newPath)))
                 {
-                    var parentFolderName = path.Substring(path.LastIndexOf("\\") + 1, path.Length);
-                    var dirInfo = new DirectoryInfo(newPath);
-                    var folder = dirInfo.GetDirectories().FirstOrDefault(p => p.Name == parentFolderName);
-                    if (folder != null)
+                    if (File.Exists(path))
                     {
-                        if (replace)
+                        var name = Path.GetFileName(path);
+                        var dirInfo = new DirectoryInfo(newPath);
+                        var file = dirInfo.GetFiles().FirstOrDefault(p => p.Name == name);
+                        if (file != null)
                         {
-                            Directory.Delete(folder.FullName);
-                            Directory.Move(path, newPath);
+                            if (replace)
+                            {
+                                File.Delete(file.FullName);
+                                File.Move(path, newPath);
+                            }
                         }
                         else
                         {
-                            Directory.Move(path, newPath);
+                            File.Move(path, newPath);
                         }
-                        MemoryFileManager.GetInstance().SetFile(
-                        path, FileTypeEnum.Directory, FileStatusEnum.Remove);
+                        //MemoryFileManager.GetInstance().SetFile(
+                        //    path, FileTypeEnum.File, FileStatusEnum.Remove);
 
-                        MemoryFileManager.GetInstance().SetFile(
-                            newPath, FileTypeEnum.Directory, FileStatusEnum.Create);
+                        //MemoryFileManager.GetInstance().SetFile(
+                        //    newPath, FileTypeEnum.File, FileStatusEnum.Create);
+                    }
+                    else if (Directory.Exists(filename))
+                    {
+                        var parentFolderName = path.Substring(path.LastIndexOf("\\") + 1, path.Length);
+                        var dirInfo = new DirectoryInfo(newPath);
+                        var folder = dirInfo.GetDirectories().FirstOrDefault(p => p.Name == parentFolderName);
+                        if (folder != null)
+                        {
+                            if (replace)
+                            {
+                                Directory.Delete(folder.FullName);
+                                Directory.Move(path, newPath);
+                            }
+                            else
+                            {
+                                Directory.Move(path, newPath);
+                            }
+                            //MemoryFileManager.GetInstance().SetFile(
+                            //path, FileTypeEnum.Directory, FileStatusEnum.Remove);
+
+                            //MemoryFileManager.GetInstance().SetFile(
+                            //    newPath, FileTypeEnum.Directory, FileStatusEnum.Create);
+                        }
                     }
                 }
+                else
+                {
+                    File.Move(path, newPath);
+                    //MemoryFileManager.GetInstance().SetFile(
+                    //        path, FileTypeEnum.File, FileStatusEnum.Remove);
+
+                    //MemoryFileManager.GetInstance().SetFile(
+                    //    newPath, FileTypeEnum.File, FileStatusEnum.Create);
+                }
+
+                return DokanNet.DOKAN_SUCCESS;
             }
-            else
+            catch (Exception)
             {
-                File.Move(path, newPath);
-                MemoryFileManager.GetInstance().SetFile(
-                        path, FileTypeEnum.File, FileStatusEnum.Remove);
-
-                MemoryFileManager.GetInstance().SetFile(
-                    newPath, FileTypeEnum.File, FileStatusEnum.Create);
+                return DokanNet.DOKAN_SUCCESS;
             }
-
-            return DokanNet.DOKAN_SUCCESS;
 
         }
 
@@ -264,15 +329,22 @@ namespace BCD.FileSystem
 
         public int WriteFile(string filename, byte[] buffer, ref uint writtenBytes, long offset, DokanFileInfo info)
         {
-            var path = this.GetPath(filename);
-            if (!File.Exists(path)) return DokanNet.ERROR_FILE_NOT_FOUND;
-            File.WriteAllBytes(path, buffer);
-            var file = MemoryFileManager.GetInstance().GetFile(path);
-            if (file != null && file.FileStatus != FileStatusEnum.Create && file.FileStatus != FileStatusEnum.Remove)
+            try
             {
-                MemoryFileManager.GetInstance().SetFile(path, file.FileType, FileStatusEnum.Append);
+                var path = this.GetPath(filename);
+                if (!File.Exists(path)) return DokanNet.ERROR_FILE_NOT_FOUND;
+                File.WriteAllBytes(path, buffer);
+                //var file = MemoryFileManager.GetInstance().GetFile(path);
+                //if (file != null && file.FileStatus != FileStatusEnum.Create && file.FileStatus != FileStatusEnum.Remove)
+                //{
+                //    MemoryFileManager.GetInstance().SetFile(path, file.FileType, FileStatusEnum.Append);
+                //}
+                return DokanNet.DOKAN_SUCCESS;
             }
-            return DokanNet.DOKAN_SUCCESS;
+            catch (Exception)
+            {
+                return DokanNet.DOKAN_SUCCESS;
+            }
         }
 
         public int SetAllocationSize(string filename, long length, DokanFileInfo info)
