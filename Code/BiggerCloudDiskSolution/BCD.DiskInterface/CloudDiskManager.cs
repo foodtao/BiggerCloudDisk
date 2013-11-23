@@ -136,15 +136,14 @@ namespace BCD.DiskInterface
             if (type == CloudFileUploadType.Update)
             {
                 //遍历所有网盘
-                foreach (ICloudDiskAPI api in _loadedCloudDiskApi) 
+                foreach (ICloudDiskAPI api in _loadedCloudDiskApi)
                 {
-                    if (api.GetCloudFileInfo(filePath) != null) 
+                    if (api.GetCloudFileInfo(filePath) != null)
                     {
                         uploaded = api.UploadFile(fileContent);
                     }
                 }
             }
-
             return uploaded;
         }
 
@@ -159,14 +158,27 @@ namespace BCD.DiskInterface
             try
             {
                 //CloudDiskType type = GetDiskTypeByURL(remotePath);
-                ICloudDiskAPI oneApi;
-                if (IsDiskTypeLoaded(type, out oneApi))
+                if (type != CloudDiskType.NOT_SPECIFIED)
                 {
-                    fileContent = oneApi.DownloadFile(remotePath);
+                    ICloudDiskAPI oneApi;
+                    if (IsDiskTypeLoaded(type, out oneApi))
+                    {
+                        fileContent = oneApi.DownloadFile(remotePath);
+                    }
+                    else
+                    {
+                        throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
+                    }
                 }
-                else
+                else 
                 {
-                    throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
+                    foreach (ICloudDiskAPI api in _loadedCloudDiskApi) 
+                    {
+                        if (api.GetCloudFileInfo(remotePath) != null) 
+                        {
+                            fileContent = api.DownloadFile(remotePath);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -210,13 +222,26 @@ namespace BCD.DiskInterface
             {
                 //CloudDiskType type = GetDiskTypeByURL(remotePath);
                 ICloudDiskAPI oneApi;
-                if (IsDiskTypeLoaded(type, out oneApi))
+                if (type != CloudDiskType.NOT_SPECIFIED)
                 {
-                    oneApi.DeleteFile(remotePath);
+                    if (IsDiskTypeLoaded(type, out oneApi))
+                    {
+                        oneApi.DeleteFile(remotePath);
+                    }
+                    else
+                    {
+                        throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
+                    }
                 }
                 else
                 {
-                    throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
+                    foreach (ICloudDiskAPI api in _loadedCloudDiskApi)
+                    {
+                        if (api.GetCloudFileInfo(remotePath) != null)
+                        {
+                            api.DeleteFile(remotePath);
+                        }
+                    }
                 }
 
             }
