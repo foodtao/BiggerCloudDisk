@@ -98,8 +98,8 @@ namespace BCD.DiskInterface.Sina
                 WebRequestHelper helper = new WebRequestHelper(url);
                 var result = helper.Get(url + "?access_token=" + _accessToken);
                 XmlNode node = JsonHelper.DeserializeToXmlNode(result);
-                m.TotalByte = Convert.ToDouble(node.SelectSingleNode("root").SelectSingleNode("quota_info").SelectSingleNode("quota").ToString());
-                var comsumed = Convert.ToDouble(node.SelectSingleNode("root").SelectSingleNode("quota_info").SelectSingleNode("consumed").ToString());
+                m.TotalByte = Convert.ToDouble(node.ChildNodes[0].SelectSingleNode("quota_info").SelectSingleNode("quota").InnerText);
+                var comsumed = Convert.ToDouble(node.ChildNodes[0].SelectSingleNode("quota_info").SelectSingleNode("consumed").InnerText);
                 m.TotalAvailableByte = m.TotalByte - comsumed;
                 return m;
             }
@@ -126,11 +126,11 @@ namespace BCD.DiskInterface.Sina
                 m.LastModifiedDate = Convert.ToDateTime(fileInfo.modified);
                 m.MD5 = fileInfo.md5;
                 m.SHA1 = fileInfo.sha1;
-                if (fileInfo.contents != null) 
+                if (fileInfo.contents != null)
                 {
                     m.Contents = new List<CloudFileInfoModel>();
                 }
-                foreach (var oneDir in fileInfo.contents) 
+                foreach (var oneDir in fileInfo.contents)
                 {
                     CloudFileInfoModel subDir = new CloudFileInfoModel();
                     subDir.Bytes = Convert.ToDouble(oneDir.bytes);
@@ -162,7 +162,7 @@ namespace BCD.DiskInterface.Sina
             return null;
         }
 
-        public Model.CloudDisk.CloudFileInfoModel UploadFile(byte[] fileContent,string filePath)
+        public Model.CloudDisk.CloudFileInfoModel UploadFile(byte[] fileContent, string filePath)
         {
             //string url = "https://upload-vdisk.sina.com.cn/2/files/basic/sandbox";
             //var request = new WebRequestHelper(url);

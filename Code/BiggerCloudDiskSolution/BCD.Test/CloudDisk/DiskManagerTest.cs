@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using BCD.DiskInterface;
+using BCD.Model;
 
 namespace BCD.Test.CloudDisk
 {
@@ -7,8 +9,11 @@ namespace BCD.Test.CloudDisk
     public class DiskManagerTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void GetDiskCapacityInfo()
         {
+            ///新浪测试通过
+            CloudDiskManager m = new CloudDiskManager();
+            var s = m.GetCloudDiskCapacityInfo();
         }
     }
 }

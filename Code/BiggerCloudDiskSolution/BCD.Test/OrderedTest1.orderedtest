@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<OrderedTest name="orderedtest1" storage="c:\users\joy\documents\github\biggerclouddisk\code\biggerclouddisksolution\bcd.test\orderedtest1.orderedtest" id="c55c8886-7d0b-4193-8d79-1978353a0b10" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestLinks>
+    <TestLink id="6ee6b4e8-2647-5bfe-58bd-280a721d67ce" name="CreateCloudDiskManager" storage="bin\debug\bcd.test.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  </TestLinks>
+</OrderedTest>

@@ -37,7 +37,10 @@ namespace BCD.DiskInterface
                 foreach (string m in moduels)
                 {
                     ICloudDiskAPI d = _factory.CreateDiskAPI(m);
-                    _loadedCloudDiskApi.Add(d);
+                    if (d != null)
+                    {
+                        _loadedCloudDiskApi.Add(d);
+                    }
                 }
             }
             catch (Exception ex)
@@ -170,11 +173,11 @@ namespace BCD.DiskInterface
                         throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
                     }
                 }
-                else 
+                else
                 {
-                    foreach (ICloudDiskAPI api in _loadedCloudDiskApi) 
+                    foreach (ICloudDiskAPI api in _loadedCloudDiskApi)
                     {
-                        if (api.GetCloudFileInfo(remotePath) != null) 
+                        if (api.GetCloudFileInfo(remotePath) != null)
                         {
                             fileContent = api.DownloadFile(remotePath);
                         }
