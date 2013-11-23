@@ -19,6 +19,8 @@ namespace BCD.WinApp
         {
             InitializeComponent();
             MountDisk();
+
+            MemoryFileManagerThead.Start();
         }
 
         private void MountDisk()
@@ -38,7 +40,8 @@ namespace BCD.WinApp
 
         private void btnSetUserSina_Click(object sender, EventArgs e)
         {
-
+            var a = MemoryFileManager.GetInstance().GetAllFiles();
+            var b = 1;
         }
 
         private void btnSetDiskPosition_Click(object sender, EventArgs e)

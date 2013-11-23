@@ -5,6 +5,12 @@ using System.Text;
 
 namespace BCD.FileSystem
 {
+    using System.IO;
+    using System.Threading;
+
+    /// <summary>
+    /// 磁盘缓存文件管理类
+    /// </summary>
     public class MemoryFileManager
     {
         private static readonly object _lock = new object();
@@ -21,36 +27,41 @@ namespace BCD.FileSystem
             {
                 lock (_lock)
                 {
-                    if (memoryFileManager == null) 
+                    if (memoryFileManager == null)
                         return memoryFileManager = new MemoryFileManager();
                 }
             }
             return memoryFileManager;
         }
 
-        public void SetFile(string filePath, FileTypeEnum fileType, FileStatusEnum fileStatus)
+        /// <summary>
+        /// 添加或修改文件信息到缓存中
+        /// </summary>
+        /// <param name="memoryFile"></param>
+        public void SetFile(MemoryFile memoryFile)
         {
             lock (_fileLock)
             {
-                var file = memoryFiles.FirstOrDefault(p => p.FilePath == filePath);
+                var file = memoryFiles.FirstOrDefault(p => p.FilePath == memoryFile.FilePath);
                 if (file == null)
                 {
-                    file = new MemoryFile { FilePath = filePath, FileStatus = fileStatus, FileType = fileType };
-                    memoryFiles.Add(file);
+                    memoryFiles.Add(memoryFile);
                 }
                 else
                 {
-                    file.FilePath = filePath;
-                    file.FileStatus = fileStatus;
-                    file.FileType = fileType;
+                    file.FilePath = memoryFile.FilePath;
+                    file.FileStatus = memoryFile.FileStatus;
+                    file.FileType = memoryFile.FileType;
+                    file.CreateDate = memoryFile.CreateDate;
+                    file.LastModifyDate = memoryFile.LastModifyDate;
                     if (file.FileType == FileTypeEnum.Directory && file.FileStatus == FileStatusEnum.Remove)
                     {
-                        var files = memoryFiles.Where(p => p.FilePath.Contains(filePath)).ToList();
+                        var files = memoryFiles.Where(p => p.FilePath.Contains(memoryFile.FilePath)).ToList();
                         if (files.Count > 0)
                         {
-                            foreach (var memoryFile in files)
+                            foreach (var f in files)
                             {
-                                memoryFile.FileStatus = FileStatusEnum.Remove;
+                                f.FileStatus = FileStatusEnum.Remove;
                             }
                         }
                     }
@@ -58,6 +69,10 @@ namespace BCD.FileSystem
             }
         }
 
+        /// <summary>
+        /// 从缓存项中移除此文件信息。
+        /// </summary>
+        /// <param name="filePath"></param>
         public void RemoveFile(string filePath)
         {
             lock (_fileLock)
@@ -70,6 +85,11 @@ namespace BCD.FileSystem
             }
         }
 
+        /// <summary>
+        /// 获取某个文件的缓存项信息
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
         public MemoryFile GetFile(string filePath)
         {
             lock (_fileLock)
@@ -80,6 +100,10 @@ namespace BCD.FileSystem
             }
         }
 
+        /// <summary>
+        /// 获取所有文件的缓存项信息。
+        /// </summary>
+        /// <returns></returns>
         public List<MemoryFile> GetAllFiles()
         {
             lock (_fileLock)
@@ -88,7 +112,130 @@ namespace BCD.FileSystem
             }
         }
 
+    }
 
+    /// <summary>
+    /// 文件管理线程类
+    /// </summary>
+    public class MemoryFileManagerThead
+    {
+        /// <summary>
+        /// 动态缓存线程
+        /// </summary>
+        private static Thread DataThreadSingle;
+        /// <summary>
+        /// 时间
+        /// </summary>
+        private static DateTime dtStartTime = default(DateTime);
 
+        /// <summary>
+        /// 动态数据缓存启动
+        /// </summary>
+        public static void Start()
+        {
+            try
+            {
+                //5秒钟内不可重复启动线程
+                if ((DateTime.Now - dtStartTime).TotalSeconds <= 5) { }
+                else
+                {
+                    if (DataThreadSingle == null || 
+                        (DataThreadSingle.ThreadState == ThreadState.Stopped 
+                        && DataThreadSingle.ThreadState != ThreadState.Background))
+                    {
+                        DataThreadSingle = new Thread(GetFileInfo);
+                        dtStartTime = DateTime.Now;
+                        DataThreadSingle.Start();
+                    }
+                }
+            }
+            catch (ThreadStateException threadStateException)
+            {
+                //过滤Thread错误
+            }
+            catch
+            {
+
+            }
+        }
+
+        /// <summary>
+        /// 发送酒店访问数据到缓存服务器。
+        /// </summary>
+        public static void GetFileInfo()
+        {
+            while (true)
+            {
+                try
+                {
+                    var root = "G:\\Temp";
+                    var rootFiles = (new DirectoryInfo(root)).GetFiles();
+                    if (rootFiles.Length > 0)
+                    {
+                        foreach (var rootFile in rootFiles)
+                        {
+                            var memoryFile = new MemoryFile();
+                            memoryFile.CreateDate = rootFile.CreationTime;
+                            memoryFile.FilePath = rootFile.FullName.Replace(root, "");
+                            memoryFile.FileStatus = FileStatusEnum.Normal;
+                            memoryFile.FileType = FileTypeEnum.File;
+                            memoryFile.LastModifyDate = rootFile.LastWriteTime;
+                            MemoryFileManager.GetInstance().SetFile(memoryFile);
+                        }
+                    }
+
+                    var dirs = new List<DirectoryInfo>();
+
+                    GetALlDirectoryInfo(root, ref dirs);
+
+                    if (dirs.Count > 0)
+                    {
+                        foreach (var dir in dirs)
+                        {
+                            var memoryFile = new MemoryFile();
+                            memoryFile.CreateDate = dir.CreationTime;
+                            memoryFile.FilePath = dir.FullName.Replace(root, "");
+                            memoryFile.FileStatus = FileStatusEnum.Normal;
+                            memoryFile.FileType = FileTypeEnum.Directory;
+                            memoryFile.LastModifyDate = dir.LastWriteTime;
+                            MemoryFileManager.GetInstance().SetFile(memoryFile);
+
+                            var files = dir.GetFiles();
+
+                            foreach (var file in files)
+                            {
+                                var memoryFile1 = new MemoryFile();
+                                memoryFile1.CreateDate = file.CreationTime;
+                                memoryFile1.FilePath = file.FullName.Replace(root, "");
+                                memoryFile1.FileStatus = FileStatusEnum.Normal;
+                                memoryFile1.FileType = FileTypeEnum.File;
+                                memoryFile1.LastModifyDate = file.LastWriteTime;
+                                MemoryFileManager.GetInstance().SetFile(memoryFile1);
+                            }
+                        }
+                    }
+
+                    Thread.Sleep(10 * 1000);
+                }
+                catch (Exception ex)
+                {
+                   
+                }
+            }
+        }
+
+        private static void GetALlDirectoryInfo(string path, ref List<DirectoryInfo> dirs)
+        {
+            var dir = new DirectoryInfo(path);
+            var dir_temps = dir.GetDirectories();
+            if (dir_temps.Length > 0)
+            {
+                foreach (var dirTemp in dir_temps)
+                {
+                    dirs.Add(dirTemp);
+                    GetALlDirectoryInfo(dirTemp.FullName, ref dirs);
+                }
+            }
+        }
     }
 }
