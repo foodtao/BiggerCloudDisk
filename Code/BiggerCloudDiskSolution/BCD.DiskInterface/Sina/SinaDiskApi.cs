@@ -15,7 +15,7 @@ namespace BCD.DiskInterface.Sina
     /// 新浪微盘API接口
     /// 2013-11-23 by 丁智渊
     /// </summary>
-    public class SinaDiskApi : ICloudDiskAPI
+    public class SinaDiskAPI : ICloudDiskAPI
     {
         ///sina token第一次获取方法:浏览器访问 https://auth.sina.com.cn/oauth2/authorize?client_id=1551059632&redirect_uri=http://localhost/&response_type=token
         ///在返回的页面里手动复制access_token部分值
@@ -27,7 +27,7 @@ namespace BCD.DiskInterface.Sina
 
         public CloudDiskType DiskType { get { return CloudDiskType.SINA; } }
 
-        public SinaDiskApi()
+        public SinaDiskAPI()
         {
             _appKey = GetLocalStoredAppKey();
             _appSecret = GetLocalStoredAppSeceret();
