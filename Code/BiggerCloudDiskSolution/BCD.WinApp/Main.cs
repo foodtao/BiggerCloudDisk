@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace BCD.WinApp
 {
-    using BCD.FilSystem;
+    using BCD.FileSystem;
 
     using Dokan;
 
@@ -29,7 +29,7 @@ namespace BCD.WinApp
                 DokanOptions opt = new DokanOptions();
                 opt.DebugMode = true;
                 opt.MountPoint = "l:\\";
-                opt.VolumeLabel = "ÎÒµÄ³¬ÔÆÅÌ";
+                opt.VolumeLabel = "è¶…äº‘ç›˜";
                 opt.ThreadCount = 5;
                 DokanNet.DokanMain(opt, new MirrorDisk("G:\\Temp"));
             };

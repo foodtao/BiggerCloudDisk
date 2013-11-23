@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using BCD.DiskInterface;
 
-namespace BCD.FilSystem
+namespace BCD.FileSystem
 {
     using System.IO;
     class ServiceHandler

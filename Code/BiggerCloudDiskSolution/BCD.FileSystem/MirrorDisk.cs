@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BCD.FilSystem
+namespace BCD.FileSystem
 {
     using BCD.DiskInterface;
 

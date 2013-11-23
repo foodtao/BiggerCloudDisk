@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BCD.FilSystem
+namespace BCD.FileSystem
 {
     public class MemoryFile
     {

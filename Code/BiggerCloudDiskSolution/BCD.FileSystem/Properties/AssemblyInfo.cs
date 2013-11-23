@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("BCD.FilSystem")]
+[assembly: AssemblyTitle("BCD.FileSystem")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("BCD.FilSystem")]
+[assembly: AssemblyProduct("BCD.FileSystem")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("4b3048ba-5929-4225-a7c7-26ccac05d608")]
+[assembly: Guid("d4ee7326-f72b-499f-8b61-e195c5e9d8ab")]
 
 // Version information for an assembly consists of the following four values:
 //

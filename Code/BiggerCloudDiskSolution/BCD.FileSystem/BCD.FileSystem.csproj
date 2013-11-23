@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{6AEB65D8-44AA-4F5E-903B-5F4CEE8C6C6D}</ProjectGuid>
+    <ProjectGuid>{80062DCF-1D86-4D9A-A212-A5557C453638}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BCD.FilSystem</RootNamespace>
-    <AssemblyName>BCD.FilSystem</AssemblyName>
+    <RootNamespace>BCD.FileSystem</RootNamespace>
+    <AssemblyName>BCD.FileSystem</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -48,16 +48,6 @@
     <Compile Include="MirrorDisk.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceHandler.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BCD.DiskInterface\BCD.DiskInterface.csproj">
-      <Project>{f71400d8-36b4-442e-9549-10af7cc9493a}</Project>
-      <Name>BCD.DiskInterface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BCD.Model\BCD.Model.csproj">
-      <Project>{7d2e87a6-ae65-4c1e-b78f-b2297d6729a3}</Project>
-      <Name>BCD.Model</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BCD.DiskInterface\BCD.DiskInterface.csproj">
