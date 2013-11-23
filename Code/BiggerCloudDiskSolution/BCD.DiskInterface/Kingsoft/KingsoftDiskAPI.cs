@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BCD.Model.CloudDisk;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,15 @@ namespace BCD.DiskInterface.Kingsoft
 {
     public class KingsoftDiskAPI : ICloudDiskAPI
     {
+        /// <summary>
+        /// 获取本网盘的类型
+        /// </summary>
+        /// <returns></returns>
+        public CloudDiskType GetDiskType()
+        {
+            return CloudDiskType.KINGSOFT;
+        }
+
         public string GetLocalStoredAppKey()
         {
             throw new NotImplementedException();
@@ -22,7 +32,7 @@ namespace BCD.DiskInterface.Kingsoft
             throw new NotImplementedException();
         }
 
-        public void WriteLocalAccessToken()
+        public void WriteLocalAccessToken(string newToken)
         {
             throw new NotImplementedException();
         }
@@ -32,7 +42,7 @@ namespace BCD.DiskInterface.Kingsoft
             throw new NotImplementedException();
         }
 
-        public Model.CloudDisk.CloudDiskCapacityModel GetCloudDiskCapacityInfo()
+        public SingleCloudDiskCapacityModel GetCloudDiskCapacityInfo()
         {
             throw new NotImplementedException();
         }
@@ -58,6 +68,11 @@ namespace BCD.DiskInterface.Kingsoft
         }
 
         public int DeleteFile(string remotePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int DeleteDirectory(string remotePath)
         {
             throw new NotImplementedException();
         }
