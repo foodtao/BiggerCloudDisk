@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CloudDisk\AccessTokenModel.cs" />
     <Compile Include="CloudDisk\CloudDiskCapacityModel.cs" />
     <Compile Include="CloudDisk\CloudDiskTypeModel.cs" />
     <Compile Include="CloudDisk\CloudFileInfoModel.cs" />
