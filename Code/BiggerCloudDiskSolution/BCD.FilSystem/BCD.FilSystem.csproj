@@ -43,8 +43,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MemoryFile.cs" />
+    <Compile Include="MemoryFileManager.cs" />
     <Compile Include="MirrorDisk.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BCD.DiskInterface\BCD.DiskInterface.csproj">
+      <Project>{F71400D8-36B4-442E-9549-10AF7CC9493A}</Project>
+      <Name>BCD.DiskInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BCD.Model\BCD.Model.csproj">
+      <Project>{7D2E87A6-AE65-4C1E-B78F-B2297D6729A3}</Project>
+      <Name>BCD.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
