@@ -76,18 +76,18 @@ namespace BCD.DiskInterface.Kingsoft
         }
 
 
-        private string _consumerKey { set; get; }
+        public string _consumerKey { set; get; }
 
-        private string _consumerSecret { set; get; }
+        public string _consumerSecret { set; get; }
 
-        private string _accessToken { set; get; }
+        public string _accessToken { set; get; }
 
-        private string _accessTokenSecret { set; get; }
+        public string _accessTokenSecret { set; get; }
 
 
         public KingsoftDiskAPI()
         {
-            _consumerKey = ConfigurationManager.AppSettings["SINA_APP_KEY"];
+            _consumerKey = ConfigurationManager.AppSettings["KINGSOFT_APP_KEY"];
             _consumerSecret = ConfigurationManager.AppSettings["KINGSOFT_APP_SECRET"];
             _accessToken = ConfigurationManager.AppSettings["KINGSOFT_ACCESS_TOKEN"];
             _accessTokenSecret = ConfigurationManager.AppSettings["KINGSOFT_ACCESS_TOKEN_SECRET"];
