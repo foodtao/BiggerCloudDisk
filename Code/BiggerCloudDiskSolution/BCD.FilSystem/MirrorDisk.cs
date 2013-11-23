@@ -4,6 +4,8 @@ using System.Linq;
 
 namespace BCD.FilSystem
 {
+    using BCD.DiskInterface;
+
     using Dokan;
     using System.IO;
 
@@ -39,6 +41,7 @@ namespace BCD.FilSystem
                     {
                         FileStream fs = File.Create(path);
                         fs.Close();
+                        MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.File, FileStatusEnum.Create);
                     }
                     return DokanNet.DOKAN_SUCCESS;
                 case FileMode.CreateNew:
@@ -46,6 +49,7 @@ namespace BCD.FilSystem
                     {
                         FileStream fs = File.Create(path);
                         fs.Close();
+                        MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.File, FileStatusEnum.Create);
                     }
                     return DokanNet.DOKAN_SUCCESS;
                 case FileMode.Open:
@@ -105,7 +109,7 @@ namespace BCD.FilSystem
                 fileinfo.CreationTime = f.CreationTime;
                 fileinfo.LastAccessTime = f.LastAccessTime;
                 fileinfo.LastWriteTime = f.LastWriteTime;
-                fileinfo.Length = 0;// f.Length;
+                fileinfo.Length = 0;
                 return DokanNet.DOKAN_SUCCESS;
             }
             else
@@ -118,6 +122,7 @@ namespace BCD.FilSystem
         {
             var path = this.GetPath(filename);
             if (File.Exists(path)) File.Delete(path);
+            MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.File, FileStatusEnum.Remove);
             return DokanNet.DOKAN_SUCCESS;
         }
 
@@ -127,6 +132,7 @@ namespace BCD.FilSystem
             Directory.CreateDirectory(path);
             var client = new ServiceHandler();
             var result = client.CreateDir(path);
+            MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.Directory, FileStatusEnum.Create);
             return DokanNet.DOKAN_SUCCESS;
         }
 
@@ -144,14 +150,29 @@ namespace BCD.FilSystem
             if (Directory.Exists(path)) Directory.Delete(path);
             var client = new ServiceHandler();
             var result = client.RemoveDir(path);
+            MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.Directory, FileStatusEnum.Remove);
             return DokanNet.DOKAN_SUCCESS;
         }
 
         public int GetDiskFreeSpace(ref ulong freeBytesAvailable, ref ulong totalBytes, ref ulong totalFreeBytes, DokanFileInfo info)
         {
-            freeBytesAvailable = 512 * 1024 * 1024;
-            totalBytes = 1024 * 1024 * 1024;
-            totalFreeBytes = 512 * 1024 * 1024;
+            CloudDiskManager diskManager = new CloudDiskManager();
+            totalBytes = (ulong)diskManager.GetCloudDiskCapacityInfo().TotalAvailableByte * 1024 * 1024;
+            freeBytesAvailable = (ulong)diskManager.GetCloudDiskCapacityInfo().TotalAvailableByte * 1024 * 1024;
+            totalFreeBytes = (ulong)diskManager.GetCloudDiskCapacityInfo().TotalAvailableByte * 1024 * 1024;
+
+            if (totalBytes == 0)
+            {
+                totalBytes = 1024 * 1024 * 1024;
+            }
+            if (freeBytesAvailable == 0)
+            {
+                freeBytesAvailable = 512 * 1024 * 1024;
+            }
+            if (totalFreeBytes == 0)
+            {
+                totalFreeBytes = 512 * 1024 * 1024;
+            }
             return 0;
         }
 
@@ -180,6 +201,11 @@ namespace BCD.FilSystem
                     {
                         File.Move(path, newPath);
                     }
+                    MemoryFileManager.GetInstance().SetFile(
+                        path, FileTypeEnum.File, FileStatusEnum.Remove);
+
+                    MemoryFileManager.GetInstance().SetFile(
+                        newPath, FileTypeEnum.File, FileStatusEnum.Create);
                 }
                 else if (Directory.Exists(filename))
                 {
@@ -197,12 +223,22 @@ namespace BCD.FilSystem
                         {
                             Directory.Move(path, newPath);
                         }
+                        MemoryFileManager.GetInstance().SetFile(
+                        path, FileTypeEnum.Directory, FileStatusEnum.Remove);
+
+                        MemoryFileManager.GetInstance().SetFile(
+                            newPath, FileTypeEnum.Directory, FileStatusEnum.Create);
                     }
                 }
             }
             else
             {
                 File.Move(path, newPath);
+                MemoryFileManager.GetInstance().SetFile(
+                        path, FileTypeEnum.File, FileStatusEnum.Remove);
+
+                MemoryFileManager.GetInstance().SetFile(
+                    newPath, FileTypeEnum.File, FileStatusEnum.Create);
             }
 
             return DokanNet.DOKAN_SUCCESS;
@@ -226,6 +262,19 @@ namespace BCD.FilSystem
             }
         }
 
+        public int WriteFile(string filename, byte[] buffer, ref uint writtenBytes, long offset, DokanFileInfo info)
+        {
+            var path = this.GetPath(filename);
+            if (!File.Exists(path)) return DokanNet.ERROR_FILE_NOT_FOUND;
+            File.WriteAllBytes(path, buffer);
+            var file = MemoryFileManager.GetInstance().GetFile(path);
+            if (file != null && file.FileStatus != FileStatusEnum.Create && file.FileStatus != FileStatusEnum.Remove)
+            {
+                MemoryFileManager.GetInstance().SetFile(path, file.FileType, FileStatusEnum.Append);
+            }
+            return DokanNet.DOKAN_SUCCESS;
+        }
+
         public int SetAllocationSize(string filename, long length, DokanFileInfo info)
         {
             return DokanNet.DOKAN_SUCCESS;
@@ -233,14 +282,6 @@ namespace BCD.FilSystem
 
         public int SetEndOfFile(string filename, long length, DokanFileInfo info)
         {
-            return DokanNet.DOKAN_SUCCESS;
-        }
-
-        public int WriteFile(string filename, byte[] buffer, ref uint writtenBytes, long offset, DokanFileInfo info)
-        {
-            var path = this.GetPath(filename);
-            if (!File.Exists(path)) return DokanNet.ERROR_FILE_NOT_FOUND;
-            File.WriteAllBytes(path, buffer);
             return DokanNet.DOKAN_SUCCESS;
         }
 

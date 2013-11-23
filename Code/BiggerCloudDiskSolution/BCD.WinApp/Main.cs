@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,15 +17,43 @@ namespace BCD.WinApp
     {
         public Main()
         {
-            DokanOptions options = new DokanOptions();
-            options.ThreadCount = 1;
-            options.DebugMode = true;
-            options.MountPoint = "n:\\";
-            options.VolumeLabel = "æˆ‘çš„è¶…äº‘ç›˜";
-
-            DokanNet.DokanMain(options, new MirrorDisk("c:\\dev"));
-
             InitializeComponent();
+            MountDisk();
+        }
+
+        private void MountDisk()
+        {
+            BackgroundWorker _dokanWorker = new BackgroundWorker();
+            _dokanWorker.DoWork += delegate
+            {
+                DokanOptions opt = new DokanOptions();
+                opt.DebugMode = true;
+                opt.MountPoint = "l:\\";
+                opt.VolumeLabel = "ÎÒµÄ³¬ÔÆÅÌ";
+                opt.ThreadCount = 5;
+                DokanNet.DokanMain(opt, new MirrorDisk("G:\\Temp"));
+            };
+            _dokanWorker.RunWorkerAsync();
+        }
+
+        private void btnSetUserSina_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnSetDiskPosition_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnSetUserBaidu_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnSetUserKing_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
