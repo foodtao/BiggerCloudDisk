@@ -58,9 +58,9 @@ namespace BCD.DiskInterface.Sina
             return tmp;
         }
 
-        public void WriteLocalAccessToken(string newToken)
+        public void WriteLocalAccessToken(AccessTokenModel newToken)
         {
-            ConfigurationManager.AppSettings["SINA_ACCESS_TOKEN"] = newToken;
+            ConfigurationManager.AppSettings["SINA_ACCESS_TOKEN"] = newToken.AccessToken;
         }
 
         public Model.CloudDisk.AccessTokenModel GetAccessToken()

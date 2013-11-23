@@ -32,7 +32,7 @@ namespace BCD.DiskInterface.Baidu
             throw new NotImplementedException();
         }
 
-        public void WriteLocalAccessToken(string newToken)
+        public void WriteLocalAccessToken(AccessTokenModel newToken)
         {
             throw new NotImplementedException();
         }

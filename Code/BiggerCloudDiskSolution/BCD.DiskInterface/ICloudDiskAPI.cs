@@ -40,7 +40,7 @@ namespace BCD.DiskInterface
         /// 将获取或者刷新获得的access token写入本地文件
         /// <param name="newToken">新获得的token</param>
         /// </summary>
-        void WriteLocalAccessToken(string newToken);
+        void WriteLocalAccessToken(AccessTokenModel newToken);
 
         /// <summary>
         /// 从远程api或者或者刷新access token
