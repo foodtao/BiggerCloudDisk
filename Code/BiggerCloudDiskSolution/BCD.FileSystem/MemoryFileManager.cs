@@ -40,7 +40,7 @@ namespace BCD.FileSystem
                     if (memoryFileManager == null)
                     {
                         memoryFileManager = new MemoryFileManager();
-                        InitData();
+                        GetLocalFileData();
                     }
                 }
             }
@@ -161,7 +161,7 @@ namespace BCD.FileSystem
         /// <summary>
         /// 初始化文件缓存信息。
         /// </summary>
-        private static void InitData()
+        public static void GetLocalFileData()
         {
             try
             {

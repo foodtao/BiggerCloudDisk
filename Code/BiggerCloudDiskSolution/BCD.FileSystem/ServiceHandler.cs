@@ -65,7 +65,7 @@ namespace BCD.FileSystem
             //{
                 try
                 {
-                    Thread.Sleep(10 * 1000);
+                    //Thread.Sleep(10 * 1000);
 
                     DateTime dataChangeDate1 = DateTime.MinValue;
                     if (MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate1)) //如果缓存有更新
@@ -88,14 +88,15 @@ namespace BCD.FileSystem
         /// </summary>
         public static void SysToCloud()
         {
-            SysRemoveFileToCloud();
-            SysChangeFileToCloud();
+            SyncRemoveFileToCloud();
+            SyncChangeFileToCloud();
+            SyncCloudFileToLocal();
         }
 
         /// <summary>
         /// 同步删除的内容到云
         /// </summary>
-        public static void SysRemoveFileToCloud()
+        public static void SyncRemoveFileToCloud()
         {
             var memFiles =
                 MemoryFileManager.GetInstance().GetAllFiles().OrderBy(p => p.FilePath).Where(
@@ -132,7 +133,7 @@ namespace BCD.FileSystem
         /// <summary>
         /// 同步更改的内容到云
         /// </summary>
-        public static void SysChangeFileToCloud()
+        public static void SyncChangeFileToCloud()
         {
             var memFiles =
                 MemoryFileManager.GetInstance().GetAllFiles().OrderBy(p => p.FilePath).Where(
@@ -143,9 +144,9 @@ namespace BCD.FileSystem
             {
                 while (memFiles.Count > 0)
                 {
+                    var memFile = memFiles[0];
                     try
                     {
-                        var memFile = memFiles[0];
                         if (memFile.FileType == FileTypeEnum.Directory)
                         {
                             if (memFile.FileStatus == FileStatusEnum.Create)
@@ -153,6 +154,7 @@ namespace BCD.FileSystem
                                 cloudDisk.CreateDirectory(memFile.FilePath);
                                 memFile.FileStatus = FileStatusEnum.Normal;
                                 MemoryFileManager.GetInstance().SetFile(memFile);
+                                memFiles.Remove(memFile);
                             }
                             else
                             {
@@ -160,6 +162,7 @@ namespace BCD.FileSystem
                                 if (cloudFiles == null)
                                 {
                                     cloudDisk.CreateDirectory(memFile.FilePath);
+                                    memFiles.Remove(memFile);
                                 }
                             }
                         }
@@ -174,6 +177,7 @@ namespace BCD.FileSystem
                                     CloudFileUploadType.Create, memFile.FilePath, buffer);
                                 memFile.FileStatus = FileStatusEnum.Normal;
                                 MemoryFileManager.GetInstance().SetFile(memFile);
+                                memFiles.Remove(memFile);
                             }
                             else
                             {
@@ -185,18 +189,25 @@ namespace BCD.FileSystem
                                     fileInfo.OpenRead().Read(buffer, 0, (int)fileInfo.Length);
                                     cloudDisk.UploadFile(
                                         CloudFileUploadType.Create, memFile.FilePath, buffer);
+                                    memFiles.Remove(memFile);
                                 }
                             }
                         }
                     }
                     catch (Exception)
                     {
-                        
+                        memFiles.Remove(memFile);
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// 同步云端的文件到本地。
+        /// </summary>
+        public static void SyncCloudFileToLocal()
+        {
 
+        }
     }
 }
