@@ -10,6 +10,7 @@ using System.IO;
 using System.Net;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Xml;
 
 namespace BCD.DiskInterface.Kingsoft
 {
@@ -23,6 +24,7 @@ namespace BCD.DiskInterface.Kingsoft
         private string fileUploadLocationUrl = "http://api-content.dfs.kuaipan.cn/1/fileops/upload_locate";
         private string fileUploadUrl = "{0}1/fileops/upload_file";
         private string fileDownloadUrl = "http://api-content.dfs.kuaipan.cn/1/fileops/download_file";
+        private string account_infoUrl = "http://openapi.kuaipan.cn/1/account_info";
      
 
         private string _http_method = "GET";
@@ -106,12 +108,12 @@ namespace BCD.DiskInterface.Kingsoft
 
         public string GetLocalStoredAppSeceret()
         {
-            return ConfigurationManager.AppSettings["KINGSOFT_ACCESS_TOKEN"];
+            return ConfigurationManager.AppSettings["KINGSOFT_APP_SECRET"];
         }
 
         public string GetLocalStoredAccessToken()
         {
-            return ConfigurationManager.AppSettings["KINGSOFT_APP_SECRET"];
+            return ConfigurationManager.AppSettings["KINGSOFT_ACCESS_TOKEN"];
         }
 
         public string GetLocalStoredAccessTokenSecret()
@@ -134,8 +136,19 @@ namespace BCD.DiskInterface.Kingsoft
 
         public SingleCloudDiskCapacityModel GetCloudDiskCapacityInfo()
         {
-            return null;
-           
+            SortedDictionary<string, string> ParamList = getParamList();
+            string SourceString =GetApiSourceString(this.account_infoUrl,ParamList);
+            string SecretKey = GetSecretKey();
+            string Sign = GetSignature(SourceString, SecretKey);
+            ParamList.Add("oauth_signature", Sign);
+            string URL = this.account_infoUrl + "?" + ParamToUrl(ParamList, false);
+            object jsonAccess = GetGeneralContent(URL);
+            XmlNode node = JsonHelper.DeserializeToXmlNode(jsonAccess.ToString());
+            SingleCloudDiskCapacityModel fileInfo = new SingleCloudDiskCapacityModel();
+            fileInfo.TotalByte = Convert.ToDouble(node.ChildNodes[0].SelectSingleNode("quota_total").InnerText);
+            var used=Convert.ToDouble(node.ChildNodes[0].SelectSingleNode("quota_used").InnerText);
+            fileInfo.TotalAvailableByte = fileInfo.TotalByte - used;
+            return fileInfo;
         }
 
         public CloudFileInfoModel GetCloudFileInfo(string remotePath)
@@ -149,20 +162,27 @@ namespace BCD.DiskInterface.Kingsoft
             ParamList.Add("oauth_signature", Sign);
             string URL = metaUrl + "?" + ParamToUrl(ParamList, false);
             object jsonAccess=GetGeneralContent(URL);
-            object json = JsonHelper.DeserializeObject(jsonAccess.ToString());
-            Dictionary<string, object> dict = (Dictionary<string, object>)json;
-            CloudFileInfoModel fileInfo = new CloudFileInfoModel();
-            fileInfo.ID = dict["file_id"].ToString();
-            fileInfo.name = dict["name"].ToString();
-            if (dict["type"].ToString() == "folder")
+            if (jsonAccess != "")
             {
-                fileInfo.IsDir = true;
+                XmlNode node = JsonHelper.DeserializeToXmlNode(jsonAccess.ToString());
+                CloudFileInfoModel fileInfo = new CloudFileInfoModel();
+                fileInfo.ID = Convert.ToString(node.ChildNodes[0].SelectSingleNode("file_id").InnerText);
+                fileInfo.name = Convert.ToString(node.ChildNodes[0].SelectSingleNode("name").InnerText);
+                var type = Convert.ToString(node.ChildNodes[0].SelectSingleNode("type").InnerText);
+                if (type == "folder")
+                {
+                    fileInfo.IsDir = true;
+                }
+                else
+                {
+                    fileInfo.IsDir = false;
+                }
+                return fileInfo;
             }
             else
             {
-                fileInfo.IsDir = false;
+                return null;
             }
-            return fileInfo;
            
         }
 
