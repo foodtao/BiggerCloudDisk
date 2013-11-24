@@ -306,9 +306,13 @@ namespace BCD.DiskInterface.Kingsoft
             byte[] returnByte = null;
             try
             {
-                WebRequest request = WebRequest.Create(url);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.CookieContainer = new CookieContainer();
+              
+            
                 WebResponse response = request.GetResponse();
-             
+                StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding("gb2312"));
+               
                 MemoryStream stream = (MemoryStream)response.GetResponseStream();
                returnByte =stream.ToArray();
               
@@ -331,10 +335,9 @@ namespace BCD.DiskInterface.Kingsoft
             ParamList.Add("oauth_signature", Sign);
             string url = this.createFolderUrl + "?" + ParamToUrl(ParamList, false);
             object jsonAccess = GetGeneralContent(url);
-            object json = JsonHelper.DeserializeObject(jsonAccess.ToString());
-            Dictionary<string, object> dict = (Dictionary<string, object>)json;
+             XmlNode node = JsonHelper.DeserializeToXmlNode(jsonAccess.ToString());
             CloudFileInfoModel fileInfo = new CloudFileInfoModel();
-            fileInfo.Path = dict["path"].ToString();
+            fileInfo.Path = Convert.ToString(node.ChildNodes[0].SelectSingleNode("path").InnerText);
             return fileInfo;
         }
 
