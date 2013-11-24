@@ -191,10 +191,9 @@ namespace BCD.DiskInterface.Kingsoft
             NameValueCollection stringDict = new NameValueCollection();
             stringDict.Add("file", "fileKeyValue");
             object jsonAccess = GetGeneralContent(this.fileUploadLocationUrl);
-            object json = JsonHelper.DeserializeObject(jsonAccess.ToString());
-            Dictionary<string, object> dict = (Dictionary<string, object>)json;
-            String updateUrl = dict["url"].ToString();
-            String status = dict["stat"].ToString();
+            XmlNode node = JsonHelper.DeserializeToXmlNode(jsonAccess.ToString());
+            String updateUrl = Convert.ToString(node.ChildNodes[0].SelectSingleNode("url").InnerText);
+            String status = Convert.ToString(node.ChildNodes[0].SelectSingleNode("stat").InnerText);
             if (status.Equals("OK"))
             {
                 String Url = string.Format(this.fileUploadUrl, updateUrl);
@@ -285,11 +284,9 @@ namespace BCD.DiskInterface.Kingsoft
 
                 httpWebResponse.Close();
                 webRequest.Abort();
-
-                object jsonResult = JsonHelper.DeserializeObject(responseContent.ToString());
-                Dictionary<string, object> dictResult = (Dictionary<string, object>)jsonResult;
+                 node = JsonHelper.DeserializeToXmlNode(responseContent.ToString());          
                 CloudFileInfoModel fileInfo = new CloudFileInfoModel();
-                fileInfo.Size = dictResult["size"].ToString();
+                fileInfo.Size = Convert.ToString(node.ChildNodes[0].SelectSingleNode("size").InnerText);
                 fileInfo.Path = filePath;
                 return fileInfo;
             }
