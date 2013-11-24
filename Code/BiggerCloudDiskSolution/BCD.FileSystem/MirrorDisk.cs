@@ -43,7 +43,17 @@ namespace BCD.FileSystem
                         {
                             FileStream fs = File.Create(path);
                             fs.Close();
-                            //MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.File, FileStatusEnum.Create);
+
+                            var fileInfo = new FileInfo(path);
+                            var memoryFile = new MemoryFile
+                                {
+                                    CreateDate = fileInfo.CreationTime,
+                                    FilePath = path.Replace(this.root_, ""),
+                                    FileStatus = FileStatusEnum.Create,
+                                    FileType = FileTypeEnum.File,
+                                    LastModifyDate = fileInfo.LastWriteTime
+                                };
+                            MemoryFileManager.GetInstance().SetFile(memoryFile);
                         }
                         return DokanNet.DOKAN_SUCCESS;
                     case FileMode.CreateNew:
@@ -51,7 +61,17 @@ namespace BCD.FileSystem
                         {
                             FileStream fs = File.Create(path);
                             fs.Close();
-                            //MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.File, FileStatusEnum.Create);
+
+                            var fileInfo = new FileInfo(path);
+                            var memoryFile = new MemoryFile
+                            {
+                                CreateDate = fileInfo.CreationTime,
+                                FilePath = path.Replace(this.root_, ""),
+                                FileStatus = FileStatusEnum.Create,
+                                FileType = FileTypeEnum.File,
+                                LastModifyDate = fileInfo.LastWriteTime
+                            };
+                            MemoryFileManager.GetInstance().SetFile(memoryFile);
                         }
                         return DokanNet.DOKAN_SUCCESS;
                     case FileMode.Open:
@@ -144,8 +164,23 @@ namespace BCD.FileSystem
             try
             {
                 var path = this.GetPath(filename);
-                if (File.Exists(path)) File.Delete(path);
-                //MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.File, FileStatusEnum.Remove);
+                if (File.Exists(path))
+                {
+
+                    var fileInfo = new FileInfo(path);
+                    var memoryFile = new MemoryFile
+                        {
+                            CreateDate = fileInfo.CreationTime,
+                            FilePath = path.Replace(this.root_, ""),
+                            FileStatus = FileStatusEnum.Remove,
+                            FileType = FileTypeEnum.File,
+                            LastModifyDate = fileInfo.LastWriteTime
+                        };
+
+                    File.Delete(path);
+
+                    MemoryFileManager.GetInstance().SetFile(memoryFile);
+                }
                 return DokanNet.DOKAN_SUCCESS;
             }
             catch (Exception)
@@ -160,9 +195,19 @@ namespace BCD.FileSystem
             {
                 var path = this.GetPath(filename);
                 Directory.CreateDirectory(path);
-                //var client = new ServiceHandler();
-                //var result = client.CreateDir(path);
-                //MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.Directory, FileStatusEnum.Create);
+
+                var dir = new DirectoryInfo(path);
+                var memoryFile = new MemoryFile
+                {
+                    CreateDate = dir.CreationTime,
+                    FilePath = path.Replace(this.root_, ""),
+                    FileStatus = FileStatusEnum.Create,
+                    FileType = FileTypeEnum.Directory,
+                    LastModifyDate = dir.LastWriteTime
+                };
+
+                MemoryFileManager.GetInstance().SetFile(memoryFile);
+
                 return DokanNet.DOKAN_SUCCESS;
             }
             catch
@@ -191,10 +236,23 @@ namespace BCD.FileSystem
             try
             {
                 var path = this.GetPath(filename);
-                if (Directory.Exists(path)) Directory.Delete(path);
-                //var client = new ServiceHandler();
-                //var result = client.RemoveDir(path);
-                //MemoryFileManager.GetInstance().SetFile(path, FileTypeEnum.Directory, FileStatusEnum.Remove);
+                if (Directory.Exists(path))
+                {
+                    var dir = new DirectoryInfo(path);
+                    var memoryFile = new MemoryFile
+                    {
+                        CreateDate = dir.CreationTime,
+                        FilePath = path.Replace(this.root_, ""),
+                        FileStatus = FileStatusEnum.Remove,
+                        FileType = FileTypeEnum.Directory,
+                        LastModifyDate = dir.LastWriteTime
+                    };
+
+                    Directory.Delete(path);
+
+                    MemoryFileManager.GetInstance().SetFile(memoryFile);
+                }
+                
                 return DokanNet.DOKAN_SUCCESS;
             }
             catch (Exception)
@@ -334,11 +392,20 @@ namespace BCD.FileSystem
                 var path = this.GetPath(filename);
                 if (!File.Exists(path)) return DokanNet.ERROR_FILE_NOT_FOUND;
                 File.WriteAllBytes(path, buffer);
-                //var file = MemoryFileManager.GetInstance().GetFile(path);
-                //if (file != null && file.FileStatus != FileStatusEnum.Create && file.FileStatus != FileStatusEnum.Remove)
-                //{
-                //    MemoryFileManager.GetInstance().SetFile(path, file.FileType, FileStatusEnum.Append);
-                //}
+                var file = MemoryFileManager.GetInstance().GetFile(path);
+                if (file != null && file.FileStatus != FileStatusEnum.Create && file.FileStatus != FileStatusEnum.Remove)
+                {
+                    var fileInfo = new FileInfo(path);
+                    var memoryFile = new MemoryFile
+                    {
+                        CreateDate = fileInfo.CreationTime,
+                        FilePath = path.Replace(this.root_, ""),
+                        FileStatus = FileStatusEnum.Append,
+                        FileType = FileTypeEnum.File,
+                        LastModifyDate = fileInfo.LastWriteTime
+                    };
+                    MemoryFileManager.GetInstance().SetFile(memoryFile);
+                }
                 return DokanNet.DOKAN_SUCCESS;
             }
             catch (Exception)

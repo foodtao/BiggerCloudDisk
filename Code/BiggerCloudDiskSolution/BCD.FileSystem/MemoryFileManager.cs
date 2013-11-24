@@ -19,7 +19,17 @@ namespace BCD.FileSystem
 
         private static volatile MemoryFileManager memoryFileManager = null;
 
-        private List<MemoryFile> memoryFiles = new List<MemoryFile>(); 
+        private List<MemoryFile> memoryFiles = new List<MemoryFile>();
+
+        /// <summary>
+        /// 是否数据发生变化。
+        /// </summary>
+        private static bool IsDataChange = false;
+
+        /// <summary>
+        /// 数据变化的时间。
+        /// </summary>
+        private static DateTime DataChangeDate = DateTime.MinValue;
 
         public static MemoryFileManager GetInstance()
         {
@@ -28,7 +38,10 @@ namespace BCD.FileSystem
                 lock (_lock)
                 {
                     if (memoryFileManager == null)
-                        return memoryFileManager = new MemoryFileManager();
+                    {
+                        memoryFileManager = new MemoryFileManager();
+                        InitData();
+                    }
                 }
             }
             return memoryFileManager;
@@ -46,6 +59,8 @@ namespace BCD.FileSystem
                 if (file == null)
                 {
                     memoryFiles.Add(memoryFile);
+                    IsDataChange = true;
+                    DataChangeDate = DateTime.Now;
                 }
                 else
                 {
@@ -65,7 +80,38 @@ namespace BCD.FileSystem
                             }
                         }
                     }
+                    if (file.FileStatus != FileStatusEnum.Normal)
+                    {
+                        IsDataChange = true;
+                        DataChangeDate = DateTime.Now;
+                    }
                 }
+            }
+        }
+
+        /// <summary>
+        /// 设置缓存状态
+        /// </summary>
+        /// <param name="isDataChange"></param>
+        public void SetCacheStatus(bool isDataChange)
+        {
+            lock (memoryFiles)
+            {
+                IsDataChange = isDataChange;
+                DataChangeDate = DateTime.Now;
+            }
+        }
+
+        /// <summary>
+        /// 获取缓存状态
+        /// </summary>
+        /// <returns></returns>
+        public bool GetCacheStatus(out DateTime dateTime)
+        {
+            lock (memoryFiles)
+            {
+                dateTime = DataChangeDate;
+                return IsDataChange;
             }
         }
 
@@ -109,6 +155,85 @@ namespace BCD.FileSystem
             lock (_fileLock)
             {
                 return memoryFiles;
+            }
+        }
+
+        /// <summary>
+        /// 初始化文件缓存信息。
+        /// </summary>
+        private static void InitData()
+        {
+            try
+            {
+                var root = "G:\\Temp";
+                var rootFiles = (new DirectoryInfo(root)).GetFiles();
+                if (rootFiles.Length > 0)
+                {
+                    foreach (var rootFile in rootFiles)
+                    {
+                        var memoryFile = new MemoryFile();
+                        memoryFile.CreateDate = rootFile.CreationTime;
+                        memoryFile.FilePath = rootFile.FullName.Replace(root, "");
+                        memoryFile.FileStatus = FileStatusEnum.Normal;
+                        memoryFile.FileType = FileTypeEnum.File;
+                        memoryFile.LastModifyDate = rootFile.LastWriteTime;
+                        GetInstance().SetFile(memoryFile);
+                    }
+                }
+
+                var dirs = new List<DirectoryInfo>();
+
+                GetALlDirectoryInfo(root, ref dirs);
+
+                if (dirs.Count > 0)
+                {
+                    foreach (var dir in dirs)
+                    {
+                        var memoryFile = new MemoryFile();
+                        memoryFile.CreateDate = dir.CreationTime;
+                        memoryFile.FilePath = dir.FullName.Replace(root, "");
+                        memoryFile.FileStatus = FileStatusEnum.Normal;
+                        memoryFile.FileType = FileTypeEnum.Directory;
+                        memoryFile.LastModifyDate = dir.LastWriteTime;
+                        GetInstance().SetFile(memoryFile);
+
+                        var files = dir.GetFiles();
+
+                        foreach (var file in files)
+                        {
+                            var memoryFile1 = new MemoryFile();
+                            memoryFile1.CreateDate = file.CreationTime;
+                            memoryFile1.FilePath = file.FullName.Replace(root, "");
+                            memoryFile1.FileStatus = FileStatusEnum.Normal;
+                            memoryFile1.FileType = FileTypeEnum.File;
+                            memoryFile1.LastModifyDate = file.LastWriteTime;
+                            GetInstance().SetFile(memoryFile1);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        /// <summary>
+        /// 获取所有文件夹信息。
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="dirs"></param>
+        private static void GetALlDirectoryInfo(string path, ref List<DirectoryInfo> dirs)
+        {
+            var dir = new DirectoryInfo(path);
+            var dir_temps = dir.GetDirectories();
+            if (dir_temps.Length > 0)
+            {
+                foreach (var dirTemp in dir_temps)
+                {
+                    dirs.Add(dirTemp);
+                    GetALlDirectoryInfo(dirTemp.FullName, ref dirs);
+                }
             }
         }
 
