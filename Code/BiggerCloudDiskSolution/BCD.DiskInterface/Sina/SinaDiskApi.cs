@@ -143,7 +143,7 @@ namespace BCD.DiskInterface.Sina
                         m.Contents.Add(subDir);
                     }
                 }
-                
+
                 return m;
             }
             catch (System.Net.WebException webEx)
@@ -257,26 +257,90 @@ namespace BCD.DiskInterface.Sina
         public byte[] DownloadFile(string remotePath)
         {
             string url = "https://api.weipan.cn/2/files/sandbox";
-            var request = new WebRequestHelper(url);
+            //var request = new WebRequestHelper(url);
             string fileName = remotePath.Substring(remotePath.LastIndexOf("/") + 1);
             url = url + remotePath + "?access_token=" + _accessToken;
-            var result = request.Get(url);
-            return System.Text.Encoding.ASCII.GetBytes(result);
+            //var result = request.Get(url);
+            //return System.Text.Encoding.ASCII.GetBytes(result);
+            byte[] returnByte;
+            try
+            {
+                WebRequest request = WebRequest.Create(url);
+                WebResponse response = request.GetResponse();
+
+
+                Stream stream = response.GetResponseStream();
+                /*
+                StreamHelper helper = new StreamHelper();
+                Stream newStream = new Stream();
+                helper.CopyStream(stream, newStream);
+                returnByte = helper.StreamToBytes(newStream);
+                */
+                long length = response.ContentLength;
+                returnByte = new byte[length];
+                stream.Read(returnByte, 0, (int)length);
+                /*
+                MemoryStream stream = (MemoryStream)response.GetResponseStream();
+                returnByte = stream.ToArray();
+                */
+                response.Close();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return returnByte;
         }
 
         public Model.CloudDisk.CloudFileInfoModel CreateDirectory(string dir)
         {
-            throw new NotImplementedException();
+            string url = "https://api.weipan.cn/2/fileops/create_folder";
+            url += "?root=sandbox&path=" + dir;
+            CloudFileInfoModel m = new CloudFileInfoModel();
+            try
+            {
+                var request = new WebRequestHelper(url);
+                var result = request.Post(url);
+                var entity = JsonHelper.DeserializeObject<SinaResponseFileInfoJsonEntity>(result);
+
+                m.Bytes = 0;
+                m.FullPath = entity.path;
+                m.RootPath = entity.root;
+                m.LastModifiedDate = Convert.ToDateTime(entity.modified);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return m;
         }
 
         public int DeleteFile(string remotePath)
         {
-            throw new NotImplementedException();
+            string url = " https://api.weipan.cn/2/fileops/delete";
+            url += "?root=sandbox&path=" + remotePath;
+            CloudFileInfoModel m = new CloudFileInfoModel();
+            try
+            {
+                var request = new WebRequestHelper(url);
+                var result = request.Post(url);
+                var entity = JsonHelper.DeserializeObject<SinaResponseFileInfoJsonEntity>(result);
+
+                m.Bytes = 0;
+                m.FullPath = entity.path;
+                m.RootPath = entity.root;
+                m.LastModifiedDate = Convert.ToDateTime(entity.modified);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return 1;
         }
 
         public int DeleteDirectory(string remotePath)
         {
-            throw new NotImplementedException();
+            return DeleteFile(remotePath);
         }
 
         public Model.CloudDisk.CloudFileInfoModel MoveFile(string originPath, string newPath, bool isCopy)

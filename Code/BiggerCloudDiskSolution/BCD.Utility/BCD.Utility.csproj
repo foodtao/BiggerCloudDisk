@@ -46,6 +46,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JsonHelper.cs" />
+    <Compile Include="PathConverter.cs" />
+    <Compile Include="StreamHelper.cs" />
     <Compile Include="WebRequestHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
