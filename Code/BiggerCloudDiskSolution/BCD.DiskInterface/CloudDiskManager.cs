@@ -67,7 +67,7 @@ namespace BCD.DiskInterface
             foreach (ICloudDiskAPI api in _loadedCloudDiskApi)
             {
                 var tmpM = api.GetCloudDiskCapacityInfo();
-                if (tmpM == null) 
+                if (tmpM == null)
                 {
                     //返回全是0的对象
                     return new CloudDiskCapacityModel();
@@ -108,10 +108,10 @@ namespace BCD.DiskInterface
                 if (type == CloudDiskType.NOT_SPECIFIED)
                 {
                     //未指定类型,必须便利查找属于哪个网盘
-                    foreach (ICloudDiskAPI api in _loadedCloudDiskApi) 
+                    foreach (ICloudDiskAPI api in _loadedCloudDiskApi)
                     {
                         m = api.GetCloudFileInfo(remotePath);
-                        if (m != null) 
+                        if (m != null)
                         {
                             //第一个找到就返回
                             return m;
@@ -142,7 +142,10 @@ namespace BCD.DiskInterface
                 throw new Exception("获取远程文件信息出错!" + ex.Message);
             }
             //在传出返回值之前将远程路径的形式替换成本地路径
-            m.LocalPath = PathConverter.RemotePathToLocalPath(m.Path);
+            if (m != null)
+            {
+                m.LocalPath = PathConverter.RemotePathToLocalPath(m.Path);
+            }
             return m;
         }
 
@@ -184,7 +187,10 @@ namespace BCD.DiskInterface
                 }
             }
             //在传出返回值之前将远程路径的形式替换成本地路径
-            uploaded.LocalPath = PathConverter.RemotePathToLocalPath(uploaded.Path);
+            if (uploaded != null)
+            {
+                uploaded.LocalPath = PathConverter.RemotePathToLocalPath(uploaded.Path);
+            }
             return uploaded;
         }
 
@@ -437,6 +443,15 @@ namespace BCD.DiskInterface
             foreach (ICloudDiskAPI api in _loadedCloudDiskApi)
             {
                 var tmp = api.GetCloudDiskCapacityInfo();
+                if (tmp == null)
+                {
+                    //可用空间为null,如果还没有返回值,那么先赋一个,如果之后有正常的可用空间值,则result会变化.
+                    if (result == null)
+                    {
+                        result = api;
+                    }
+                    continue;
+                }
                 if (tmp.TotalAvailableByte > max)
                 {
                     max = tmp.TotalAvailableByte;
