@@ -19,7 +19,7 @@ namespace BCD.FileSystem
 
         private static volatile MemoryFileManager memoryFileManager = null;
 
-        private List<MemoryFile> memoryFiles = new List<MemoryFile>();
+        private static List<MemoryFile> memoryFiles = new List<MemoryFile>();
 
         /// <summary>
         /// 是否数据发生变化。
