@@ -16,17 +16,14 @@ namespace BCD.DiskInterface.Kingsoft
 
     public class KingsoftDiskAPI : ICloudDiskAPI
     {
-        private string requestTokenUrl = "https://openapi.kuaipan.cn/open/requestToken";
-        private string accessTokenUrl = "https://openapi.kuaipan.cn/open/accessToken";
-        private string account_infoUrl = "http://openapi.kuaipan.cn/1/account_info/";
-        private string metadataUrl = "http://openapi.kuaipan.cn/1/metadata/app_folder/{0}";
-        private string oauth_callback = "http://{0}/gettoken.aspx";
+
+        private string metadataUrl = "http://openapi.kuaipan.cn/1/metadata/app_folder{0}";     
         private string createFolderUrl = "http://openapi.kuaipan.cn/1/fileops/create_folder";
         private string deleteFolderUrl = "http://openapi.kuaipan.cn/1/fileops/delete";
         private string fileUploadLocationUrl = "http://api-content.dfs.kuaipan.cn/1/fileops/upload_locate";
         private string fileUploadUrl = "{0}1/fileops/upload_file";
         private string fileDownloadUrl = "http://api-content.dfs.kuaipan.cn/1/fileops/download_file";
-        private string oauthURl = "https://www.kuaipan.cn/api.php";
+     
 
         private string _http_method = "GET";
         public string http_method
@@ -87,10 +84,10 @@ namespace BCD.DiskInterface.Kingsoft
 
         public KingsoftDiskAPI()
         {
-            _consumerKey = ConfigurationManager.AppSettings["KINGSOFT_APP_KEY"];
-            _consumerSecret = ConfigurationManager.AppSettings["KINGSOFT_APP_SECRET"];
-            _accessToken = ConfigurationManager.AppSettings["KINGSOFT_ACCESS_TOKEN"];
-            _accessTokenSecret = ConfigurationManager.AppSettings["KINGSOFT_ACCESS_TOKEN_SECRET"];
+            _consumerKey = GetLocalStoredAppKey();
+            _consumerSecret = GetLocalStoredAppSeceret();
+            _accessToken = GetLocalStoredAccessToken();
+            _accessTokenSecret = GetLocalStoredAccessTokenSecret();
         }
 
         /// <summary>
@@ -104,32 +101,41 @@ namespace BCD.DiskInterface.Kingsoft
 
         public string GetLocalStoredAppKey()
         {
-            return _consumerKey;
+            return ConfigurationManager.AppSettings["KINGSOFT_APP_KEY"];
         }
 
         public string GetLocalStoredAppSeceret()
         {
-            return _consumerSecret;
+            return ConfigurationManager.AppSettings["KINGSOFT_ACCESS_TOKEN"];
         }
 
         public string GetLocalStoredAccessToken()
         {
-            return _accessToken;
+            return ConfigurationManager.AppSettings["KINGSOFT_APP_SECRET"];
+        }
+
+        public string GetLocalStoredAccessTokenSecret()
+        {
+            return ConfigurationManager.AppSettings["KINGSOFT_ACCESS_TOKEN_SECRET"];
         }
 
         public void WriteLocalAccessToken(AccessTokenModel newToken)
         {
-            throw new NotImplementedException();
+
+            ConfigurationManager.AppSettings["KINGSOFT_ACCESS_TOKEN"] = newToken.AccessToken;
         }
 
-        public Model.CloudDisk.AccessTokenModel GetAccessToken()
+        public AccessTokenModel GetAccessToken()
         {
-            throw new NotImplementedException();
+            AccessTokenModel accessToken = new AccessTokenModel();
+            accessToken.AccessToken = _accessToken;
+            return accessToken;
         }
 
         public SingleCloudDiskCapacityModel GetCloudDiskCapacityInfo()
         {
-            throw new NotImplementedException();
+            
+           
         }
 
         public CloudFileInfoModel GetCloudFileInfo(string remotePath)
@@ -196,7 +202,6 @@ namespace BCD.DiskInterface.Kingsoft
                 var boundary = "---------------" + DateTime.Now.Ticks.ToString("x");
                 // 边界符
                 var beginBoundary = Encoding.ASCII.GetBytes("--" + boundary + "\r\n");
-                var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
                 // 最后的结束符
                 var endBoundary = Encoding.ASCII.GetBytes("--" + boundary + "--\r\n");
 
@@ -215,13 +220,8 @@ namespace BCD.DiskInterface.Kingsoft
                 memStream.Write(beginBoundary, 0, beginBoundary.Length);
                 memStream.Write(headerbytes, 0, headerbytes.Length);
 
-                var buffer = new byte[1024];
-                int bytesRead; // =0
 
-                while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
-                {
-                    memStream.Write(buffer, 0, bytesRead);
-                }
+                memStream.Write(fileContent, 0, fileContent.Length);
 
 
                 // 写入字符串的Key
@@ -263,7 +263,6 @@ namespace BCD.DiskInterface.Kingsoft
                     responseContent = httpStreamReader.ReadToEnd();
                 }
 
-                fileStream.Close();
                 httpWebResponse.Close();
                 webRequest.Abort();
 

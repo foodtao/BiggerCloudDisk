@@ -22,7 +22,7 @@ namespace BCD.WinApp
             InitializeComponent();
             MountDisk();
 
-            MemoryFileManagerThead.Start();
+            //MemoryFileManagerThead.Start();
             ServiceHandler.Start();
         }
 
@@ -46,7 +46,7 @@ namespace BCD.WinApp
             //var a = MemoryFileManager.GetInstance().GetAllFiles();
             //var b = 1;
             CloudDiskManager cloudDiskManager = new CloudDiskManager();
-            var a = cloudDiskManager.GetCloudFileInfo(CloudDiskType.KINGSOFT, "BiggerCloudDisk");
+            var a = cloudDiskManager.GetCloudFileInfo(CloudDiskType.KINGSOFT, "/");
             var b = 1;
         }
 

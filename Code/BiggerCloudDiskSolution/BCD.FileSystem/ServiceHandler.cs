@@ -67,87 +67,49 @@ namespace BCD.FileSystem
                 {
                     Thread.Sleep(10 * 1000);
 
-
-                    //var root = "G:\\temp";
-                    //var files = MemoryFileManager.GetInstance().GetAllFiles();
-                    //CloudDiskManager cloudDiskManager = new CloudDiskManager();
-                    //if (files != null && files.Count > 0)
-                    //{
-                    //    files = files.OrderBy(p => p.FilePath).ToList();
-                    //    foreach (var file in files)
-                    //    {
-                    //        try
-                    //        {
-                    //            var cloudFile = cloudDiskManager.GetCloudFileInfo(
-                    //                CloudDiskType.NOT_SPECIFIED, file.FilePath);
-                    //            if (cloudFile == null)
-                    //            {
-                    //                if (file.FileType == FileTypeEnum.Directory
-                    //                    && file.FileStatus != FileStatusEnum.Remove)
-                    //                {
-                    //                    cloudDiskManager.CreateDirectory(file.FilePath);
-                    //                    file.FileStatus = FileStatusEnum.Normal;
-                    //                    MemoryFileManager.GetInstance().SetFile(file);
-                    //                }
-                    //                else if (file.FileType == FileTypeEnum.File
-                    //                         && file.FileStatus != FileStatusEnum.Remove)
-                    //                {
-                    //                    var fileInfo = new FileInfo(root + file.FilePath);
-                    //                    var buffer = new byte[fileInfo.Length];
-                    //                    fileInfo.OpenRead().Read(buffer, 0, (int)fileInfo.Length);
-                    //                    cloudDiskManager.UploadFile(
-                    //                        CloudFileUploadType.Create, file.FilePath, buffer);
-                    //                    file.FileStatus = FileStatusEnum.Normal;
-                    //                    MemoryFileManager.GetInstance().SetFile(file);
-                    //                }
-                    //            }
-                    //            else
-                    //            {
-                    //                if (file.FileStatus == FileStatusEnum.Remove)
-                    //                {
-                    //                    if (file.FileType == FileTypeEnum.Directory)
-                    //                    {
-                    //                        cloudDiskManager.DeleteDirectory(file.FilePath);
-                    //                        MemoryFileManager.GetInstance().RemoveFile(file.FilePath);
-                    //                    }
-                    //                    else if (file.FileType == FileTypeEnum.File)
-                    //                    {
-                    //                        cloudDiskManager.DeleteFile(CloudDiskType.NOT_SPECIFIED, file.FilePath);
-                    //                        MemoryFileManager.GetInstance().RemoveFile(file.FilePath);
-                    //                    }
-                    //                }
-                    //                else
-                    //                {
-                    //                    if (file.LastModifyDate > cloudFile.LastModifiedDate
-                    //                        && file.FileStatus == FileStatusEnum.Append)
-                    //                    {
-                    //                        var fileInfo = new FileInfo(root + file.FilePath);
-                    //                        var buffer = new byte[fileInfo.Length];
-                    //                        fileInfo.OpenRead().Read(buffer, 0, (int)fileInfo.Length);
-                    //                        cloudDiskManager.UploadFile(
-                    //                            CloudFileUploadType.Create, file.FilePath, buffer);
-                    //                        file.FileStatus = FileStatusEnum.Normal;
-                    //                        MemoryFileManager.GetInstance().SetFile(file);
-                    //                    }
-                    //                    else if (file.LastModifyDate > cloudFile.LastModifiedDate)
-                    //                    {
-                    //                        var cloudbyte = cloudDiskManager.DownloadFile(CloudDiskType.NOT_SPECIFIED, file.FilePath);
-
-                    //                        File.Delete();
-                    //                    }
-                    //                }
-                    //            }
-                    //        }
-                    //        catch
-                    //        {
-                                
-                    //        }
-                    //    }
-                    //}
+                    DateTime dataChangeDate1 = DateTime.MinValue;
+                    if (MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate1)) //如果缓存有更新
+                    {
+                        SysToCloud();
+                    }
+                    DateTime dataChangeDate2 = DateTime.MinValue;
+                    if (dataChangeDate1 == dataChangeDate2)
+                    {
+                        MemoryFileManager.GetInstance().SetCacheStatus(false);
+                    }
                 }
                 catch
                 { }
-                Thread.Sleep(60 * 1000);
+            }
+        }
+
+        /// <summary>
+        /// 同步本地更改到云。
+        /// </summary>
+        public static void SysToCloud()
+        {
+            
+        }
+
+        /// <summary>
+        /// 同步删除的内容到云
+        /// </summary>
+        public static void SysRemoveFileToCloud()
+        {
+            var memFiles =
+                MemoryFileManager.GetInstance().GetAllFiles().OrderBy(p => p.FilePath).Where(
+                    p => p.FileStatus == FileStatusEnum.Remove).ToList();
+            var cloudDisk = new CloudDiskManager();
+            if (memFiles.Count > 0)
+            {
+                while (memFiles.Count > 0)
+                {
+                    var memFile = memFiles[0];
+                    if (memFile.FileType == FileTypeEnum.Directory)
+                    {
+                        cloudDisk.DeleteDirectory(memFile.FilePath);
+                    }
+                }
             }
         }
 
