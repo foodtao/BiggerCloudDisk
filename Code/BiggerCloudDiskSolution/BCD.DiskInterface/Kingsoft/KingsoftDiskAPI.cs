@@ -134,29 +134,7 @@ namespace BCD.DiskInterface.Kingsoft
 
         public SingleCloudDiskCapacityModel GetCloudDiskCapacityInfo()
         {
-            String metaUrl = String.Format(this.metadataUrl, remotePath);
-            SortedDictionary<string, string> ParamList = getParamList();
-            ParamList.Add("list", "false");
-            string SourceString = GetApiSourceString(metaUrl, ParamList);
-            string SecretKey = GetSecretKey();
-            string Sign = GetSignature(SourceString, SecretKey);
-            ParamList.Add("oauth_signature", Sign);
-            string URL = metaUrl + "?" + ParamToUrl(ParamList, false);
-            object jsonAccess = GetGeneralContent(URL);
-            object json = JsonHelper.DeserializeObject(jsonAccess.ToString());
-            Dictionary<string, object> dict = (Dictionary<string, object>)json;
-            CloudFileInfoModel fileInfo = new CloudFileInfoModel();
-            fileInfo.ID = dict["file_id"].ToString();
-            fileInfo.name = dict["name"].ToString();
-            if (dict["type"].ToString() == "folder")
-            {
-                fileInfo.IsDir = true;
-            }
-            else
-            {
-                fileInfo.IsDir = false;
-            }
-            return fileInfo;
+            
            
         }
 
