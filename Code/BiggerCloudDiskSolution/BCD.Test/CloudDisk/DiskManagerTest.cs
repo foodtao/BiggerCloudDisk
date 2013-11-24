@@ -30,7 +30,7 @@ namespace BCD.Test.CloudDisk
         public void GetDirInfo()
         {
             CloudDiskManager m = new CloudDiskManager();
-            var result = m.GetCloudFileInfo(CloudDiskType.KINGSOFT, "/");
+            var result = m.GetCloudFileInfo(CloudDiskType.SINA, "/");
         }
 
         [TestMethod]
@@ -44,7 +44,21 @@ namespace BCD.Test.CloudDisk
         public void CreateDir()
         {
             CloudDiskManager m = new CloudDiskManager();
-            var result = m.CreateDirectory("\\1");
+            var result = m.CreateDirectory("\\1asdf\\23");
+        }
+
+        [TestMethod]
+        public void DeleteDir()
+        {
+            CloudDiskManager m = new CloudDiskManager();
+            var result = m.DeleteDirectory("\\1asdf\\23");
+        }
+
+        [TestMethod]
+        public void DeleteFile()
+        {
+            CloudDiskManager m = new CloudDiskManager();
+            var result = m.DeleteFile(CloudDiskType.NOT_SPECIFIED, "/1.jpg");
         }
     }
 }

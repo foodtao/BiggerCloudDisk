@@ -67,6 +67,11 @@ namespace BCD.DiskInterface
             foreach (ICloudDiskAPI api in _loadedCloudDiskApi)
             {
                 var tmpM = api.GetCloudDiskCapacityInfo();
+                if (tmpM == null) 
+                {
+                    //返回全是0的对象
+                    return new CloudDiskCapacityModel();
+                }
                 if (tmpM.TotalAvailableByte > max)
                 {
                     max = tmpM.TotalAvailableByte;

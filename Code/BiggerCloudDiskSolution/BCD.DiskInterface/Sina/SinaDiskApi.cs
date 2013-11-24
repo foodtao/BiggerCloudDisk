@@ -268,7 +268,6 @@ namespace BCD.DiskInterface.Sina
                 WebRequest request = WebRequest.Create(url);
                 WebResponse response = request.GetResponse();
 
-
                 Stream stream = response.GetResponseStream();
                 /*
                 StreamHelper helper = new StreamHelper();
@@ -295,16 +294,20 @@ namespace BCD.DiskInterface.Sina
         public Model.CloudDisk.CloudFileInfoModel CreateDirectory(string dir)
         {
             string url = "https://api.weipan.cn/2/fileops/create_folder";
-            url += "?root=sandbox&path=" + dir + "&access_token=" + _accessToken;
+            //url += "?access_token=" + _accessToken + "&root=sandbox&path=" +  UrlEncoder.UrlEncode(dir);
+            IDictionary<string, string> postParameters = new Dictionary<string, string>();
+            postParameters.Add("access_token", _accessToken);
+            postParameters.Add("root", "sandbox");
+            postParameters.Add("path", UrlEncoder.UrlEncode(dir));
             CloudFileInfoModel m = new CloudFileInfoModel();
             try
             {
                 var request = new WebRequestHelper(url);
-                var result = request.Post(url);
+                var result = request.Post(url, postParameters);
                 var entity = JsonHelper.DeserializeObject<SinaResponseFileInfoJsonEntity>(result);
 
                 m.Bytes = 0;
-                m.FullPath = entity.path;
+                m.Path = UrlEncoder.UrlDecode(entity.path);
                 m.RootPath = entity.root;
                 m.LastModifiedDate = Convert.ToDateTime(entity.modified);
             }
@@ -317,17 +320,21 @@ namespace BCD.DiskInterface.Sina
 
         public int DeleteFile(string remotePath)
         {
-            string url = " https://api.weipan.cn/2/fileops/delete";
-            url += "?root=sandbox&path=" + remotePath + "&access_token=" + _accessToken;
+            string url = "https://api.weipan.cn/2/fileops/delete";
+            //url += "?root=sandbox&path=" + HttpUtility.UrlEncode(remotePath) + "&access_token=" + _accessToken;
+            IDictionary<string, string> postParameters = new Dictionary<string, string>();
+            postParameters.Add("access_token", _accessToken);
+            postParameters.Add("root", "sandbox");
+            postParameters.Add("path", remotePath);
             CloudFileInfoModel m = new CloudFileInfoModel();
             try
             {
                 var request = new WebRequestHelper(url);
-                var result = request.Post(url);
+                var result = request.Post(url, postParameters);
                 var entity = JsonHelper.DeserializeObject<SinaResponseFileInfoJsonEntity>(result);
 
                 m.Bytes = 0;
-                m.FullPath = entity.path;
+                m.Path = entity.path;
                 m.RootPath = entity.root;
                 m.LastModifiedDate = Convert.ToDateTime(entity.modified);
             }
