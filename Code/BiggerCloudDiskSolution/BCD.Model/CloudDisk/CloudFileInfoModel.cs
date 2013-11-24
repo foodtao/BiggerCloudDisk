@@ -47,6 +47,11 @@ namespace BCD.Model.CloudDisk
         public string Path { get; set; }
 
         /// <summary>
+        /// 远程路径对应的本地路径,将所有"\"替换成"/"
+        /// </summary>
+        public string LocalPath { get; set; }
+
+        /// <summary>
         /// 网盘根路径(有些网盘只允许在某个特定的目录下开放API,此目录即为API的根目录)
         /// </summary>
         public string RootPath { get; set; }

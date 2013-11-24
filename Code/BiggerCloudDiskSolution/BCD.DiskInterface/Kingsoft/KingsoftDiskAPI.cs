@@ -134,7 +134,7 @@ namespace BCD.DiskInterface.Kingsoft
 
         public SingleCloudDiskCapacityModel GetCloudDiskCapacityInfo()
         {
-            
+            return null;
            
         }
 

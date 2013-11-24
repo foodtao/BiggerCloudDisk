@@ -40,6 +40,11 @@ namespace BCD.Test.CloudDisk
             var result = m.DownloadFile(CloudDiskType.NOT_SPECIFIED, "/1.jpg");
         }
 
-
+        [TestMethod]
+        public void CreateDir()
+        {
+            CloudDiskManager m = new CloudDiskManager();
+            var result = m.CreateDirectory("\\1");
+        }
     }
 }

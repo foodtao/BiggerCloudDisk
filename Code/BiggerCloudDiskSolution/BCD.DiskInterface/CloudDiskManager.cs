@@ -7,6 +7,7 @@ using BCD.DiskInterface.Sina;
 using BCD.DiskInterface.Baidu;
 using BCD.DiskInterface.Kingsoft;
 using System.Configuration;
+using BCD.Utility;
 
 namespace BCD.DiskInterface
 {
@@ -96,7 +97,9 @@ namespace BCD.DiskInterface
             try
             {
                 //CloudDiskType type = GetDiskTypeByURL(remotePath);
-                
+                //所有传入的文件都进行一次转换
+                remotePath = PathConverter.LocalPathToRemotePath(remotePath);
+
                 if (type == CloudDiskType.NOT_SPECIFIED)
                 {
                     //未指定类型,必须便利查找属于哪个网盘
@@ -133,6 +136,8 @@ namespace BCD.DiskInterface
             {
                 throw new Exception("获取远程文件信息出错!" + ex.Message);
             }
+            //在传出返回值之前将远程路径的形式替换成本地路径
+            m.LocalPath = PathConverter.RemotePathToLocalPath(m.Path);
             return m;
         }
 
@@ -146,6 +151,9 @@ namespace BCD.DiskInterface
         public CloudFileInfoModel UploadFile(CloudFileUploadType type, string filePath, byte[] fileContent)
         {
             CloudFileInfoModel uploaded = new CloudFileInfoModel();
+            //所有传入的路径都进行一次转换
+            filePath = PathConverter.LocalPathToRemotePath(filePath);
+
             if (type == CloudFileUploadType.Create)
             {
                 ICloudDiskAPI api = GetOptimizedDisk(CloudDiskOptimizationTypeModel.AVAILABLE_BIGGEST);
@@ -170,6 +178,8 @@ namespace BCD.DiskInterface
                     }
                 }
             }
+            //在传出返回值之前将远程路径的形式替换成本地路径
+            uploaded.LocalPath = PathConverter.RemotePathToLocalPath(uploaded.Path);
             return uploaded;
         }
 
@@ -183,6 +193,9 @@ namespace BCD.DiskInterface
             byte[] fileContent = null;
             try
             {
+                //所有传入的路径都进行一次转换
+                remotePath = PathConverter.LocalPathToRemotePath(remotePath);
+
                 //CloudDiskType type = GetDiskTypeByURL(remotePath);
                 if (type != CloudDiskType.NOT_SPECIFIED)
                 {
@@ -222,11 +235,15 @@ namespace BCD.DiskInterface
         public List<CloudFileInfoModel> CreateDirectory(string dir)
         {
             List<CloudFileInfoModel> list = new List<CloudFileInfoModel>();
+            //所有传入的路径都进行一次转换
+            dir = PathConverter.LocalPathToRemotePath(dir);
             try
             {
                 foreach (ICloudDiskAPI api in _loadedCloudDiskApi)
                 {
                     var oneDir = api.CreateDirectory(dir);
+                    //在传出返回值之前将远程路径的形式替换成本地路径
+                    oneDir.LocalPath = PathConverter.RemotePathToLocalPath(oneDir.Path);
                     list.Add(oneDir);
                 }
             }
@@ -247,6 +264,9 @@ namespace BCD.DiskInterface
             try
             {
                 //CloudDiskType type = GetDiskTypeByURL(remotePath);
+                //所有传入的路径都进行一次转换
+                remotePath = PathConverter.LocalPathToRemotePath(remotePath);
+
                 ICloudDiskAPI oneApi;
                 if (type != CloudDiskType.NOT_SPECIFIED)
                 {
@@ -285,6 +305,9 @@ namespace BCD.DiskInterface
         /// <returns></returns>
         public int DeleteDirectory(string remotePath)
         {
+            //所有传入的路径都进行一次转换
+            remotePath = PathConverter.LocalPathToRemotePath(remotePath);
+
             foreach (ICloudDiskAPI api in _loadedCloudDiskApi)
             {
                 api.DeleteDirectory(remotePath);

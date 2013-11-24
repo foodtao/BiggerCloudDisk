@@ -295,7 +295,7 @@ namespace BCD.DiskInterface.Sina
         public Model.CloudDisk.CloudFileInfoModel CreateDirectory(string dir)
         {
             string url = "https://api.weipan.cn/2/fileops/create_folder";
-            url += "?root=sandbox&path=" + dir;
+            url += "?root=sandbox&path=" + dir + "&access_token=" + _accessToken;
             CloudFileInfoModel m = new CloudFileInfoModel();
             try
             {
@@ -318,7 +318,7 @@ namespace BCD.DiskInterface.Sina
         public int DeleteFile(string remotePath)
         {
             string url = " https://api.weipan.cn/2/fileops/delete";
-            url += "?root=sandbox&path=" + remotePath;
+            url += "?root=sandbox&path=" + remotePath + "&access_token=" + _accessToken;
             CloudFileInfoModel m = new CloudFileInfoModel();
             try
             {
