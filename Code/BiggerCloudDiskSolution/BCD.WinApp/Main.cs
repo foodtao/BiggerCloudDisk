@@ -76,9 +76,9 @@ namespace BCD.WinApp
         private void Main_Load(object sender, EventArgs e)
         {
             var client = new CloudDiskManager();
-            this.Text = "超云盘设置(空间："
-                        + ServiceHandler.FormatBytes((long)client.GetCloudDiskCapacityInfo().TotalAvailableByte) + "/"
-                        + ServiceHandler.FormatBytes((long)client.GetCloudDiskCapacityInfo().TotalByte) + ")";
+            //this.Text = "超云盘设置(空间："
+            //            + ServiceHandler.FormatBytes((long)client.GetCloudDiskCapacityInfo().TotalAvailableByte) + "/"
+            //            + ServiceHandler.FormatBytes((long)client.GetCloudDiskCapacityInfo().TotalByte) + ")";
         }
 
         private void groupBox2_Enter(object sender, EventArgs e)

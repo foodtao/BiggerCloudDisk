@@ -227,45 +227,53 @@ namespace BCD.FileSystem
             var root = "G:\\Temp";
 
             var cloudManager = new CloudDiskManager();
-            var cloudRootFiles = cloudManager.GetCloudFileInfo(CloudDiskType.SINA, fileInfo.Path);
-
-            var path = root + fileInfo.LocalPath;
-            if(fileInfo.Path != "/")
+            var cloudFile = cloudManager.GetCloudFileInfo(CloudDiskType.KINGSOFT, fileInfo.Path);
+            if (cloudFile != null)
             {
-                if (fileInfo.IsDir)
+                var path = root + cloudFile.LocalPath;
+
+                if (fileInfo.Path != "/")
                 {
-                    if (Directory.Exists(path))
+                    if (cloudFile.IsDir)
                     {
-                        SyncCloudFileToLocal(cloudRootFiles);
-                    }
-                    else
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-                }
-                else
-                {
-                    var needCreat = false;
-                    if (!File.Exists(path))
-                    {
-                        needCreat = true;
-                    }
-                    else
-                    {
-                        var file = new FileInfo(path);
-                        if (cloudRootFiles.LastModifiedDate.HasValue)
+                        if (!Directory.Exists(path))
                         {
-                            if (file.LastWriteTime < cloudRootFiles.LastModifiedDate)
-                            {
-                                File.Delete(path);
-                                needCreat = true;
-                            }
+                            Directory.CreateDirectory(path);
                         }
                     }
-                    if (needCreat)
+                    else
                     {
-                        var cloudFile = cloudManager.DownloadFile(CloudDiskType.NOT_SPECIFIED, cloudRootFiles.Path);
-                        File.WriteAllBytes(path, cloudFile);
+                        var needCreat = false;
+                        if (!File.Exists(path))
+                        {
+                            needCreat = true;
+                        }
+                        else
+                        {
+                            var file = new FileInfo(path);
+                            if (cloudFile.LastModifiedDate.HasValue)
+                            {
+                                if (file.LastWriteTime < cloudFile.LastModifiedDate)
+                                {
+                                    File.Delete(path);
+                                    needCreat = true;
+                                }
+                            }
+                        }
+                        if (needCreat)
+                        {
+                            var fileContent = cloudManager.DownloadFile(CloudDiskType.NOT_SPECIFIED, cloudFile.Path);
+                            File.WriteAllBytes(path, fileContent);
+                        }
+                    }
+                }
+
+                if (cloudFile != null && cloudFile.Contents != null && cloudFile.Contents.Count > 0)
+                {
+                    foreach (var subFile in cloudFile.Contents)
+                    {
+                        subFile.Path = cloudFile.Path + subFile.name;
+                        SyncCloudFileToLocal(subFile);
                     }
                 }
             }
