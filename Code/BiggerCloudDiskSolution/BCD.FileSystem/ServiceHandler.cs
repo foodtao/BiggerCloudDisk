@@ -88,9 +88,12 @@ namespace BCD.FileSystem
         /// </summary>
         public static void SysToCloud()
         {
-            SyncRemoveFileToCloud();
-            SyncChangeFileToCloud();
-            SyncCloudFileToLocal();
+            //SyncRemoveFileToCloud();
+            //SyncChangeFileToCloud();
+
+            var fileInfo = new CloudFileInfoModel { Path = "/", IsDir = true };
+
+            SyncCloudFileToLocal(fileInfo);
         }
 
         /// <summary>
@@ -191,6 +194,20 @@ namespace BCD.FileSystem
                                         CloudFileUploadType.Create, memFile.FilePath, buffer);
                                     memFiles.Remove(memFile);
                                 }
+                                else
+                                {
+                                    var fileInfo = new FileInfo(root + memFile.FilePath);
+                                    if (cloudFiles.LastModifiedDate.HasValue)
+                                    {
+                                        if (fileInfo.LastWriteTime > cloudFiles.LastModifiedDate)
+                                        {
+                                            var buffer = new byte[fileInfo.Length];
+                                            fileInfo.OpenRead().Read(buffer, 0, (int)fileInfo.Length);
+                                            cloudDisk.UploadFile(
+                                                CloudFileUploadType.Create, memFile.FilePath, buffer);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -205,10 +222,55 @@ namespace BCD.FileSystem
         /// <summary>
         /// 同步云端的文件到本地。
         /// </summary>
-        public static void SyncCloudFileToLocal()
+        public static void SyncCloudFileToLocal(CloudFileInfoModel fileInfo)
         {
+            var root = "G:\\Temp";
 
+            var cloudManager = new CloudDiskManager();
+            var cloudRootFiles = cloudManager.GetCloudFileInfo(CloudDiskType.SINA, fileInfo.Path);
+
+            var path = root + fileInfo.LocalPath;
+            if(fileInfo.Path != "/")
+            {
+                if (fileInfo.IsDir)
+                {
+                    if (Directory.Exists(path))
+                    {
+                        SyncCloudFileToLocal(cloudRootFiles);
+                    }
+                    else
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                }
+                else
+                {
+                    var needCreat = false;
+                    if (!File.Exists(path))
+                    {
+                        needCreat = true;
+                    }
+                    else
+                    {
+                        var file = new FileInfo(path);
+                        if (cloudRootFiles.LastModifiedDate.HasValue)
+                        {
+                            if (file.LastWriteTime < cloudRootFiles.LastModifiedDate)
+                            {
+                                File.Delete(path);
+                                needCreat = true;
+                            }
+                        }
+                    }
+                    if (needCreat)
+                    {
+                        var cloudFile = cloudManager.DownloadFile(CloudDiskType.NOT_SPECIFIED, cloudRootFiles.Path);
+                        File.WriteAllBytes(path, cloudFile);
+                    }
+                }
+            }
         }
+
 
         public static string FormatBytes(long bytes)
         {

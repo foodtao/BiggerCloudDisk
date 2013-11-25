@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LocalDiskPathHelper.cs" />
     <Compile Include="UrlEncoder.cs" />
     <Compile Include="JsonHelper.cs" />
     <Compile Include="PathConverter.cs" />

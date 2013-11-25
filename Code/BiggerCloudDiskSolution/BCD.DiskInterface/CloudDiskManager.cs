@@ -144,7 +144,7 @@ namespace BCD.DiskInterface
             //在传出返回值之前将远程路径的形式替换成本地路径
             if (m != null)
             {
-                m.LocalPath = PathConverter.RemotePathToLocalPath(m.Path);
+                if (m.Path != null) m.LocalPath = PathConverter.RemotePathToLocalPath(m.Path);
             }
             return m;
         }
