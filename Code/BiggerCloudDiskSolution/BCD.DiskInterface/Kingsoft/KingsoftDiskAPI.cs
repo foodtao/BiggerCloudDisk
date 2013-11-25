@@ -314,7 +314,7 @@ namespace BCD.DiskInterface.Kingsoft
                  node = JsonHelper.DeserializeToXmlNode(responseContent.ToString());          
                 CloudFileInfoModel fileInfo = new CloudFileInfoModel();
                 fileInfo.Size = Convert.ToString(node.ChildNodes[0].SelectSingleNode("size").InnerText);
-                fileInfo.Path = filePath;
+                fileInfo.Path = PathConverter.RemotePathToLocalPath(filePath);
                 return fileInfo;
             }
             return null;
@@ -366,7 +366,7 @@ namespace BCD.DiskInterface.Kingsoft
             object jsonAccess = GetGeneralContent(url);
              XmlNode node = JsonHelper.DeserializeToXmlNode(jsonAccess.ToString());
             CloudFileInfoModel fileInfo = new CloudFileInfoModel();
-            fileInfo.Path = Convert.ToString(node.ChildNodes[0].SelectSingleNode("path").InnerText);
+            fileInfo.Path = PathConverter.RemotePathToLocalPath(Convert.ToString(node.ChildNodes[0].SelectSingleNode("path").InnerText));
             return fileInfo;
         }
 
