@@ -171,6 +171,7 @@ namespace BCD.DiskInterface.Kingsoft
                 fileInfo.name = entity.name;
                 fileInfo.LastModifiedDate = Convert.ToDateTime(entity.modify_time);
                 fileInfo.Size = entity.size;
+                fileInfo.Path = entity.path;
                 if (entity.type == "folder")
                 {
                     fileInfo.IsDir = true;

@@ -10,6 +10,7 @@ namespace BCD.FileSystem
     using System.Threading;
 
     using BCD.Model.CloudDisk;
+    using BCD.Utility;
 
     public class ServiceHandler
     {
@@ -68,7 +69,8 @@ namespace BCD.FileSystem
                     //Thread.Sleep(10 * 1000);
 
                     DateTime dataChangeDate1 = DateTime.MinValue;
-                    if (MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate1)) //如果缓存有更新
+                    if (MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate1)
+                        || MemoryFileManager.GetInstance().GetAllFiles().Count == 0) //如果缓存有更新
                     {
                         SysToCloud();
                     }
@@ -142,7 +144,7 @@ namespace BCD.FileSystem
                 MemoryFileManager.GetInstance().GetAllFiles().OrderBy(p => p.FilePath).Where(
                     p => p.FileStatus != FileStatusEnum.Remove).ToList();
             var cloudDisk = new CloudDiskManager();
-            var root = "G:\\Temp";
+            var root = LocalDiskPathHelper.GetPath();
             if (memFiles.Count > 0)
             {
                 while (memFiles.Count > 0)
@@ -224,7 +226,7 @@ namespace BCD.FileSystem
         /// </summary>
         public static void SyncCloudFileToLocal(CloudFileInfoModel fileInfo)
         {
-            var root = "G:\\Temp";
+            var root = LocalDiskPathHelper.GetPath();
 
             var cloudManager = new CloudDiskManager();
             var cloudFile = cloudManager.GetCloudFileInfo(CloudDiskType.KINGSOFT, fileInfo.Path);
@@ -272,6 +274,7 @@ namespace BCD.FileSystem
                 {
                     foreach (var subFile in cloudFile.Contents)
                     {
+                        if (!cloudFile.Path.EndsWith("/")) cloudFile.Path = cloudFile.Path + "/";
                         subFile.Path = cloudFile.Path + subFile.name;
                         SyncCloudFileToLocal(subFile);
                     }

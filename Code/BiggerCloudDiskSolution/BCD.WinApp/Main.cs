@@ -12,6 +12,7 @@ namespace BCD.WinApp
     using BCD.DiskInterface;
     using BCD.FileSystem;
     using BCD.Model.CloudDisk;
+    using BCD.Utility;
 
     using Dokan;
 
@@ -37,18 +38,14 @@ namespace BCD.WinApp
                 opt.MountPoint = "l:\\";
                 opt.VolumeLabel = "超云盘";
                 opt.ThreadCount = 5;
-                if(this.local.Length > 0) DokanNet.DokanMain(opt, new MirrorDisk(this.local));
+                DokanNet.DokanMain(opt, new MirrorDisk(LocalDiskPathHelper.GetPath()));
             };
             _dokanWorker.RunWorkerAsync();
         }
 
         private void btnSetUserSina_Click(object sender, EventArgs e)
         {
-            //var a = MemoryFileManager.GetInstance().GetAllFiles();
-            //var b = 1;
-            CloudDiskManager cloudDiskManager = new CloudDiskManager();
-            var a = cloudDiskManager.GetCloudFileInfo(CloudDiskType.KINGSOFT, "/");
-            var b = 1;
+            
         }
 
         private void btnSetDiskPosition_Click(object sender, EventArgs e)
@@ -59,7 +56,7 @@ namespace BCD.WinApp
             {
                 var folderName = dialog.SelectedPath;
                 tbDiskPostion.Text = folderName.ToString();
-                this.local = folderName.ToString();
+                LocalDiskPathHelper.SetPath(folderName);
             }
         }
 
@@ -88,12 +85,9 @@ namespace BCD.WinApp
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (this.local.Length > 0)
-            {
-                tbDiskPostion.Text = "process";
-                //MountDisk();
-                ServiceHandler.Start();
-            }
+            tbDiskPostion.Text = "process";
+            //MountDisk();
+            ServiceHandler.Start();
         }
     }
 }
