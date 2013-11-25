@@ -36,7 +36,7 @@ namespace BCD.WinApp
                 opt.MountPoint = "l:\\";
                 opt.VolumeLabel = "超云盘";
                 opt.ThreadCount = 5;
-                DokanNet.DokanMain(opt, new MirrorDisk("G:\\Temp"));
+                DokanNet.DokanMain(opt, new MirrorDisk("c:\\dev"));
             };
             _dokanWorker.RunWorkerAsync();
         }
@@ -52,7 +52,7 @@ namespace BCD.WinApp
 
         private void btnSetDiskPosition_Click(object sender, EventArgs e)
         {
-
+            
         }
 
         private void btnSetUserBaidu_Click(object sender, EventArgs e)
@@ -63,6 +63,12 @@ namespace BCD.WinApp
         private void btnSetUserKing_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void Main_Load(object sender, EventArgs e)
+        {
+            var client = new CloudDiskManager();
+            this.Text = "超云盘设置(空间：" + ServiceHandler.FormatBytes((long)client.GetCloudDiskCapacityInfo().TotalByte) + ")";
         }
     }
 }
