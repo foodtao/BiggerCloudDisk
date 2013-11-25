@@ -155,21 +155,23 @@ namespace BCD.DiskInterface.Kingsoft
         {
             String metaUrl=String.Format(this.metadataUrl,remotePath);
             SortedDictionary<string, string> ParamList = getParamList();
-            ParamList.Add("list", "false");
+            ParamList.Add("list", "true");
             string SourceString = GetApiSourceString(metaUrl, ParamList);
             string SecretKey = GetSecretKey();
             string Sign = GetSignature(SourceString, SecretKey);
             ParamList.Add("oauth_signature", Sign);
             string URL = metaUrl + "?" + ParamToUrl(ParamList, false);
-            object jsonAccess=GetGeneralContent(URL);
+            var jsonAccess=GetGeneralContent(URL);
+            var entity = JsonHelper.DeserializeObject<KingsoftResponseFileInfoJsonEntity>(jsonAccess);
             if (jsonAccess != "")
             {
-                XmlNode node = JsonHelper.DeserializeToXmlNode(jsonAccess.ToString());
+              
                 CloudFileInfoModel fileInfo = new CloudFileInfoModel();
-                fileInfo.ID = Convert.ToString(node.ChildNodes[0].SelectSingleNode("file_id").InnerText);
-                fileInfo.name = Convert.ToString(node.ChildNodes[0].SelectSingleNode("name").InnerText);
-                var type = Convert.ToString(node.ChildNodes[0].SelectSingleNode("type").InnerText);
-                if (type == "folder")
+                fileInfo.Hash = entity.hash;
+                fileInfo.name = entity.name;
+                fileInfo.LastModifiedDate = Convert.ToDateTime(entity.modify_time);
+                fileInfo.Size = entity.size;
+                if (entity.type == "folder")
                 {
                     fileInfo.IsDir = true;
                 }
@@ -177,6 +179,31 @@ namespace BCD.DiskInterface.Kingsoft
                 {
                     fileInfo.IsDir = false;
                 }
+
+                if (entity.files != null)
+                {
+                    fileInfo.Contents = new List<CloudFileInfoModel>();
+                    foreach (var oneDir in entity.files)
+                    {
+                        CloudFileInfoModel subDir = new CloudFileInfoModel();
+                     
+                        subDir.LastModifiedDate = Convert.ToDateTime(oneDir.modify_time);
+                        subDir.name = oneDir.name;
+                        subDir.Size = oneDir.size;
+                        if (oneDir.type == "folder")
+                        {
+                            subDir.IsDir = true;
+                        }
+                        else
+                        {
+                            subDir.IsDir = false;
+                        }
+
+
+                        fileInfo.Contents.Add(subDir);
+                    }
+                }
+
                 return fileInfo;
             }
             else
@@ -311,13 +338,15 @@ namespace BCD.DiskInterface.Kingsoft
               
             
                 WebResponse response = request.GetResponse();
-                StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding("gb2312"));
-               
-                MemoryStream stream = (MemoryStream)response.GetResponseStream();
-               returnByte =stream.ToArray();
-              
+                Stream st = response.GetResponseStream();
+                MemoryStream outstream = new MemoryStream();
+                StreamHelper.CopyStream(st, outstream);
+                if (outstream != null)
+                {
+                    returnByte = StreamHelper.StreamToBytes(outstream);
+                }
 
-                response.Close();
+               response.Close();
             }
             catch
             { }

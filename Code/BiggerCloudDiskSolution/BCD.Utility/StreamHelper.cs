@@ -15,7 +15,7 @@ namespace BCD.Utility
         /// <summary> 
         /// 将 Stream 转成 byte[] 
         /// </summary> 
-        public byte[] StreamToBytes(Stream stream)
+        public static byte[] StreamToBytes(Stream stream)
         {
             byte[] bytes = new byte[stream.Length];
             stream.Read(bytes, 0, bytes.Length);
@@ -30,7 +30,7 @@ namespace BCD.Utility
         /// </summary>
         /// <param name="instream"></param>
         /// <param name="outstream"></param>
-        public void CopyStream(Stream instream, Stream outstream)
+        public static void CopyStream(Stream instream, Stream outstream)
         {
             const int bufferLen = 4096;
             byte[] buffer = new byte[bufferLen];
