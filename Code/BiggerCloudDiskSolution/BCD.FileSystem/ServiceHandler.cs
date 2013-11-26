@@ -264,7 +264,7 @@ namespace BCD.FileSystem
                         }
                         if (needCreat)
                         {
-                            var fileContent = cloudManager.DownloadFile(CloudDiskType.NOT_SPECIFIED, cloudFile.Path);
+                            var fileContent = cloudManager.DownloadFile(CloudDiskType.KINGSOFT, cloudFile.Path);
                             File.WriteAllBytes(path, fileContent);
                         }
                     }
@@ -282,7 +282,11 @@ namespace BCD.FileSystem
             }
         }
 
-
+        /// <summary>
+        /// 转换文件大小单位
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
         public static string FormatBytes(long bytes)
         {
             string[] Suffix = { "B", "KB", "MB", "GB", "TB" };

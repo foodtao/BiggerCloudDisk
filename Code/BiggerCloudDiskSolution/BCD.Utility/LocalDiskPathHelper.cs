@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
+﻿using System.IO;
 
 namespace BCD.Utility
 {
@@ -13,7 +9,7 @@ namespace BCD.Utility
     {
         public static string LocalPath = "";
 
-        private static string savedpathFileName = Directory.GetCurrentDirectory() + "\\" + "LocalDiskPath.txt";
+        private static readonly string SavedpathFileName = Directory.GetCurrentDirectory() + "\\" + "LocalDiskPath.txt";
 
         /// <summary>
         /// 设置与网盘同步文件夹路径。
@@ -21,7 +17,7 @@ namespace BCD.Utility
         /// <param name="path"></param>
         public static void SetPath(string path)
         {
-            File.WriteAllText(savedpathFileName, path);
+            File.WriteAllText(SavedpathFileName, path);
         }
 
         /// <summary>
@@ -32,19 +28,23 @@ namespace BCD.Utility
             var path = "";
             if (string.IsNullOrEmpty(LocalPath))
             {
-                if (!File.Exists(savedpathFileName))
+                if (!File.Exists(SavedpathFileName))
                 {
-                    var fs = File.Create(savedpathFileName);
+                    var fs = File.Create(SavedpathFileName);
                     fs.Dispose();
                     fs.Close();
                 }
-                path = File.ReadAllText(savedpathFileName);
+                path = File.ReadAllText(SavedpathFileName);
             }
-            if (!string.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
-                return path;
+                path = "G:\\Temp";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
             }
-            return "G:\\Temp";
+            return path;
         }
 
     }
