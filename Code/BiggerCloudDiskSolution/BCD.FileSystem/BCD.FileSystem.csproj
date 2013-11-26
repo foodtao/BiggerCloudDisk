@@ -58,6 +58,10 @@
       <Project>{7D2E87A6-AE65-4C1E-B78F-B2297D6729A3}</Project>
       <Name>BCD.Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BCD.Utility\BCD.Utility.csproj">
+      <Project>{54948308-4541-430B-996F-21A97370295E}</Project>
+      <Name>BCD.Utility</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

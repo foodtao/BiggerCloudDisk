@@ -10,6 +10,7 @@ using System.IO;
 using System.Net;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Xml;
 
 namespace BCD.DiskInterface.Kingsoft
 {
@@ -23,6 +24,7 @@ namespace BCD.DiskInterface.Kingsoft
         private string fileUploadLocationUrl = "http://api-content.dfs.kuaipan.cn/1/fileops/upload_locate";
         private string fileUploadUrl = "{0}1/fileops/upload_file";
         private string fileDownloadUrl = "http://api-content.dfs.kuaipan.cn/1/fileops/download_file";
+        private string account_infoUrl = "http://openapi.kuaipan.cn/1/account_info";
      
 
         private string _http_method = "GET";
@@ -106,12 +108,12 @@ namespace BCD.DiskInterface.Kingsoft
 
         public string GetLocalStoredAppSeceret()
         {
-            return ConfigurationManager.AppSettings["KINGSOFT_ACCESS_TOKEN"];
+            return ConfigurationManager.AppSettings["KINGSOFT_APP_SECRET"];
         }
 
         public string GetLocalStoredAccessToken()
         {
-            return ConfigurationManager.AppSettings["KINGSOFT_APP_SECRET"];
+            return ConfigurationManager.AppSettings["KINGSOFT_ACCESS_TOKEN"];
         }
 
         public string GetLocalStoredAccessTokenSecret()
@@ -134,35 +136,81 @@ namespace BCD.DiskInterface.Kingsoft
 
         public SingleCloudDiskCapacityModel GetCloudDiskCapacityInfo()
         {
-            return null;
-           
+            SortedDictionary<string, string> ParamList = getParamList();
+            string SourceString =GetApiSourceString(this.account_infoUrl,ParamList);
+            string SecretKey = GetSecretKey();
+            string Sign = GetSignature(SourceString, SecretKey);
+            ParamList.Add("oauth_signature", Sign);
+            string URL = this.account_infoUrl + "?" + ParamToUrl(ParamList, false);
+            object jsonAccess = GetGeneralContent(URL);
+            XmlNode node = JsonHelper.DeserializeToXmlNode(jsonAccess.ToString());
+            SingleCloudDiskCapacityModel fileInfo = new SingleCloudDiskCapacityModel();
+            fileInfo.TotalByte = Convert.ToDouble(node.ChildNodes[0].SelectSingleNode("quota_total").InnerText);
+            var used=Convert.ToDouble(node.ChildNodes[0].SelectSingleNode("quota_used").InnerText);
+            fileInfo.TotalAvailableByte = fileInfo.TotalByte - used;
+            return fileInfo;
         }
 
         public CloudFileInfoModel GetCloudFileInfo(string remotePath)
         {
             String metaUrl=String.Format(this.metadataUrl,remotePath);
             SortedDictionary<string, string> ParamList = getParamList();
-            ParamList.Add("list", "false");
+            ParamList.Add("list", "true");
             string SourceString = GetApiSourceString(metaUrl, ParamList);
             string SecretKey = GetSecretKey();
             string Sign = GetSignature(SourceString, SecretKey);
             ParamList.Add("oauth_signature", Sign);
             string URL = metaUrl + "?" + ParamToUrl(ParamList, false);
-            object jsonAccess=GetGeneralContent(URL);
-            object json = JsonHelper.DeserializeObject(jsonAccess.ToString());
-            Dictionary<string, object> dict = (Dictionary<string, object>)json;
-            CloudFileInfoModel fileInfo = new CloudFileInfoModel();
-            fileInfo.ID = dict["file_id"].ToString();
-            fileInfo.name = dict["name"].ToString();
-            if (dict["type"].ToString() == "folder")
+            var jsonAccess=GetGeneralContent(URL);
+            var entity = JsonHelper.DeserializeObject<KingsoftResponseFileInfoJsonEntity>(jsonAccess);
+            if (jsonAccess != "")
             {
-                fileInfo.IsDir = true;
+              
+                CloudFileInfoModel fileInfo = new CloudFileInfoModel();
+                fileInfo.Hash = entity.hash;
+                fileInfo.name = entity.name;
+                fileInfo.LastModifiedDate = Convert.ToDateTime(entity.modify_time);
+                fileInfo.Size = entity.size;
+                fileInfo.Path = entity.path;
+                if (entity.type == "folder")
+                {
+                    fileInfo.IsDir = true;
+                }
+                else
+                {
+                    fileInfo.IsDir = false;
+                }
+
+                if (entity.files != null)
+                {
+                    fileInfo.Contents = new List<CloudFileInfoModel>();
+                    foreach (var oneDir in entity.files)
+                    {
+                        CloudFileInfoModel subDir = new CloudFileInfoModel();
+                     
+                        subDir.LastModifiedDate = Convert.ToDateTime(oneDir.modify_time);
+                        subDir.name = oneDir.name;
+                        subDir.Size = oneDir.size;
+                        if (oneDir.type == "folder")
+                        {
+                            subDir.IsDir = true;
+                        }
+                        else
+                        {
+                            subDir.IsDir = false;
+                        }
+
+
+                        fileInfo.Contents.Add(subDir);
+                    }
+                }
+
+                return fileInfo;
             }
             else
             {
-                fileInfo.IsDir = false;
+                return null;
             }
-            return fileInfo;
            
         }
 
@@ -171,10 +219,9 @@ namespace BCD.DiskInterface.Kingsoft
             NameValueCollection stringDict = new NameValueCollection();
             stringDict.Add("file", "fileKeyValue");
             object jsonAccess = GetGeneralContent(this.fileUploadLocationUrl);
-            object json = JsonHelper.DeserializeObject(jsonAccess.ToString());
-            Dictionary<string, object> dict = (Dictionary<string, object>)json;
-            String updateUrl = dict["url"].ToString();
-            String status = dict["stat"].ToString();
+            XmlNode node = JsonHelper.DeserializeToXmlNode(jsonAccess.ToString());
+            String updateUrl = Convert.ToString(node.ChildNodes[0].SelectSingleNode("url").InnerText);
+            String status = Convert.ToString(node.ChildNodes[0].SelectSingleNode("stat").InnerText);
             if (status.Equals("OK"))
             {
                 String Url = string.Format(this.fileUploadUrl, updateUrl);
@@ -265,12 +312,10 @@ namespace BCD.DiskInterface.Kingsoft
 
                 httpWebResponse.Close();
                 webRequest.Abort();
-
-                object jsonResult = JsonHelper.DeserializeObject(responseContent.ToString());
-                Dictionary<string, object> dictResult = (Dictionary<string, object>)jsonResult;
+                 node = JsonHelper.DeserializeToXmlNode(responseContent.ToString());          
                 CloudFileInfoModel fileInfo = new CloudFileInfoModel();
-                fileInfo.Size = dictResult["size"].ToString();
-                fileInfo.Path = filePath;
+                fileInfo.Size = Convert.ToString(node.ChildNodes[0].SelectSingleNode("size").InnerText);
+                fileInfo.Path = PathConverter.RemotePathToLocalPath(filePath);
                 return fileInfo;
             }
             return null;
@@ -289,14 +334,16 @@ namespace BCD.DiskInterface.Kingsoft
             byte[] returnByte = null;
             try
             {
-                WebRequest request = WebRequest.Create(url);
-                WebResponse response = request.GetResponse();
-             
-                MemoryStream stream = (MemoryStream)response.GetResponseStream();
-               returnByte =stream.ToArray();
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.CookieContainer = new CookieContainer();
               
-
-                response.Close();
+            
+                WebResponse response = request.GetResponse();
+                Stream st = response.GetResponseStream();
+                long length = response.ContentLength;
+                returnByte = new byte[length];
+                st.Read(returnByte, 0, (int)length);
+               response.Close();
             }
             catch
             { }
@@ -314,10 +361,9 @@ namespace BCD.DiskInterface.Kingsoft
             ParamList.Add("oauth_signature", Sign);
             string url = this.createFolderUrl + "?" + ParamToUrl(ParamList, false);
             object jsonAccess = GetGeneralContent(url);
-            object json = JsonHelper.DeserializeObject(jsonAccess.ToString());
-            Dictionary<string, object> dict = (Dictionary<string, object>)json;
+             XmlNode node = JsonHelper.DeserializeToXmlNode(jsonAccess.ToString());
             CloudFileInfoModel fileInfo = new CloudFileInfoModel();
-            fileInfo.Path = dict["path"].ToString();
+            fileInfo.Path = PathConverter.RemotePathToLocalPath(Convert.ToString(node.ChildNodes[0].SelectSingleNode("path").InnerText));
             return fileInfo;
         }
 

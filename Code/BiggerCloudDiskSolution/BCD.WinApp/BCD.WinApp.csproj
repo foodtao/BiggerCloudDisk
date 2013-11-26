@@ -58,6 +58,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Main.resx">
+      <DependentUpon>Main.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -91,6 +94,10 @@
     <ProjectReference Include="..\BCD.Model\BCD.Model.csproj">
       <Project>{7D2E87A6-AE65-4C1E-B78F-B2297D6729A3}</Project>
       <Name>BCD.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BCD.Utility\BCD.Utility.csproj">
+      <Project>{54948308-4541-430B-996F-21A97370295E}</Project>
+      <Name>BCD.Utility</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

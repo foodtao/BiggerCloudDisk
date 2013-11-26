@@ -53,6 +53,7 @@
             this.btnSetDiskPosition = new System.Windows.Forms.Button();
             this.tbDiskPostion = new System.Windows.Forms.TextBox();
             this.fbdDiskPosition = new System.Windows.Forms.FolderBrowserDialog();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -273,6 +274,7 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.lblDiskSize);
             this.groupBox2.Controls.Add(this.btnSetDiskPosition);
             this.groupBox2.Controls.Add(this.tbDiskPostion);
@@ -295,9 +297,9 @@
             // 
             // btnSetDiskPosition
             // 
-            this.btnSetDiskPosition.Location = new System.Drawing.Point(300, 32);
+            this.btnSetDiskPosition.Location = new System.Drawing.Point(328, 27);
             this.btnSetDiskPosition.Name = "btnSetDiskPosition";
-            this.btnSetDiskPosition.Size = new System.Drawing.Size(75, 23);
+            this.btnSetDiskPosition.Size = new System.Drawing.Size(76, 21);
             this.btnSetDiskPosition.TabIndex = 1;
             this.btnSetDiskPosition.Text = "设置";
             this.btnSetDiskPosition.UseVisualStyleBackColor = true;
@@ -306,11 +308,21 @@
             // tbDiskPostion
             // 
             this.tbDiskPostion.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tbDiskPostion.Location = new System.Drawing.Point(7, 33);
+            this.tbDiskPostion.Location = new System.Drawing.Point(113, 27);
             this.tbDiskPostion.Name = "tbDiskPostion";
             this.tbDiskPostion.ReadOnly = true;
-            this.tbDiskPostion.Size = new System.Drawing.Size(270, 21);
+            this.tbDiskPostion.Size = new System.Drawing.Size(204, 21);
             this.tbDiskPostion.TabIndex = 0;
+            this.tbDiskPostion.Click += new System.EventHandler(this.tbDiskPostion_Click);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(8, 30);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(101, 12);
+            this.label7.TabIndex = 3;
+            this.label7.Text = "本地文件夹位置：";
             // 
             // Main
             // 
@@ -322,6 +334,7 @@
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "超云盘设置(空间：1G/100G)";
+            this.Load += new System.EventHandler(this.Main_Load);
             this.groupBox1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
@@ -363,6 +376,7 @@
         private System.Windows.Forms.TextBox tbDiskPostion;
         private System.Windows.Forms.FolderBrowserDialog fbdDiskPosition;
         private System.Windows.Forms.Label lblDiskSize;
+        private System.Windows.Forms.Label label7;
 
     }
 }

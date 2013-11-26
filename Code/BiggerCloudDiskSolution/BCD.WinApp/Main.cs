@@ -9,9 +9,11 @@ using System.Windows.Forms;
 
 namespace BCD.WinApp
 {
+    using System.IO;
+
     using BCD.DiskInterface;
     using BCD.FileSystem;
-    using BCD.Model.CloudDisk;
+    using BCD.Utility;
 
     using Dokan;
 
@@ -20,10 +22,6 @@ namespace BCD.WinApp
         public Main()
         {
             InitializeComponent();
-            MountDisk();
-
-            //MemoryFileManagerThead.Start();
-            ServiceHandler.Start();
         }
 
         private void MountDisk()
@@ -31,28 +29,36 @@ namespace BCD.WinApp
             BackgroundWorker _dokanWorker = new BackgroundWorker();
             _dokanWorker.DoWork += delegate
             {
-                DokanOptions opt = new DokanOptions();
-                opt.DebugMode = true;
-                opt.MountPoint = "l:\\";
-                opt.VolumeLabel = "超云盘";
-                opt.ThreadCount = 5;
-                DokanNet.DokanMain(opt, new MirrorDisk("G:\\Temp"));
+                try
+                {
+                    DokanOptions opt = new DokanOptions();
+                    opt.DebugMode = true;
+                    opt.MountPoint = "l:\\";
+                    opt.VolumeLabel = "超云盘";
+                    opt.ThreadCount = 5;
+                    DokanNet.DokanMain(opt, new MirrorDisk(LocalDiskPathHelper.GetPath()));
+                }
+                catch
+                {
+                }
             };
             _dokanWorker.RunWorkerAsync();
         }
 
         private void btnSetUserSina_Click(object sender, EventArgs e)
         {
+<<<<<<< HEAD
             //var a = MemoryFileManager.GetInstance().GetAllFiles();
             //var b = 1;
             CloudDiskManager cloudDiskManager = new CloudDiskManager();
             //var a = cloudDiskManager.GetCloudFileInfo(CloudDiskType.KINGSOFT, "/");
             var b = 1;
-        }
+=======
+            var fileInfo = new FileInfo("G:\\Temp\\test2.txt");
+            var buffer = new byte[fileInfo.Length];
+            fileInfo.OpenRead().Read(buffer, 0, (int)fileInfo.Length);
 
-        private void btnSetDiskPosition_Click(object sender, EventArgs e)
-        {
-
+>>>>>>> 382719eb73b7fa4c59890dd1ef49929d911f9a15
         }
 
         private void btnSetUserBaidu_Click(object sender, EventArgs e)
@@ -64,5 +70,61 @@ namespace BCD.WinApp
         {
 
         }
+
+        /// <summary>
+        /// 点击设置按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnSetDiskPosition_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(tbDiskPostion.Text))
+            {
+                LocalDiskPathHelper.SetPath(tbDiskPostion.Text);
+                MessageBox.Show(@"设置成功");
+            }
+            else
+            {
+                MessageBox.Show(@"请点击左侧的输入框选择文件夹！");
+            }
+        }
+
+        /// <summary>
+        /// 主窗体加载
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Main_Load(object sender, EventArgs e)
+        {
+            tbDiskPostion.Text = LocalDiskPathHelper.GetPath();
+
+            if (!string.IsNullOrEmpty(LocalDiskPathHelper.GetPath()))
+            {
+                ServiceHandler.Start();
+            }
+            MountDisk();
+
+            var client = new CloudDiskManager();
+            var diskSpace = client.GetCloudDiskCapacityInfo();
+            this.Text = "超云盘设置(空间："
+                        + ServiceHandler.FormatBytes((long)(diskSpace.TotalByte - diskSpace.TotalAvailableByte)) + "/"
+                        + ServiceHandler.FormatBytes((long)client.GetCloudDiskCapacityInfo().TotalByte) + ")";
+        }
+
+        /// <summary>
+        /// 点击设置按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tbDiskPostion_Click(object sender, EventArgs e)
+        {
+            var dialog = new FolderBrowserDialog { Description = @"请选择文件路径" };
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                var folderName = dialog.SelectedPath;
+                tbDiskPostion.Text = folderName;
+            }
+        }
+
     }
 }
