@@ -109,6 +109,7 @@ namespace BCD.WinApp
                         + ServiceHandler.FormatBytes((long)client.GetCloudDiskCapacityInfo().TotalByte) + ")";
         }
 
+
         /// <summary>
         /// 点击设置按钮
         /// </summary>

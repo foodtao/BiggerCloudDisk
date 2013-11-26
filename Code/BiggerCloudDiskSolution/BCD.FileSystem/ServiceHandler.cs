@@ -64,6 +64,7 @@ namespace BCD.FileSystem
         {
             //while (true)
             //{
+
             try
             {
                 Thread.Sleep(10 * 1000);
@@ -90,7 +91,19 @@ namespace BCD.FileSystem
                         dataChangeDate2 = DateTime.MinValue;
                         if (dataChangeDate1 == dataChangeDate2)
                         {
-                            MemoryFileManager.GetInstance().SetCacheStatus(false);
+                            //Thread.Sleep(10 * 1000);
+
+                            dataChangeDate1 = DateTime.MinValue;
+                            if (MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate1)
+                                || MemoryFileManager.GetInstance().GetAllFiles().Count == 0) //如果缓存有更新
+                            {
+                                SysToCloud();
+                            }
+                            dataChangeDate2 = DateTime.MinValue;
+                            if (dataChangeDate1 == dataChangeDate2)
+                            {
+                                MemoryFileManager.GetInstance().SetCacheStatus(false);
+                            }
                         }
                     }
                     catch { }
@@ -231,11 +244,7 @@ namespace BCD.FileSystem
                     }
                     catch (Exception)
                     {
-
-
-
                         memFiles.Remove(memFile);
-
                     }
                 }
             }
@@ -301,6 +310,9 @@ namespace BCD.FileSystem
                 }
             }
         }
+
+
+
 
         /// <summary>
         /// 转换文件大小单位
