@@ -64,7 +64,6 @@ namespace BCD.FileSystem
         {
             //while (true)
             //{
-<<<<<<< HEAD
             try
             {
                 Thread.Sleep(10 * 1000);
@@ -78,23 +77,23 @@ namespace BCD.FileSystem
                 if (dataChangeDate1 == dataChangeDate2)
                 {
                     MemoryFileManager.GetInstance().SetCacheStatus(false);
-=======
-                try
-                {
-                    //Thread.Sleep(10 * 1000);
+                    try
+                    {
+                        //Thread.Sleep(10 * 1000);
 
-                    DateTime dataChangeDate1 = DateTime.MinValue;
-                    if (MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate1)
-                        || MemoryFileManager.GetInstance().GetAllFiles().Count == 0) //如果缓存有更新
-                    {
-                        SysToCloud();
+                        dataChangeDate1 = DateTime.MinValue;
+                        if (MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate1)
+                            || MemoryFileManager.GetInstance().GetAllFiles().Count == 0) //如果缓存有更新
+                        {
+                            SysToCloud();
+                        }
+                        dataChangeDate2 = DateTime.MinValue;
+                        if (dataChangeDate1 == dataChangeDate2)
+                        {
+                            MemoryFileManager.GetInstance().SetCacheStatus(false);
+                        }
                     }
-                    DateTime dataChangeDate2 = DateTime.MinValue;
-                    if (dataChangeDate1 == dataChangeDate2)
-                    {
-                        MemoryFileManager.GetInstance().SetCacheStatus(false);
-                    }
->>>>>>> 382719eb73b7fa4c59890dd1ef49929d911f9a15
+                    catch { }
                 }
             }
             catch
@@ -232,11 +231,11 @@ namespace BCD.FileSystem
                     }
                     catch (Exception)
                     {
-<<<<<<< HEAD
 
-=======
+
+
                         memFiles.Remove(memFile);
->>>>>>> 382719eb73b7fa4c59890dd1ef49929d911f9a15
+
                     }
                 }
             }
@@ -250,7 +249,7 @@ namespace BCD.FileSystem
             var root = LocalDiskPathHelper.GetPath();
 
             var cloudManager = new CloudDiskManager();
-            var cloudFile = cloudManager.GetCloudFileInfo(CloudDiskType.KINGSOFT, fileInfo.Path);
+            var cloudFile = cloudManager.GetCloudFileInfo(CloudDiskType.KINGSOFT, false, fileInfo.Path);
             if (cloudFile != null)
             {
                 var path = root + cloudFile.LocalPath;

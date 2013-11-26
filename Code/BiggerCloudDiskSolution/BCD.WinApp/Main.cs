@@ -47,18 +47,16 @@ namespace BCD.WinApp
 
         private void btnSetUserSina_Click(object sender, EventArgs e)
         {
-<<<<<<< HEAD
             //var a = MemoryFileManager.GetInstance().GetAllFiles();
             //var b = 1;
             CloudDiskManager cloudDiskManager = new CloudDiskManager();
             //var a = cloudDiskManager.GetCloudFileInfo(CloudDiskType.KINGSOFT, "/");
             var b = 1;
-=======
+
             var fileInfo = new FileInfo("G:\\Temp\\test2.txt");
             var buffer = new byte[fileInfo.Length];
             fileInfo.OpenRead().Read(buffer, 0, (int)fileInfo.Length);
 
->>>>>>> 382719eb73b7fa4c59890dd1ef49929d911f9a15
         }
 
         private void btnSetUserBaidu_Click(object sender, EventArgs e)
