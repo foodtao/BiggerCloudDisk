@@ -63,23 +63,23 @@ namespace BCD.FileSystem
         {
             //while (true)
             //{
-                try
-                {
-                    Thread.Sleep(10 * 1000);
+            try
+            {
+                Thread.Sleep(10 * 1000);
 
-                    DateTime dataChangeDate1 = DateTime.MinValue;
-                    if (MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate1)) //如果缓存有更新
-                    {
-                        SysToCloud();
-                    }
-                    DateTime dataChangeDate2 = DateTime.MinValue;
-                    if (dataChangeDate1 == dataChangeDate2)
-                    {
-                        MemoryFileManager.GetInstance().SetCacheStatus(false);
-                    }
+                DateTime dataChangeDate1 = DateTime.MinValue;
+                if (MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate1)) //如果缓存有更新
+                {
+                    SysToCloud();
                 }
-                catch
-                { }
+                DateTime dataChangeDate2 = DateTime.MinValue;
+                if (dataChangeDate1 == dataChangeDate2)
+                {
+                    MemoryFileManager.GetInstance().SetCacheStatus(false);
+                }
+            }
+            catch
+            { }
             //}
         }
 
@@ -123,7 +123,7 @@ namespace BCD.FileSystem
                     }
                     catch
                     {
-                        
+
                     }
                 }
             }
@@ -156,7 +156,7 @@ namespace BCD.FileSystem
                             }
                             else
                             {
-                                var cloudFiles = cloudDisk.GetCloudFileInfo(CloudDiskType.KINGSOFT, memFile.FilePath);
+                                var cloudFiles = cloudDisk.GetCloudFileInfo(CloudDiskType.KINGSOFT, true, memFile.FilePath);
                                 if (cloudFiles == null)
                                 {
                                     cloudDisk.CreateDirectory(memFile.FilePath);
@@ -177,7 +177,7 @@ namespace BCD.FileSystem
                             }
                             else
                             {
-                                var cloudFiles = cloudDisk.GetCloudFileInfo(CloudDiskType.KINGSOFT, memFile.FilePath);
+                                var cloudFiles = cloudDisk.GetCloudFileInfo(CloudDiskType.KINGSOFT, false, memFile.FilePath);
                                 if (cloudFiles == null)
                                 {
                                     var fileInfo = new FileInfo(root + memFile.FilePath);
@@ -191,7 +191,7 @@ namespace BCD.FileSystem
                     }
                     catch (Exception)
                     {
-                        
+
                     }
                 }
             }

@@ -30,7 +30,7 @@ namespace BCD.Test.CloudDisk
         public void GetDirInfo()
         {
             CloudDiskManager m = new CloudDiskManager();
-            var result = m.GetCloudFileInfo(CloudDiskType.SINA, "/");
+            var result = m.GetCloudFileInfo(CloudDiskType.SINA, true, "/");
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace BCD.Test.CloudDisk
         public void CreateDir()
         {
             CloudDiskManager m = new CloudDiskManager();
-            var result = m.CreateDirectory("\\1asdf\\23");
+            var result = m.CreateDirectory("\\123\\asdf3\\afd");
         }
 
         [TestMethod]

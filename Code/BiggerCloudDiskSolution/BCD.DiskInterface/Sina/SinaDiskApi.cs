@@ -298,7 +298,7 @@ namespace BCD.DiskInterface.Sina
             IDictionary<string, string> postParameters = new Dictionary<string, string>();
             postParameters.Add("access_token", _accessToken);
             postParameters.Add("root", "sandbox");
-            postParameters.Add("path", UrlEncoder.UrlEncode(dir));
+            postParameters.Add("path", dir);
             CloudFileInfoModel m = new CloudFileInfoModel();
             try
             {
