@@ -62,56 +62,29 @@ namespace BCD.FileSystem
         /// </summary>
         public static void CheckFile()
         {
-            //while (true)
-            //{
-
-            try
+            while (true)
             {
-                Thread.Sleep(10 * 1000);
+                try
+                {
+                    Thread.Sleep(10 * 1000);
 
-                DateTime dataChangeDate1 = DateTime.MinValue;
-                if (MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate1)) //如果缓存有更新
-                {
-                    SysToCloud();
-                }
-                DateTime dataChangeDate2 = DateTime.MinValue;
-                if (dataChangeDate1 == dataChangeDate2)
-                {
-                    MemoryFileManager.GetInstance().SetCacheStatus(false);
-                    try
+                    DateTime dataChangeDate1 = DateTime.MinValue;
+                    if (MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate1)
+                        || MemoryFileManager.GetInstance().GetAllFiles().Count == 0) //如果缓存有更新
                     {
-                        //Thread.Sleep(10 * 1000);
-
-                        dataChangeDate1 = DateTime.MinValue;
-                        if (MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate1)
-                            || MemoryFileManager.GetInstance().GetAllFiles().Count == 0) //如果缓存有更新
-                        {
-                            SysToCloud();
-                        }
-                        dataChangeDate2 = DateTime.MinValue;
-                        if (dataChangeDate1 == dataChangeDate2)
-                        {
-                            //Thread.Sleep(10 * 1000);
-
-                            dataChangeDate1 = DateTime.MinValue;
-                            if (MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate1)
-                                || MemoryFileManager.GetInstance().GetAllFiles().Count == 0) //如果缓存有更新
-                            {
-                                SysToCloud();
-                            }
-                            dataChangeDate2 = DateTime.MinValue;
-                            if (dataChangeDate1 == dataChangeDate2)
-                            {
-                                MemoryFileManager.GetInstance().SetCacheStatus(false);
-                            }
-                        }
+                        SysToCloud();
                     }
-                    catch { }
+                    DateTime dataChangeDate2 = DateTime.MinValue;
+                    MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate2);
+                    if (dataChangeDate1 == dataChangeDate2)
+                    {
+                        MemoryFileManager.GetInstance().SetCacheStatus(false);
+                    }
+                }
+                catch
+                {
                 }
             }
-            catch
-            { }
-            //}
         }
 
         /// <summary>
@@ -119,8 +92,8 @@ namespace BCD.FileSystem
         /// </summary>
         public static void SysToCloud()
         {
-            //SyncRemoveFileToCloud();
-            //SyncChangeFileToCloud();
+            SyncRemoveFileToCloud();
+            SyncChangeFileToCloud();
 
             var fileInfo = new CloudFileInfoModel { Path = "/", IsDir = true };
 
@@ -188,15 +161,13 @@ namespace BCD.FileSystem
                                 cloudDisk.CreateDirectory(memFile.FilePath);
                                 memFile.FileStatus = FileStatusEnum.Normal;
                                 MemoryFileManager.GetInstance().SetFile(memFile);
-                                memFiles.Remove(memFile);
                             }
                             else
                             {
-                                var cloudFiles = cloudDisk.GetCloudFileInfo(CloudDiskType.KINGSOFT, true, memFile.FilePath);
+                                var cloudFiles = cloudDisk.GetCloudFileInfo(CloudDiskType.NOT_SPECIFIED, true, memFile.FilePath);
                                 if (cloudFiles == null)
                                 {
                                     cloudDisk.CreateDirectory(memFile.FilePath);
-                                    memFiles.Remove(memFile);
                                 }
                             }
                         }
@@ -211,11 +182,10 @@ namespace BCD.FileSystem
                                     CloudFileUploadType.Create, memFile.FilePath, buffer);
                                 memFile.FileStatus = FileStatusEnum.Normal;
                                 MemoryFileManager.GetInstance().SetFile(memFile);
-                                memFiles.Remove(memFile);
                             }
                             else
                             {
-                                var cloudFiles = cloudDisk.GetCloudFileInfo(CloudDiskType.KINGSOFT, false, memFile.FilePath);
+                                var cloudFiles = cloudDisk.GetCloudFileInfo(CloudDiskType.NOT_SPECIFIED, false, memFile.FilePath);
                                 if (cloudFiles == null)
                                 {
                                     var fileInfo = new FileInfo(root + memFile.FilePath);
@@ -223,7 +193,6 @@ namespace BCD.FileSystem
                                     fileInfo.OpenRead().Read(buffer, 0, (int)fileInfo.Length);
                                     cloudDisk.UploadFile(
                                         CloudFileUploadType.Create, memFile.FilePath, buffer);
-                                    memFiles.Remove(memFile);
                                 }
                                 else
                                 {
@@ -241,6 +210,7 @@ namespace BCD.FileSystem
                                 }
                             }
                         }
+                        memFiles.Remove(memFile);
                     }
                     catch (Exception)
                     {
@@ -258,7 +228,7 @@ namespace BCD.FileSystem
             var root = LocalDiskPathHelper.GetPath();
 
             var cloudManager = new CloudDiskManager();
-            var cloudFile = cloudManager.GetCloudFileInfo(CloudDiskType.KINGSOFT, false, fileInfo.Path);
+            var cloudFile = cloudManager.GetCloudFileInfo(CloudDiskType.NOT_SPECIFIED, fileInfo.IsDir, fileInfo.Path);
             if (cloudFile != null)
             {
                 var path = root + cloudFile.LocalPath;
@@ -293,7 +263,7 @@ namespace BCD.FileSystem
                         }
                         if (needCreat)
                         {
-                            var fileContent = cloudManager.DownloadFile(CloudDiskType.KINGSOFT, cloudFile.Path);
+                            var fileContent = cloudManager.DownloadFile(CloudDiskType.NOT_SPECIFIED, cloudFile.Path);
                             File.WriteAllBytes(path, fileContent);
                         }
                     }

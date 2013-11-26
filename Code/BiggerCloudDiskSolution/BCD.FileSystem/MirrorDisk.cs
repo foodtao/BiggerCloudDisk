@@ -265,12 +265,13 @@ namespace BCD.FileSystem
         {
             try
             {
-                var diskManager = new CloudDiskManager();
-                var space = diskManager.GetCloudDiskCapacityInfo();
-                totalBytes = (ulong)space.TotalByte * 1024 * 1024;
-                freeBytesAvailable = (ulong)space.TotalAvailableByte * 1024 * 1024;
-                totalFreeBytes = (ulong)space.TotalAvailableByte * 1024 * 1024;
-
+                var space = (Model.CloudDisk.CloudDiskCapacityModel)AppDomain.CurrentDomain.GetData("diskspace");
+                if (space != null)
+                {
+                    totalBytes = (ulong)space.TotalByte;
+                    freeBytesAvailable = (ulong)space.TotalAvailableByte;
+                    totalFreeBytes = (ulong)space.TotalAvailableByte;
+                }
                 if (totalBytes == 0)
                 {
                     totalBytes = 1024 * 1024 * 1024;

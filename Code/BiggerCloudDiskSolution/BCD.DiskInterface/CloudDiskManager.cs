@@ -66,22 +66,26 @@ namespace BCD.DiskInterface
             double min = 9999999999999999999;
             foreach (ICloudDiskAPI api in _loadedCloudDiskApi)
             {
-                var tmpM = api.GetCloudDiskCapacityInfo();
-                if (tmpM == null)
+                try
                 {
-                    //返回全是0的对象
-                    return new CloudDiskCapacityModel();
+                    var tmpM = api.GetCloudDiskCapacityInfo();
+                    if (tmpM == null)
+                    {
+                        //返回全是0的对象
+                        return new CloudDiskCapacityModel();
+                    }
+                    if (tmpM.TotalAvailableByte > max)
+                    {
+                        max = tmpM.TotalAvailableByte;
+                    }
+                    if (tmpM.TotalAvailableByte < min)
+                    {
+                        min = tmpM.TotalAvailableByte;
+                    }
+                    total += tmpM.TotalByte;
+                    totalAvailable += tmpM.TotalAvailableByte;
                 }
-                if (tmpM.TotalAvailableByte > max)
-                {
-                    max = tmpM.TotalAvailableByte;
-                }
-                if (tmpM.TotalAvailableByte < min)
-                {
-                    min = tmpM.TotalAvailableByte;
-                }
-                total += tmpM.TotalByte;
-                totalAvailable += tmpM.TotalAvailableByte;
+                catch { }
             }
             m.MaxAvailableByte = max;
             m.MinAvailableByte = min;
@@ -117,6 +121,10 @@ namespace BCD.DiskInterface
                             if (m == null)
                             {
                                 m = new CloudFileInfoModel();
+                                m.Path = tmp_dir.Path;
+                                m.name = tmp_dir.name;
+                                m.IsDir = tmp_dir.IsDir;
+                                m.LastModifiedDate = tmp_dir.LastModifiedDate;
                                 m.Contents = new List<CloudFileInfoModel>();
                             }
                             //将每个找到网盘的子目录和子文件都加入到返回值m里去.
@@ -142,7 +150,7 @@ namespace BCD.DiskInterface
                             if (m != null)
                             {
                                 //第一个找到就返回
-                                return m;
+                                break;
                             }
                         }
                         if (m == null)

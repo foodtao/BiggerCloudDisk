@@ -47,15 +47,7 @@ namespace BCD.WinApp
 
         private void btnSetUserSina_Click(object sender, EventArgs e)
         {
-            //var a = MemoryFileManager.GetInstance().GetAllFiles();
-            //var b = 1;
-            CloudDiskManager cloudDiskManager = new CloudDiskManager();
-            //var a = cloudDiskManager.GetCloudFileInfo(CloudDiskType.KINGSOFT, "/");
-            var b = 1;
 
-            var fileInfo = new FileInfo("G:\\Temp\\test2.txt");
-            var buffer = new byte[fileInfo.Length];
-            fileInfo.OpenRead().Read(buffer, 0, (int)fileInfo.Length);
 
         }
 
@@ -94,19 +86,29 @@ namespace BCD.WinApp
         /// <param name="e"></param>
         private void Main_Load(object sender, EventArgs e)
         {
-            tbDiskPostion.Text = LocalDiskPathHelper.GetPath();
-
-            if (!string.IsNullOrEmpty(LocalDiskPathHelper.GetPath()))
+            try
             {
-                ServiceHandler.Start();
-            }
-            MountDisk();
+                tbDiskPostion.Text = LocalDiskPathHelper.GetPath();
 
-            var client = new CloudDiskManager();
-            var diskSpace = client.GetCloudDiskCapacityInfo();
-            this.Text = "超云盘设置(空间："
-                        + ServiceHandler.FormatBytes((long)(diskSpace.TotalByte - diskSpace.TotalAvailableByte)) + "/"
-                        + ServiceHandler.FormatBytes((long)client.GetCloudDiskCapacityInfo().TotalByte) + ")";
+                var client = new CloudDiskManager();
+                var diskSpace = client.GetCloudDiskCapacityInfo();
+                AppDomain.CurrentDomain.SetData("diskspace", diskSpace);
+                this.Text = "超云盘设置(空间："
+                            + ServiceHandler.FormatBytes((long)(diskSpace.TotalByte - diskSpace.TotalAvailableByte)) + "/"
+                            + ServiceHandler.FormatBytes((long)diskSpace.TotalByte) + ")";
+
+                if (!string.IsNullOrEmpty(LocalDiskPathHelper.GetPath()))
+                {
+                    ServiceHandler.Start();
+                }
+
+                MountDisk();
+            }
+            catch (Exception ex)
+            {
+                
+            }
+
         }
 
 
@@ -123,6 +125,12 @@ namespace BCD.WinApp
                 var folderName = dialog.SelectedPath;
                 tbDiskPostion.Text = folderName;
             }
+        }
+
+        private void Main_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            DokanNet.DokanRemoveMountPoint("l:\\");
+            Application.Exit();
         }
 
     }

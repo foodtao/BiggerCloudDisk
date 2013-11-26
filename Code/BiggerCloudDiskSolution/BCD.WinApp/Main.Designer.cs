@@ -49,11 +49,11 @@
             this.tbUserNameKing = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.lblDiskSize = new System.Windows.Forms.Label();
             this.btnSetDiskPosition = new System.Windows.Forms.Button();
             this.tbDiskPostion = new System.Windows.Forms.TextBox();
             this.fbdDiskPosition = new System.Windows.Forms.FolderBrowserDialog();
-            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -285,6 +285,15 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "同步位置";
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(8, 30);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(101, 12);
+            this.label7.TabIndex = 3;
+            this.label7.Text = "本地文件夹位置：";
+            // 
             // lblDiskSize
             // 
             this.lblDiskSize.AutoSize = true;
@@ -315,15 +324,6 @@
             this.tbDiskPostion.TabIndex = 0;
             this.tbDiskPostion.Click += new System.EventHandler(this.tbDiskPostion_Click);
             // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(8, 30);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(101, 12);
-            this.label7.TabIndex = 3;
-            this.label7.Text = "本地文件夹位置：";
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -331,9 +331,11 @@
             this.ClientSize = new System.Drawing.Size(430, 285);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
+            this.MaximizeBox = false;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "超云盘设置(空间：1G/100G)";
+            this.Text = "超云盘设置";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Main_FormClosed);
             this.Load += new System.EventHandler(this.Main_Load);
             this.groupBox1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
