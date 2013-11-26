@@ -340,13 +340,9 @@ namespace BCD.DiskInterface.Kingsoft
             
                 WebResponse response = request.GetResponse();
                 Stream st = response.GetResponseStream();
-                MemoryStream outstream = new MemoryStream();
-                StreamHelper.CopyStream(st, outstream);
-                if (outstream != null)
-                {
-                    returnByte = StreamHelper.StreamToBytes(outstream);
-                }
-
+                long length = response.ContentLength;
+                returnByte = new byte[length];
+                st.Read(returnByte, 0, (int)length);
                response.Close();
             }
             catch
