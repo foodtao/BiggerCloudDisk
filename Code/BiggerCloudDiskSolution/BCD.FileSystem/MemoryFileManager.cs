@@ -23,16 +23,6 @@ namespace BCD.FileSystem
 
         private static List<MemoryFile> memoryFiles = new List<MemoryFile>();
 
-        /// <summary>
-        /// 是否数据发生变化。
-        /// </summary>
-        private static bool IsDataChange = false;
-
-        /// <summary>
-        /// 数据变化的时间。
-        /// </summary>
-        private static DateTime DataChangeDate = DateTime.MinValue;
-
         public static MemoryFileManager GetInstance()
         {
             if (memoryFileManager == null)
@@ -61,8 +51,6 @@ namespace BCD.FileSystem
                 if (file == null)
                 {
                     memoryFiles.Add(memoryFile);
-                    IsDataChange = true;
-                    DataChangeDate = DateTime.Now;
                 }
                 else
                 {
@@ -82,38 +70,24 @@ namespace BCD.FileSystem
                             }
                         }
                     }
-                    if (file.FileStatus != FileStatusEnum.Normal)
-                    {
-                        IsDataChange = true;
-                        DataChangeDate = DateTime.Now;
-                    }
                 }
             }
         }
 
         /// <summary>
-        /// 设置缓存状态
-        /// </summary>
-        /// <param name="isDataChange"></param>
-        public void SetCacheStatus(bool isDataChange)
-        {
-            lock (memoryFiles)
-            {
-                IsDataChange = isDataChange;
-                DataChangeDate = DateTime.Now;
-            }
-        }
-
-        /// <summary>
-        /// 获取缓存状态
+        /// 是否需要同步
         /// </summary>
         /// <returns></returns>
-        public bool GetCacheStatus(out DateTime dateTime)
+        public bool IsNeedSync()
         {
             lock (memoryFiles)
             {
-                dateTime = DataChangeDate;
-                return IsDataChange;
+                var needSyncFiles = memoryFiles.Where(p => p.FileStatus != FileStatusEnum.Normal).ToList();
+                if (needSyncFiles != null && needSyncFiles.Count > 0)
+                {
+                    return true;
+                }
+                return false;
             }
         }
 

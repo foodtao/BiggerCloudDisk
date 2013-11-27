@@ -71,6 +71,8 @@ namespace BCD.WinApp
             if (!string.IsNullOrEmpty(tbDiskPostion.Text))
             {
                 LocalDiskPathHelper.SetPath(tbDiskPostion.Text);
+                DokanNet.DokanRemoveMountPoint("l:\\");
+                MountDisk();
                 MessageBox.Show(@"设置成功");
             }
             else
@@ -106,7 +108,7 @@ namespace BCD.WinApp
             }
             catch (Exception ex)
             {
-                
+
             }
 
         }

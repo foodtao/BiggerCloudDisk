@@ -193,18 +193,19 @@ namespace BCD.FileSystem
         {
             try
             {
+                if (filename == "\\") return DokanNet.DOKAN_SUCCESS;
                 var path = this.GetPath(filename);
                 Directory.CreateDirectory(path);
 
                 var dir = new DirectoryInfo(path);
                 var memoryFile = new MemoryFile
-                {
-                    CreateDate = dir.CreationTime,
-                    FilePath = path.Replace(this.root_, ""),
-                    FileStatus = FileStatusEnum.Create,
-                    FileType = FileTypeEnum.Directory,
-                    LastModifyDate = dir.LastWriteTime
-                };
+                    {
+                        CreateDate = dir.CreationTime,
+                        FilePath = path.Replace(this.root_, ""),
+                        FileStatus = FileStatusEnum.Create,
+                        FileType = FileTypeEnum.Directory,
+                        LastModifyDate = dir.LastWriteTime
+                    };
 
                 MemoryFileManager.GetInstance().SetFile(memoryFile);
 
@@ -235,6 +236,7 @@ namespace BCD.FileSystem
         {
             try
             {
+                if (filename == "\\") return DokanNet.DOKAN_SUCCESS;
                 var path = this.GetPath(filename);
                 if (Directory.Exists(path))
                 {

@@ -68,17 +68,10 @@ namespace BCD.FileSystem
                 {
                     Thread.Sleep(10 * 1000);
 
-                    DateTime dataChangeDate1 = DateTime.MinValue;
-                    if (MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate1)
+                    if (MemoryFileManager.GetInstance().IsNeedSync()
                         || MemoryFileManager.GetInstance().GetAllFiles().Count == 0) //如果缓存有更新
                     {
                         SysToCloud();
-                    }
-                    DateTime dataChangeDate2 = DateTime.MinValue;
-                    MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate2);
-                    if (dataChangeDate1 == dataChangeDate2)
-                    {
-                        MemoryFileManager.GetInstance().SetCacheStatus(false);
                     }
                 }
                 catch
@@ -105,7 +98,8 @@ namespace BCD.FileSystem
         /// </summary>
         public static void SyncRemoveFileToCloud()
         {
-            var memFiles =
+            var memFiles = new List<MemoryFile>();
+            memFiles =
                 MemoryFileManager.GetInstance().GetAllFiles().OrderBy(p => p.FilePath).Where(
                     p => p.FileStatus == FileStatusEnum.Remove).ToList();
             var cloudDisk = new CloudDiskManager();
@@ -142,7 +136,8 @@ namespace BCD.FileSystem
         /// </summary>
         public static void SyncChangeFileToCloud()
         {
-            var memFiles =
+            var memFiles = new List<MemoryFile>();
+            memFiles =
                 MemoryFileManager.GetInstance().GetAllFiles().OrderBy(p => p.FilePath).Where(
                     p => p.FileStatus != FileStatusEnum.Remove).ToList();
             var cloudDisk = new CloudDiskManager();
