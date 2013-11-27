@@ -38,7 +38,7 @@ namespace BCD.Utility
             }
             if (string.IsNullOrEmpty(path))
             {
-                path = "G:\\Temp";
+                path = "C:\\Temp";
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
