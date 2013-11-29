@@ -255,7 +255,8 @@ namespace BCD.DiskInterface
                     }
                     else
                     {
-                        throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
+                        //throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
+                        return null;
                     }
                 }
                 else
@@ -265,6 +266,7 @@ namespace BCD.DiskInterface
                         if (api.GetCloudFileInfo(remotePath) != null)
                         {
                             fileContent = api.DownloadFile(remotePath);
+                            break;
                         }
                     }
                 }
@@ -490,6 +492,12 @@ namespace BCD.DiskInterface
                     }
                     continue;
                 }
+                //为防止result一直因为不符合条件而是空,则如果result是空,则给它赋一个值,以后有符合条件的值会自然变掉.
+                if (result == null) 
+                {
+                    result = api;
+                }
+
                 if (tmp.TotalAvailableByte > max)
                 {
                     max = tmp.TotalAvailableByte;
