@@ -250,7 +250,7 @@ namespace BCD.FileSystem
                         LastModifyDate = dir.LastWriteTime
                     };
 
-                    Directory.Delete(path);
+                    Directory.Delete(path, true);
 
                     MemoryFileManager.GetInstance().SetFile(memoryFile);
                 }
@@ -338,7 +338,7 @@ namespace BCD.FileSystem
                         {
                             if (replace)
                             {
-                                Directory.Delete(folder.FullName);
+                                Directory.Delete(folder.FullName, true);
                                 Directory.Move(path, newPath);
                             }
                             else

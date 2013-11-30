@@ -58,20 +58,20 @@ namespace BCD.FileSystem
                     }
                 }
 
-                //if((DateTime.Now - dtCloudStartTime).TotalSeconds <= 5)
-                //{
-                //}
-                //else
-                //{
-                //    if (DataThreadCloudSync == null
-                //        || (DataThreadCloudSync.ThreadState == ThreadState.Stopped
-                //        && DataThreadCloudSync.ThreadState != ThreadState.Background))
-                //    {
-                //        DataThreadCloudSync = new Thread(SysCloudToLocal);
-                //        dtCloudStartTime = DateTime.Now;
-                //        DataThreadCloudSync.Start();
-                //    }
-                //}
+                if ((DateTime.Now - dtCloudStartTime).TotalSeconds <= 5)
+                {
+                }
+                else
+                {
+                    if (DataThreadCloudSync == null
+                        || (DataThreadCloudSync.ThreadState == ThreadState.Stopped
+                        && DataThreadCloudSync.ThreadState != ThreadState.Background))
+                    {
+                        DataThreadCloudSync = new Thread(SysCloudToLocal);
+                        dtCloudStartTime = DateTime.Now;
+                        DataThreadCloudSync.Start();
+                    }
+                }
             }
             catch (ThreadStateException threadStateException)
             {
@@ -117,13 +117,16 @@ namespace BCD.FileSystem
             {
                 try
                 {
-                    CloudFiles = new List<string>();
+                    if (!MemoryFileManager.GetInstance().IsNeedSync())
+                    {
+                        CloudFiles = new List<string>();
 
-                    var fileInfo = new CloudFileInfoModel { Path = "/", IsDir = true };
+                        var fileInfo = new CloudFileInfoModel { Path = "/", IsDir = true };
 
-                    SyncCloudFileToLocal(fileInfo);
+                        SyncCloudFileToLocal(fileInfo);
 
-                    SyncCloudRemoveFileToLocal();
+                        SyncCloudRemoveFileToLocal();
+                    }
 
                     Thread.Sleep(30 * 1000);
                 }
@@ -141,13 +144,6 @@ namespace BCD.FileSystem
             SyncRemoveFileToCloud();
             SyncChangeFileToCloud();
 
-            CloudFiles = new List<string>();
-
-            var fileInfo = new CloudFileInfoModel { Path = "/", IsDir = true };
-
-            SyncCloudFileToLocal(fileInfo);
-
-            SyncCloudRemoveFileToLocal();
         }
 
         /// <summary>
@@ -353,9 +349,9 @@ namespace BCD.FileSystem
                         {
                             if (Directory.Exists(path + localFile))
                             {
-                                Directory.Delete(path + localFile);
+                                Directory.Delete(path + localFile, true);
                             }
-                            else if(File.Exists(path + localFile))
+                            else if (File.Exists(path + localFile))
                             {
                                 File.Delete(path + localFile);
                             }
@@ -364,7 +360,7 @@ namespace BCD.FileSystem
                 }
                 else
                 {
-                    Directory.Delete(path);
+                    Directory.Delete(path, true);
                     Directory.CreateDirectory(path);
                 }
             }
@@ -378,6 +374,16 @@ namespace BCD.FileSystem
         {
             var path = LocalDiskPathHelper.GetPath();
             var contents = new List<string>();
+
+            var rootFiles = (new DirectoryInfo(path)).GetFiles();
+            if (rootFiles.Length > 0)
+            {
+                foreach (var rootFile in rootFiles)
+                {
+                    contents.Add(rootFile.FullName.Replace(path, ""));
+                }
+            }
+
             var dirs = new List<DirectoryInfo>();
             MemoryFileManager.GetALlDirectoryInfo(path,ref dirs);
             if (dirs.Count > 0)
