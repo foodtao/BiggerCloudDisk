@@ -306,61 +306,66 @@ namespace BCD.FileSystem
 
                 if (string.IsNullOrEmpty(Path.GetExtension(newPath)))
                 {
-                    if (File.Exists(path))
-                    {
-                        var name = Path.GetFileName(path);
-                        var dirInfo = new DirectoryInfo(newPath);
-                        var file = dirInfo.GetFiles().FirstOrDefault(p => p.Name == name);
-                        if (file != null)
-                        {
-                            if (replace)
-                            {
-                                File.Delete(file.FullName);
-                                File.Move(path, newPath);
-                            }
-                        }
-                        else
-                        {
-                            File.Move(path, newPath);
-                        }
-                        //MemoryFileManager.GetInstance().SetFile(
-                        //    path, FileTypeEnum.File, FileStatusEnum.Remove);
+                    var dir = new DirectoryInfo(path);
 
-                        //MemoryFileManager.GetInstance().SetFile(
-                        //    newPath, FileTypeEnum.File, FileStatusEnum.Create);
-                    }
-                    else if (Directory.Exists(filename))
-                    {
-                        var parentFolderName = path.Substring(path.LastIndexOf("\\") + 1, path.Length);
-                        var dirInfo = new DirectoryInfo(newPath);
-                        var folder = dirInfo.GetDirectories().FirstOrDefault(p => p.Name == parentFolderName);
-                        if (folder != null)
-                        {
-                            if (replace)
-                            {
-                                Directory.Delete(folder.FullName, true);
-                                Directory.Move(path, newPath);
-                            }
-                            else
-                            {
-                                Directory.Move(path, newPath);
-                            }
-                            //MemoryFileManager.GetInstance().SetFile(
-                            //path, FileTypeEnum.Directory, FileStatusEnum.Remove);
+                    var oldFiles =
+                        MemoryFileManager.GetInstance().GetAllFiles().Where(p => p.FilePath.Contains(filename)).ToList();
 
-                            //MemoryFileManager.GetInstance().SetFile(
-                            //    newPath, FileTypeEnum.Directory, FileStatusEnum.Create);
-                        }
+                    Directory.Move(path, newPath);
+
+                    var memoryFile = new MemoryFile
+                    {
+                        CreateDate = dir.CreationTime,
+                        FilePath = dir.FullName.Replace(this.root_, ""),
+                        FileStatus = FileStatusEnum.Remove,
+                        FileType = FileTypeEnum.Directory,
+                        LastModifyDate = dir.LastWriteTime
+                    };
+
+                    MemoryFileManager.GetInstance().SetFile(memoryFile);
+
+                    foreach (var oldFile in oldFiles)
+                    {
+                        var memoryFileNew = new MemoryFile()
+                            {
+                                CreateDate = oldFile.CreateDate,
+                                FilePath = oldFile.FilePath.Replace(filename, newname),
+                                FileStatus = FileStatusEnum.Create,
+                                FileType = oldFile.FileType,
+                                LastModifyDate = oldFile.LastModifyDate
+                            };
+                        MemoryFileManager.GetInstance().SetFile(memoryFileNew);
                     }
+
                 }
                 else
                 {
-                    File.Move(path, newPath);
-                    //MemoryFileManager.GetInstance().SetFile(
-                    //        path, FileTypeEnum.File, FileStatusEnum.Remove);
+                    var fileOld = new FileInfo(path);
+                    var memoryFile = new MemoryFile
+                    {
+                        CreateDate = fileOld.CreationTime,
+                        FilePath = fileOld.FullName.Replace(this.root_, ""),
+                        FileStatus = FileStatusEnum.Remove,
+                        FileType = FileTypeEnum.File,
+                        LastModifyDate = fileOld.LastWriteTime
+                    };
 
-                    //MemoryFileManager.GetInstance().SetFile(
-                    //    newPath, FileTypeEnum.File, FileStatusEnum.Create);
+                    File.Move(path, newPath);
+
+                    var fileNew = new FileInfo(newPath);
+
+                    var memoryFileNew = new MemoryFile
+                    {
+                        CreateDate = fileNew.CreationTime,
+                        FilePath = fileNew.FullName.Replace(this.root_, ""),
+                        FileStatus = FileStatusEnum.Create,
+                        FileType = FileTypeEnum.File,
+                        LastModifyDate = fileNew.LastWriteTime
+                    };
+
+                    MemoryFileManager.GetInstance().SetFile(memoryFile);
+
+                    MemoryFileManager.GetInstance().SetFile(memoryFileNew);
                 }
 
                 return DokanNet.DOKAN_SUCCESS;
