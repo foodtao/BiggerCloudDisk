@@ -15,13 +15,24 @@ namespace BCD.FileSystem
     public class ServiceHandler
     {
         /// <summary>
-        /// 动态缓存线程
+        /// 本地更改同步线程
         /// </summary>
-        private static Thread DataThreadSingle;
+        private static Thread DataThreadLocalSync;
+
         /// <summary>
-        /// 时间
+        /// 云端更改同步线程
         /// </summary>
-        private static DateTime dtStartTime = default(DateTime);
+        private static Thread DataThreadCloudSync;
+
+        /// <summary>
+        /// 本地更改同步线程同步时间
+        /// </summary>
+        private static DateTime dtLocalStartTime = default(DateTime);
+
+        /// <summary>
+        /// 云端更改同步线程同步时间
+        /// </summary>
+        private static DateTime dtCloudStartTime = default(DateTime);
 
         /// <summary>
         /// 动态数据缓存启动
@@ -31,21 +42,36 @@ namespace BCD.FileSystem
             try
             {
                 //5秒钟内不可重复启动线程
-                if ((DateTime.Now - dtStartTime).TotalSeconds <= 5)
+                if ((DateTime.Now - dtLocalStartTime).TotalSeconds <= 5)
                 {
                 }
                 else
                 {
-                    if (DataThreadSingle == null
+                    if (DataThreadLocalSync == null
                         ||
-                        (DataThreadSingle.ThreadState == ThreadState.Stopped
-                         && DataThreadSingle.ThreadState != ThreadState.Background))
+                        (DataThreadLocalSync.ThreadState == ThreadState.Stopped
+                         && DataThreadLocalSync.ThreadState != ThreadState.Background))
                     {
-                        DataThreadSingle = new Thread(CheckFile);
-                        dtStartTime = DateTime.Now;
-                        DataThreadSingle.Start();
+                        DataThreadLocalSync = new Thread(CheckFile);
+                        dtLocalStartTime = DateTime.Now;
+                        DataThreadLocalSync.Start();
                     }
                 }
+
+                //if((DateTime.Now - dtCloudStartTime).TotalSeconds <= 5)
+                //{
+                //}
+                //else
+                //{
+                //    if (DataThreadCloudSync == null
+                //        || (DataThreadCloudSync.ThreadState == ThreadState.Stopped
+                //        && DataThreadCloudSync.ThreadState != ThreadState.Background))
+                //    {
+                //        DataThreadCloudSync = new Thread(SysCloudToLocal);
+                //        dtCloudStartTime = DateTime.Now;
+                //        DataThreadCloudSync.Start();
+                //    }
+                //}
             }
             catch (ThreadStateException threadStateException)
             {
@@ -58,7 +84,7 @@ namespace BCD.FileSystem
         }
 
         /// <summary>
-        /// 检查文件
+        /// 同步本地更改到云端
         /// </summary>
         public static void CheckFile()
         {
@@ -66,13 +92,40 @@ namespace BCD.FileSystem
             {
                 try
                 {
-                    Thread.Sleep(10 * 1000);
-
                     if (MemoryFileManager.GetInstance().IsNeedSync()
                         || MemoryFileManager.GetInstance().GetAllFiles().Count == 0) //如果缓存有更新
                     {
                         SysToCloud();
                     }
+
+                    Thread.Sleep(10 * 1000);
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        public static List<string> CloudFiles = null; 
+        
+        /// <summary>
+        /// 同步远端更改到本地
+        /// </summary>
+        public static void SysCloudToLocal()
+        {
+            while (true)
+            {
+                try
+                {
+                    CloudFiles = new List<string>();
+
+                    var fileInfo = new CloudFileInfoModel { Path = "/", IsDir = true };
+
+                    SyncCloudFileToLocal(fileInfo);
+
+                    SyncCloudRemoveFileToLocal();
+
+                    Thread.Sleep(30 * 1000);
                 }
                 catch
                 {
@@ -88,9 +141,13 @@ namespace BCD.FileSystem
             SyncRemoveFileToCloud();
             SyncChangeFileToCloud();
 
+            CloudFiles = new List<string>();
+
             var fileInfo = new CloudFileInfoModel { Path = "/", IsDir = true };
 
             SyncCloudFileToLocal(fileInfo);
+
+            SyncCloudRemoveFileToLocal();
         }
 
         /// <summary>
@@ -226,6 +283,8 @@ namespace BCD.FileSystem
             var cloudFile = cloudManager.GetCloudFileInfo(CloudDiskType.NOT_SPECIFIED, fileInfo.IsDir, fileInfo.Path);
             if (cloudFile != null)
             {
+                CloudFiles.Add(cloudFile.LocalPath);
+
                 var path = root + cloudFile.LocalPath;
 
                 if (fileInfo.Path != "/")
@@ -276,8 +335,66 @@ namespace BCD.FileSystem
             }
         }
 
+        /// <summary>
+        /// 同步云端已删除的文件到本地。
+        /// </summary>
+        public static void SyncCloudRemoveFileToLocal()
+        {
+            var path = LocalDiskPathHelper.GetPath();
+            var localFiles = GetLocalFiles();
 
+            if (localFiles != null && localFiles.Count > 0)
+            {
+                if (CloudFiles != null && CloudFiles.Count > 0)
+                {
+                    foreach (var localFile in localFiles)
+                    {
+                        if (!CloudFiles.Contains(localFile))
+                        {
+                            if (Directory.Exists(path + localFile))
+                            {
+                                Directory.Delete(path + localFile);
+                            }
+                            else if(File.Exists(path + localFile))
+                            {
+                                File.Delete(path + localFile);
+                            }
+                        }
+                    }  
+                }
+                else
+                {
+                    Directory.Delete(path);
+                    Directory.CreateDirectory(path);
+                }
+            }
+        }
 
+        /// <summary>
+        /// 获取本地同步文件夹下所有文件
+        /// </summary>
+        /// <returns></returns>
+        public static List<string> GetLocalFiles()
+        {
+            var path = LocalDiskPathHelper.GetPath();
+            var contents = new List<string>();
+            var dirs = new List<DirectoryInfo>();
+            MemoryFileManager.GetALlDirectoryInfo(path,ref dirs);
+            if (dirs.Count > 0)
+            {
+                foreach (var dir in dirs)
+                {
+                    contents.Add(dir.FullName.Replace(path, ""));
+                    var files = dir.GetFiles();
+
+                    foreach (var file in files)
+                    {
+                        contents.Add(file.FullName.Replace(path, ""));
+                    }
+                }
+            }
+            return contents;
+        }
 
         /// <summary>
         /// 转换文件大小单位

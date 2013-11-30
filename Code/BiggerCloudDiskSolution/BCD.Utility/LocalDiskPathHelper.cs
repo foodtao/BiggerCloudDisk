@@ -7,7 +7,7 @@ namespace BCD.Utility
     /// </summary>
     public class LocalDiskPathHelper
     {
-        public static string LocalPath = "";
+        private static string LocalPath = "";
 
         private static readonly string SavedpathFileName = Directory.GetCurrentDirectory() + "\\" + "LocalDiskPath.txt";
 
