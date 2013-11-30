@@ -9,21 +9,19 @@ using System.Windows.Forms;
 
 namespace BCD.WinApp
 {
+    using System.IO;
+
     using BCD.DiskInterface;
     using BCD.FileSystem;
-    using BCD.Model.CloudDisk;
+    using BCD.Utility;
 
     using Dokan;
 
     public partial class Main : Form
     {
-        private string local = "";
         public Main()
         {
             InitializeComponent();
-            //MountDisk();
-            //MemoryFileManagerThead.Start();
-            //ServiceHandler.Start();
         }
 
         private void MountDisk()
@@ -31,35 +29,26 @@ namespace BCD.WinApp
             BackgroundWorker _dokanWorker = new BackgroundWorker();
             _dokanWorker.DoWork += delegate
             {
-                DokanOptions opt = new DokanOptions();
-                opt.DebugMode = true;
-                opt.MountPoint = "l:\\";
-                opt.VolumeLabel = "超云盘";
-                opt.ThreadCount = 5;
-                if(this.local.Length > 0) DokanNet.DokanMain(opt, new MirrorDisk(this.local));
+                try
+                {
+                    DokanOptions opt = new DokanOptions();
+                    opt.DebugMode = true;
+                    opt.MountPoint = "l:\\";
+                    opt.VolumeLabel = "超云盘";
+                    opt.ThreadCount = 5;
+                    DokanNet.DokanMain(opt, new MirrorDisk(LocalDiskPathHelper.GetPath()));
+                }
+                catch
+                {
+                }
             };
             _dokanWorker.RunWorkerAsync();
         }
 
         private void btnSetUserSina_Click(object sender, EventArgs e)
         {
-            //var a = MemoryFileManager.GetInstance().GetAllFiles();
-            //var b = 1;
-            CloudDiskManager cloudDiskManager = new CloudDiskManager();
-            var a = cloudDiskManager.GetCloudFileInfo(CloudDiskType.KINGSOFT, "/");
-            var b = 1;
-        }
 
-        private void btnSetDiskPosition_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog dialog = new FolderBrowserDialog();
-            dialog.Description = "请选择文件路径";
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                var folderName = dialog.SelectedPath;
-                tbDiskPostion.Text = folderName.ToString();
-                this.local = folderName.ToString();
-            }
+
         }
 
         private void btnSetUserBaidu_Click(object sender, EventArgs e)
@@ -72,25 +61,79 @@ namespace BCD.WinApp
 
         }
 
-        private void Main_Load(object sender, EventArgs e)
+        /// <summary>
+        /// 点击设置按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnSetDiskPosition_Click(object sender, EventArgs e)
         {
-            var client = new CloudDiskManager();
-            this.Text = "超云盘设置(空间：" + ServiceHandler.FormatBytes((long)client.GetCloudDiskCapacityInfo().TotalByte) + ")";
-        }
-
-        private void groupBox2_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (this.local.Length > 0)
+            if (!string.IsNullOrEmpty(tbDiskPostion.Text))
             {
-                tbDiskPostion.Text = "process";
+                LocalDiskPathHelper.SetPath(tbDiskPostion.Text);
+                DokanNet.DokanRemoveMountPoint("l:\\");
                 MountDisk();
-                ServiceHandler.Start();
+                MessageBox.Show(@"设置成功");
+            }
+            else
+            {
+                MessageBox.Show(@"请点击左侧的输入框选择文件夹！");
             }
         }
+
+        /// <summary>
+        /// 主窗体加载
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Main_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                tbDiskPostion.Text = LocalDiskPathHelper.GetPath();
+
+                var client = new CloudDiskManager();
+                var diskSpace = client.GetCloudDiskCapacityInfo();
+                AppDomain.CurrentDomain.SetData("diskspace", diskSpace);
+                this.Text = "超云盘设置(空间："
+                            + ServiceHandler.FormatBytes((long)(diskSpace.TotalByte - diskSpace.TotalAvailableByte)) + "/"
+                            + ServiceHandler.FormatBytes((long)diskSpace.TotalByte) + ")";
+
+                if (!string.IsNullOrEmpty(LocalDiskPathHelper.GetPath()))
+                {
+                    ServiceHandler.Start();
+                }
+
+                MountDisk();
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+        }
+
+
+        /// <summary>
+        /// 点击设置按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tbDiskPostion_Click(object sender, EventArgs e)
+        {
+            var dialog = new FolderBrowserDialog { Description = @"请选择文件路径" };
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                var folderName = dialog.SelectedPath;
+                tbDiskPostion.Text = folderName;
+            }
+        }
+
+        private void Main_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            DokanNet.DokanRemoveMountPoint("l:\\");
+            Application.Exit();
+        }
+
     }
 }

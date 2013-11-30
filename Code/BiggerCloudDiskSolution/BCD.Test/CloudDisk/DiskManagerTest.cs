@@ -23,28 +23,28 @@ namespace BCD.Test.CloudDisk
         {
             CloudDiskManager m = new CloudDiskManager();
             var bytes = File.ReadAllBytes("c:\\1.jpg");
-            var result = m.UploadFile(CloudFileUploadType.Create, "/1.jpg", bytes);
+            var result = m.UploadFile(CloudFileUploadType.Create, "/1/2/1.jpg", bytes);
         }
 
         [TestMethod]
         public void GetDirInfo()
         {
             CloudDiskManager m = new CloudDiskManager();
-            var result = m.GetCloudFileInfo(CloudDiskType.SINA, "/");
+            var result = m.GetCloudFileInfo(CloudDiskType.BAIDU, true, "/1.txt");
         }
 
         [TestMethod]
         public void DownLoad()
         {
             CloudDiskManager m = new CloudDiskManager();
-            var result = m.DownloadFile(CloudDiskType.NOT_SPECIFIED, "/1.jpg");
+            var result = m.DownloadFile(CloudDiskType.NOT_SPECIFIED, "/adf/1.jpg");
         }
 
         [TestMethod]
         public void CreateDir()
         {
             CloudDiskManager m = new CloudDiskManager();
-            var result = m.CreateDirectory("\\1asdf\\23");
+            var result = m.CreateDirectory("\\123\\asdf3\\afd");
         }
 
         [TestMethod]
@@ -59,6 +59,13 @@ namespace BCD.Test.CloudDisk
         {
             CloudDiskManager m = new CloudDiskManager();
             var result = m.DeleteFile(CloudDiskType.NOT_SPECIFIED, "/1.jpg");
+        }
+
+        [TestMethod]
+        public void WriteAppConfig()
+        {
+            CloudDiskManager m = new CloudDiskManager();
+            var result = m.RefreshAccessToken();
         }
     }
 }

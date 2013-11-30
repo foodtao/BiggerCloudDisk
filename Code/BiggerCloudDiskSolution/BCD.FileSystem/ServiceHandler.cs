@@ -10,6 +10,7 @@ namespace BCD.FileSystem
     using System.Threading;
 
     using BCD.Model.CloudDisk;
+    using BCD.Utility;
 
     public class ServiceHandler
     {
@@ -61,26 +62,22 @@ namespace BCD.FileSystem
         /// </summary>
         public static void CheckFile()
         {
-            //while (true)
-            //{
+            while (true)
+            {
                 try
                 {
-                    //Thread.Sleep(10 * 1000);
+                    Thread.Sleep(10 * 1000);
 
-                    DateTime dataChangeDate1 = DateTime.MinValue;
-                    if (MemoryFileManager.GetInstance().GetCacheStatus(out dataChangeDate1)) //如果缓存有更新
+                    if (MemoryFileManager.GetInstance().IsNeedSync()
+                        || MemoryFileManager.GetInstance().GetAllFiles().Count == 0) //如果缓存有更新
                     {
                         SysToCloud();
                     }
-                    DateTime dataChangeDate2 = DateTime.MinValue;
-                    if (dataChangeDate1 == dataChangeDate2)
-                    {
-                        MemoryFileManager.GetInstance().SetCacheStatus(false);
-                    }
                 }
                 catch
-                { }
-            //}
+                {
+                }
+            }
         }
 
         /// <summary>
@@ -90,7 +87,10 @@ namespace BCD.FileSystem
         {
             SyncRemoveFileToCloud();
             SyncChangeFileToCloud();
-            SyncCloudFileToLocal();
+
+            var fileInfo = new CloudFileInfoModel { Path = "/", IsDir = true };
+
+            SyncCloudFileToLocal(fileInfo);
         }
 
         /// <summary>
@@ -98,7 +98,8 @@ namespace BCD.FileSystem
         /// </summary>
         public static void SyncRemoveFileToCloud()
         {
-            var memFiles =
+            var memFiles = new List<MemoryFile>();
+            memFiles =
                 MemoryFileManager.GetInstance().GetAllFiles().OrderBy(p => p.FilePath).Where(
                     p => p.FileStatus == FileStatusEnum.Remove).ToList();
             var cloudDisk = new CloudDiskManager();
@@ -124,7 +125,7 @@ namespace BCD.FileSystem
                     }
                     catch
                     {
-                        
+
                     }
                 }
             }
@@ -135,11 +136,12 @@ namespace BCD.FileSystem
         /// </summary>
         public static void SyncChangeFileToCloud()
         {
-            var memFiles =
+            var memFiles = new List<MemoryFile>();
+            memFiles =
                 MemoryFileManager.GetInstance().GetAllFiles().OrderBy(p => p.FilePath).Where(
                     p => p.FileStatus != FileStatusEnum.Remove).ToList();
             var cloudDisk = new CloudDiskManager();
-            var root = "G:\\Temp";
+            var root = LocalDiskPathHelper.GetPath();
             if (memFiles.Count > 0)
             {
                 while (memFiles.Count > 0)
@@ -154,15 +156,13 @@ namespace BCD.FileSystem
                                 cloudDisk.CreateDirectory(memFile.FilePath);
                                 memFile.FileStatus = FileStatusEnum.Normal;
                                 MemoryFileManager.GetInstance().SetFile(memFile);
-                                memFiles.Remove(memFile);
                             }
                             else
                             {
-                                var cloudFiles = cloudDisk.GetCloudFileInfo(CloudDiskType.KINGSOFT, memFile.FilePath);
+                                var cloudFiles = cloudDisk.GetCloudFileInfo(CloudDiskType.NOT_SPECIFIED, true, memFile.FilePath);
                                 if (cloudFiles == null)
                                 {
                                     cloudDisk.CreateDirectory(memFile.FilePath);
-                                    memFiles.Remove(memFile);
                                 }
                             }
                         }
@@ -177,11 +177,10 @@ namespace BCD.FileSystem
                                     CloudFileUploadType.Create, memFile.FilePath, buffer);
                                 memFile.FileStatus = FileStatusEnum.Normal;
                                 MemoryFileManager.GetInstance().SetFile(memFile);
-                                memFiles.Remove(memFile);
                             }
                             else
                             {
-                                var cloudFiles = cloudDisk.GetCloudFileInfo(CloudDiskType.KINGSOFT, memFile.FilePath);
+                                var cloudFiles = cloudDisk.GetCloudFileInfo(CloudDiskType.NOT_SPECIFIED, false, memFile.FilePath);
                                 if (cloudFiles == null)
                                 {
                                     var fileInfo = new FileInfo(root + memFile.FilePath);
@@ -189,10 +188,24 @@ namespace BCD.FileSystem
                                     fileInfo.OpenRead().Read(buffer, 0, (int)fileInfo.Length);
                                     cloudDisk.UploadFile(
                                         CloudFileUploadType.Create, memFile.FilePath, buffer);
-                                    memFiles.Remove(memFile);
+                                }
+                                else
+                                {
+                                    var fileInfo = new FileInfo(root + memFile.FilePath);
+                                    if (cloudFiles.LastModifiedDate.HasValue)
+                                    {
+                                        if (fileInfo.LastWriteTime > cloudFiles.LastModifiedDate)
+                                        {
+                                            var buffer = new byte[fileInfo.Length];
+                                            fileInfo.OpenRead().Read(buffer, 0, (int)fileInfo.Length);
+                                            cloudDisk.UploadFile(
+                                                CloudFileUploadType.Create, memFile.FilePath, buffer);
+                                        }
+                                    }
                                 }
                             }
                         }
+                        memFiles.Remove(memFile);
                     }
                     catch (Exception)
                     {
@@ -205,11 +218,72 @@ namespace BCD.FileSystem
         /// <summary>
         /// 同步云端的文件到本地。
         /// </summary>
-        public static void SyncCloudFileToLocal()
+        public static void SyncCloudFileToLocal(CloudFileInfoModel fileInfo)
         {
+            var root = LocalDiskPathHelper.GetPath();
 
+            var cloudManager = new CloudDiskManager();
+            var cloudFile = cloudManager.GetCloudFileInfo(CloudDiskType.NOT_SPECIFIED, fileInfo.IsDir, fileInfo.Path);
+            if (cloudFile != null)
+            {
+                var path = root + cloudFile.LocalPath;
+
+                if (fileInfo.Path != "/")
+                {
+                    if (cloudFile.IsDir)
+                    {
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+                    }
+                    else
+                    {
+                        var needCreat = false;
+                        if (!File.Exists(path))
+                        {
+                            needCreat = true;
+                        }
+                        else
+                        {
+                            var file = new FileInfo(path);
+                            if (cloudFile.LastModifiedDate.HasValue)
+                            {
+                                if (file.LastWriteTime < cloudFile.LastModifiedDate)
+                                {
+                                    File.Delete(path);
+                                    needCreat = true;
+                                }
+                            }
+                        }
+                        if (needCreat)
+                        {
+                            var fileContent = cloudManager.DownloadFile(CloudDiskType.NOT_SPECIFIED, cloudFile.Path);
+                            File.WriteAllBytes(path, fileContent);
+                        }
+                    }
+                }
+
+                if (cloudFile != null && cloudFile.Contents != null && cloudFile.Contents.Count > 0)
+                {
+                    foreach (var subFile in cloudFile.Contents)
+                    {
+                        if (!cloudFile.Path.EndsWith("/")) cloudFile.Path = cloudFile.Path + "/";
+                        subFile.Path = cloudFile.Path + subFile.name;
+                        SyncCloudFileToLocal(subFile);
+                    }
+                }
+            }
         }
 
+
+
+
+        /// <summary>
+        /// 转换文件大小单位
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
         public static string FormatBytes(long bytes)
         {
             string[] Suffix = { "B", "KB", "MB", "GB", "TB" };

@@ -66,22 +66,26 @@ namespace BCD.DiskInterface
             double min = 9999999999999999999;
             foreach (ICloudDiskAPI api in _loadedCloudDiskApi)
             {
-                var tmpM = api.GetCloudDiskCapacityInfo();
-                if (tmpM == null)
+                try
                 {
-                    //返回全是0的对象
-                    return new CloudDiskCapacityModel();
+                    var tmpM = api.GetCloudDiskCapacityInfo();
+                    if (tmpM == null)
+                    {
+                        //返回全是0的对象
+                        return new CloudDiskCapacityModel();
+                    }
+                    if (tmpM.TotalAvailableByte > max)
+                    {
+                        max = tmpM.TotalAvailableByte;
+                    }
+                    if (tmpM.TotalAvailableByte < min)
+                    {
+                        min = tmpM.TotalAvailableByte;
+                    }
+                    total += tmpM.TotalByte;
+                    totalAvailable += tmpM.TotalAvailableByte;
                 }
-                if (tmpM.TotalAvailableByte > max)
-                {
-                    max = tmpM.TotalAvailableByte;
-                }
-                if (tmpM.TotalAvailableByte < min)
-                {
-                    min = tmpM.TotalAvailableByte;
-                }
-                total += tmpM.TotalByte;
-                totalAvailable += tmpM.TotalAvailableByte;
+                catch { }
             }
             m.MaxAvailableByte = max;
             m.MinAvailableByte = min;
@@ -94,9 +98,10 @@ namespace BCD.DiskInterface
         /// 获取一个远程文件的信息
         /// </summary>
         /// <param name="type">网盘类型</param>
+        /// <param name="isGetDirectory">是否是获取文件夹,否的话表示获取文件</param>
         /// <param name="remotePath">远程文件的相对路径</param>
         /// <returns></returns>
-        public CloudFileInfoModel GetCloudFileInfo(CloudDiskType type, string remotePath)
+        public CloudFileInfoModel GetCloudFileInfo(CloudDiskType type, bool isGetDirectory, string remotePath)
         {
             CloudFileInfoModel m = null;
             try
@@ -105,37 +110,70 @@ namespace BCD.DiskInterface
                 //所有传入的文件都进行一次转换
                 remotePath = PathConverter.LocalPathToRemotePath(remotePath);
 
-                if (type == CloudDiskType.NOT_SPECIFIED)
+                if (isGetDirectory)
                 {
-                    //未指定类型,必须便利查找属于哪个网盘
+                    //是文件夹,需要遍历所有可用网盘,将所有子文件和子文件夹信息加总一起反馈
                     foreach (ICloudDiskAPI api in _loadedCloudDiskApi)
                     {
-                        m = api.GetCloudFileInfo(remotePath);
-                        if (m != null)
+                        var tmp_dir = api.GetCloudFileInfo(remotePath);
+                        if (tmp_dir != null)
                         {
-                            //第一个找到就返回
-                            return m;
+                            if (m == null)
+                            {
+                                m = new CloudFileInfoModel();
+                                m.Path = tmp_dir.Path;
+                                m.name = tmp_dir.name;
+                                m.IsDir = tmp_dir.IsDir;
+                                m.LastModifiedDate = tmp_dir.LastModifiedDate;
+                                m.Contents = new List<CloudFileInfoModel>();
+                            }
+                            //将每个找到网盘的子目录和子文件都加入到返回值m里去.
+                            if (tmp_dir.Contents != null)
+                            {
+                                foreach (CloudFileInfoModel subDir in tmp_dir.Contents)
+                                {
+                                    m.Contents.Add(subDir);
+                                }
+                            }
                         }
-                    }
-                    if (m == null)
-                    {
-                        //全部遍历了依然没有找到
-                        throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
                     }
                 }
                 else
                 {
-                    //指定类型的
-                    ICloudDiskAPI oneApi;
-                    if (IsDiskTypeLoaded(type, out oneApi))
+                    //是文件需要找到是哪个网盘
+                    if (type == CloudDiskType.NOT_SPECIFIED)
                     {
-                        m = oneApi.GetCloudFileInfo(remotePath);
+                        //未指定类型,必须便利查找属于哪个网盘
+                        foreach (ICloudDiskAPI api in _loadedCloudDiskApi)
+                        {
+                            m = api.GetCloudFileInfo(remotePath);
+                            if (m != null)
+                            {
+                                //第一个找到就返回
+                                break;
+                            }
+                        }
+                        if (m == null)
+                        {
+                            //全部遍历了依然没有找到
+                            throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
+                        }
                     }
                     else
                     {
-                        throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
+                        //指定类型的
+                        ICloudDiskAPI oneApi;
+                        if (IsDiskTypeLoaded(type, out oneApi))
+                        {
+                            m = oneApi.GetCloudFileInfo(remotePath);
+                        }
+                        else
+                        {
+                            throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
+                        }
                     }
                 }
+
             }
             catch (Exception ex)
             {
@@ -144,7 +182,7 @@ namespace BCD.DiskInterface
             //在传出返回值之前将远程路径的形式替换成本地路径
             if (m != null)
             {
-                m.LocalPath = PathConverter.RemotePathToLocalPath(m.Path);
+                if (m.Path != null) m.LocalPath = PathConverter.RemotePathToLocalPath(m.Path);
             }
             return m;
         }
@@ -217,7 +255,8 @@ namespace BCD.DiskInterface
                     }
                     else
                     {
-                        throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
+                        //throw new Exception("文件地址不正确或者网盘接口模块没有被正确加载!");
+                        return null;
                     }
                 }
                 else
@@ -227,6 +266,7 @@ namespace BCD.DiskInterface
                         if (api.GetCloudFileInfo(remotePath) != null)
                         {
                             fileContent = api.DownloadFile(remotePath);
+                            break;
                         }
                     }
                 }
@@ -452,6 +492,12 @@ namespace BCD.DiskInterface
                     }
                     continue;
                 }
+                //为防止result一直因为不符合条件而是空,则如果result是空,则给它赋一个值,以后有符合条件的值会自然变掉.
+                if (result == null) 
+                {
+                    result = api;
+                }
+
                 if (tmp.TotalAvailableByte > max)
                 {
                     max = tmp.TotalAvailableByte;

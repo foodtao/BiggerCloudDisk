@@ -64,7 +64,14 @@ namespace BCD.DiskInterface.Sina
 
         public void WriteLocalAccessToken(AccessTokenModel newToken)
         {
-            ConfigurationManager.AppSettings["SINA_ACCESS_TOKEN"] = newToken.AccessToken;
+            //ConfigurationManager.AppSettings["SINA_ACCESS_TOKEN"] = newToken.AccessToken;
+            System.Configuration.Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            config.AppSettings.Settings.Remove("SINA_ACCESS_TOKEN");
+            config.AppSettings.Settings.Add("SINA_ACCESS_TOKEN", newToken.AccessToken);
+
+            config.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection("appSettings");
         }
 
         public Model.CloudDisk.AccessTokenModel GetAccessToken()
@@ -298,7 +305,7 @@ namespace BCD.DiskInterface.Sina
             IDictionary<string, string> postParameters = new Dictionary<string, string>();
             postParameters.Add("access_token", _accessToken);
             postParameters.Add("root", "sandbox");
-            postParameters.Add("path", UrlEncoder.UrlEncode(dir));
+            postParameters.Add("path", dir);
             CloudFileInfoModel m = new CloudFileInfoModel();
             try
             {
