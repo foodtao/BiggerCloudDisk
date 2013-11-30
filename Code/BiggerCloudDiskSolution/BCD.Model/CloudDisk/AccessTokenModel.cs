@@ -30,5 +30,10 @@ namespace BCD.Model.CloudDisk
         /// 过期时间(单位秒)
         /// </summary>
         public string Expire { get; set; }
+
+        /// <summary>
+        /// 令牌密码
+        /// </summary>
+        public string AccessTokenSecret { get; set; }
     }
 }

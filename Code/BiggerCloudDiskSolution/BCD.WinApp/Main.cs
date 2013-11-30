@@ -58,7 +58,9 @@ namespace BCD.WinApp
 
         private void btnSetUserKing_Click(object sender, EventArgs e)
         {
-
+            KingSoftForm form = new KingSoftForm();
+            form.Show();
+            
         }
 
         /// <summary>

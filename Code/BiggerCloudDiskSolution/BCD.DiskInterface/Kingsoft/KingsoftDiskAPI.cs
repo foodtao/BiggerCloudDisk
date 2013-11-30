@@ -11,13 +11,15 @@ using System.Net;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Xml;
+using System.Reflection;
 
 namespace BCD.DiskInterface.Kingsoft
 {
 
     public class KingsoftDiskAPI : ICloudDiskAPI
     {
-
+        private string requestTokenUrl = "https://openapi.kuaipan.cn/open/requestToken";
+        private string accessTokenUrl = "https://openapi.kuaipan.cn/open/accessToken";
         private string metadataUrl = "http://openapi.kuaipan.cn/1/metadata/app_folder{0}";     
         private string createFolderUrl = "http://openapi.kuaipan.cn/1/fileops/create_folder";
         private string deleteFolderUrl = "http://openapi.kuaipan.cn/1/fileops/delete";
@@ -25,6 +27,8 @@ namespace BCD.DiskInterface.Kingsoft
         private string fileUploadUrl = "{0}1/fileops/upload_file";
         private string fileDownloadUrl = "http://api-content.dfs.kuaipan.cn/1/fileops/download_file";
         private string account_infoUrl = "http://openapi.kuaipan.cn/1/account_info";
+        private string requestAuthorization="https://www.kuaipan.cn/api.php?ac=open&op=authorise&oauth_token={0}";
+        
      
 
         private string _http_method = "GET";
@@ -83,7 +87,8 @@ namespace BCD.DiskInterface.Kingsoft
 
         public string _accessTokenSecret { set; get; }
 
-
+        public string _access_temple_token{ set; get; }
+        public string _access_temple_secret { set; get; }
         public KingsoftDiskAPI()
         {
             _consumerKey = GetLocalStoredAppKey();
@@ -124,7 +129,15 @@ namespace BCD.DiskInterface.Kingsoft
         public void WriteLocalAccessToken(AccessTokenModel newToken)
         {
 
-            ConfigurationManager.AppSettings["KINGSOFT_ACCESS_TOKEN"] = newToken.AccessToken;
+            System.Configuration.Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            config.AppSettings.Settings.Remove("KINGSOFT_ACCESS_TOKEN");
+            config.AppSettings.Settings.Add("KINGSOFT_ACCESS_TOKEN", newToken.AccessToken);
+            config.AppSettings.Settings.Remove("KINGSOFT_ACCESS_TOKEN_SECRET");
+            config.AppSettings.Settings.Add("KINGSOFT_ACCESS_TOKEN_SECRET", newToken.AccessTokenSecret);
+
+            config.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection("appSettings");
         }
 
         public AccessTokenModel GetAccessToken()
@@ -132,6 +145,49 @@ namespace BCD.DiskInterface.Kingsoft
             AccessTokenModel accessToken = new AccessTokenModel();
             accessToken.AccessToken = _accessToken;
             return accessToken;
+        }
+
+        public string GetRequestTokenUrl()
+        {
+            SortedDictionary<string, string> ParamList = new SortedDictionary<string, string>();
+            ParamList.Add("oauth_consumer_key", this._consumerKey);
+            ParamList.Add("oauth_nonce", GetRandomString(8));
+            ParamList.Add("oauth_timestamp", GetTimeStamp());
+            ParamList.Add("oauth_version", this.oauth_version);
+            ParamList.Add("oauth_signature_method", this.oauth_signature_method);
+            string SourceString = GetApiSourceString(this.requestTokenUrl, ParamList);
+            string SecretKey = this._consumerSecret + "&";
+            string Sign = GetSignature(SourceString, SecretKey);
+            ParamList.Add("oauth_signature", Sign);
+            string URL = this.requestTokenUrl + "?" + ParamToUrl(ParamList, false);
+            object jsonAccess = GetGeneralContent(URL);
+            XmlNode node = JsonHelper.DeserializeToXmlNode(jsonAccess.ToString());
+            _access_temple_token = node.ChildNodes[0].SelectSingleNode("oauth_token").InnerText;
+            _access_temple_secret = node.ChildNodes[0].SelectSingleNode("oauth_token_secret").InnerText;
+            string returnURl=string.Format(this.requestAuthorization, _access_temple_token);
+            return returnURl;
+        }
+        public bool updateAccessToken()
+        {
+            SortedDictionary<string, string> ParamList = new SortedDictionary<string, string>();
+            ParamList.Add("oauth_consumer_key", this._consumerKey);
+            ParamList.Add("oauth_nonce", GetRandomString(8));
+            ParamList.Add("oauth_timestamp", GetTimeStamp());
+            ParamList.Add("oauth_version", this.oauth_version);
+            ParamList.Add("oauth_signature_method", this.oauth_signature_method);
+            ParamList.Add("oauth_token", this._access_temple_token);
+            string SourceString = GetApiSourceString(this.accessTokenUrl, ParamList);
+            string SecretKey = this._consumerSecret + "&" + this._access_temple_secret;
+            string Sign = GetSignature(SourceString, SecretKey);
+            ParamList.Add("oauth_signature", Sign);
+            string URL = this.accessTokenUrl + "?" + ParamToUrl(ParamList, false);
+            object jsonAccess = GetGeneralContent(URL);
+            XmlNode node = JsonHelper.DeserializeToXmlNode(jsonAccess.ToString());
+            AccessTokenModel newToken = new AccessTokenModel();
+            newToken.AccessToken = node.ChildNodes[0].SelectSingleNode("oauth_token").InnerText;
+            newToken.AccessTokenSecret = node.ChildNodes[0].SelectSingleNode("oauth_token_secret").InnerText;
+            WriteLocalAccessToken(newToken);
+            return true;
         }
 
         public SingleCloudDiskCapacityModel GetCloudDiskCapacityInfo()
