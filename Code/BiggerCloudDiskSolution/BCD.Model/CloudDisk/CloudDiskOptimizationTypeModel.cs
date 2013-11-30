@@ -26,8 +26,18 @@ namespace BCD.Model.CloudDisk
         AVAILABLE_BIGGEST = 3,
 
         /// <summary>
+        /// 所有可用的网盘
+        /// </summary>
+        ALL=4,
+
+        /// <summary>
+        /// 随机选择
+        /// </summary>
+        RANDOM=5,
+
+        /// <summary>
         /// 其他情况
         /// </summary>
-        OTHER=4,
+        OTHER=10,
     }
 }

@@ -251,12 +251,14 @@ namespace BCD.DiskInterface.Sina
                 if (errorResponse.StatusCode == HttpStatusCode.Forbidden)
                 {
                     //
-                    throw new Exception("上传文件时出错!可能是权限不足!" + ex_txt);
+                    //throw new Exception("上传文件时出错!可能是权限不足!" + ex_txt);
+                    return null;
                 }
             }
             catch (Exception ex)
             {
-                throw ex;
+                //throw ex;
+                return null;
             }
             return null;
         }

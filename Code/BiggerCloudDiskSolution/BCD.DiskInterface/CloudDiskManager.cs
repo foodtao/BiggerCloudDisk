@@ -202,14 +202,18 @@ namespace BCD.DiskInterface
 
             if (type == CloudFileUploadType.Create)
             {
-                ICloudDiskAPI api = GetOptimizedDisk(CloudDiskOptimizationTypeModel.AVAILABLE_BIGGEST);
-                if (api != null)
+                List<ICloudDiskAPI> apis = GetOptimizedDisk();
+                if (apis != null)
                 {
-                    uploaded = api.UploadFile(fileContent, filePath);
+                    foreach (ICloudDiskAPI oneApi in apis)
+                    {
+                        uploaded = oneApi.UploadFile(fileContent, filePath);
+                    }
                 }
                 else
                 {
-                    throw new Exception("没有可用的网盘可供上传!");
+                    //throw new Exception("没有可用的网盘可供上传!");
+                    return null;
                 }
             }
             //修改
@@ -452,25 +456,48 @@ namespace BCD.DiskInterface
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ICloudDiskAPI GetOptimizedDisk(CloudDiskOptimizationTypeModel model)
+        public List<ICloudDiskAPI> GetOptimizedDisk()
         {
-            ICloudDiskAPI result = null;
+            List<ICloudDiskAPI> result = new List<ICloudDiskAPI>();
+            CloudDiskOptimizationTypeModel model;
+            string strategy = ConfigurationManager.AppSettings["UploadStrategy"];
+            switch (strategy)
+            {
+                case "ALL":
+                    model = CloudDiskOptimizationTypeModel.ALL;
+                    break;
+                case "MAX_AVAILABLE":
+                    model = CloudDiskOptimizationTypeModel.AVAILABLE_BIGGEST;
+                    break;
+                case "RANDOM":
+                    model = CloudDiskOptimizationTypeModel.RANDOM;
+                    break;
+                default:
+                    model = CloudDiskOptimizationTypeModel.AVAILABLE_BIGGEST;
+                    break;
+            }
             switch (model)
             {
                 case CloudDiskOptimizationTypeModel.AVAILABLE_BIGGEST:
-                    result = GetAvailableBiggestCloudDisk(); //可用空间最大的网盘.
+                    result.Add(GetAvailableBiggestCloudDisk()); //可用空间最大的网盘.
                     break;
                 case CloudDiskOptimizationTypeModel.BIGGEST:
-                    result = GetAvailableBiggestCloudDisk();
+                    result.Add(GetAvailableBiggestCloudDisk());
                     break;
                 case CloudDiskOptimizationTypeModel.FASTEST:
-                    result = GetAvailableBiggestCloudDisk();
+                    result.Add(GetAvailableBiggestCloudDisk());
                     break;
                 case CloudDiskOptimizationTypeModel.OTHER:
-                    result = GetAvailableBiggestCloudDisk();
+                    result.Add(GetAvailableBiggestCloudDisk());
+                    break;
+                case CloudDiskOptimizationTypeModel.ALL:
+                    result = _loadedCloudDiskApi;
+                    break;
+                case CloudDiskOptimizationTypeModel.RANDOM:
+                    result.Add(GetAvailableBiggestCloudDisk());
                     break;
                 default:
-                    result = GetAvailableBiggestCloudDisk();
+                    result.Add(GetAvailableBiggestCloudDisk());
                     break;
             }
             return result;
@@ -493,7 +520,7 @@ namespace BCD.DiskInterface
                     continue;
                 }
                 //为防止result一直因为不符合条件而是空,则如果result是空,则给它赋一个值,以后有符合条件的值会自然变掉.
-                if (result == null) 
+                if (result == null)
                 {
                     result = api;
                 }
