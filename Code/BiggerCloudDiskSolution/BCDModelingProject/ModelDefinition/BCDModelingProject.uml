@@ -1,0 +1,1520 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+  dslVersion="1.0.0.0"
+  Id="260f2425-c3da-4d99-8106-60db56808a8f"
+  name="BCDModelingProject" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <profileInstances>
+    <packageHasProfileInstances
+      Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b">
+      <profileInstance
+        Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791"
+        name="StandardProfileL2" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances
+      Id="29349502-908c-4fda-9054-c48619c59ed0">
+      <profileInstance
+        Id="532ea607-fb19-44b8-8502-3351b05452be"
+        name="StandardProfileL3" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <packageHasNamedElement>
+      <Interface
+        Id="8ca3b8f8-9093-42f1-9d75-c43248581c9d"
+        name="ICloudDiskAPI"
+        isAbstract="false"
+        isLeaf="false">
+        <ownedOperations>
+          <operation
+            Id="d7fac12e-6970-4fc4-a280-789833e3fbcc"
+            name="GetDiskType"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="c9fc6309-d10a-4011-8dce-fe8736140be3"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="91185e9b-e9af-430d-8312-86a72d93c5df"
+                      LastKnownName="CloudDiskType"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="f965a96f-1f1d-47f2-bd6b-195b34f4674b"
+            name="GetCloudDiskCapacityInfo"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="7654f93c-4751-4e9d-98d1-f89c8f9269ce"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="95ddb0d1-ac11-4e41-90da-2091713e4dc4"
+                      LastKnownName="SingleCloudDiskCapacityModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="fd50062e-5046-4383-8492-1648402728b5"
+            name="GetCloudFileInfo"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="564450cf-6ccc-4c83-8d17-344f4d409d34"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="76e94a03-c5fa-4c13-88fa-778fae235db9"
+            name="UploadFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="546a71ac-0ffc-4790-b3dd-b8b66c8a0dd6"
+                  name="byte[] fileContent"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="c9022a23-0ba9-40a3-bbc3-0b2917f9ebe1"
+                  name="string filePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="5b6bd334-ba0e-4f3c-8c72-ee3abf55c7ad"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="2c836dab-59dc-4224-adcf-3756350f71f5"
+            name="DownloadFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="ead7c3bd-848e-40c8-a57e-ab463216ade5"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="93cc1a95-9ff6-4eca-8895-ddb47849c8d8"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="20ff4ff1-9d44-42fd-9bfd-3c83e292b0af"
+                      LastKnownName="byte[]"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="78872588-766c-460d-809e-40de96aaa6bb"
+            name="CreateDirectory"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="3144161f-1322-4dd7-9f8c-385c7a582d63"
+                  name="string dir"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="3ec67fc5-fc05-47df-8e79-5caa906abf52"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="109b18ed-018f-4291-8878-d17502a54c8c"
+            name="DeleteFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="37d71f25-494a-43b0-9ce3-429ed72b5001"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="a624493e-1c4d-44f8-b0f4-890b1bf88474"
+            name="DeleteDirectory"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="30277828-69c8-4408-bcb1-8d1b2485223e"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="e5870a15-b71c-488d-8916-35a5c3398e33"
+            name="MoveFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="6b409bd2-f186-4483-95fb-65e34940f66e"
+                  name="string originPath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="a013d6da-ae3e-41ac-b479-9522a461d95d"
+                  name="string newPath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="361fdb51-1362-41e9-b1ab-131ef588d27a"
+                  name="bool isCopy"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="9b3d8529-338b-43b6-8957-2316bc59765e"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperations>
+      </Interface>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="91185e9b-e9af-430d-8312-86a72d93c5df"
+        name="CloudDiskType" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="02cac3b4-9636-48d7-a594-491b6e23cebb"
+        name="string" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="95ddb0d1-ac11-4e41-90da-2091713e4dc4"
+        name="SingleCloudDiskCapacityModel" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+        name="CloudFileInfoModel" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="20ff4ff1-9d44-42fd-9bfd-3c83e292b0af"
+        name="byte[]" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="ff510a33-523d-44b9-b6d6-28bce82c6151"
+        name="BaiduDiskAPI"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="df3d2845-50bb-4b49-912c-6ac0bd077022">
+            <interfaceMoniker
+              Id="8ca3b8f8-9093-42f1-9d75-c43248581c9d"
+              LastKnownName="ICloudDiskAPI"
+              LastKnownLocation="BCDModelingProject.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="5748de84-b21d-421c-ad7a-f41f28528bb3"
+            name="GetDiskType"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="11e46e1c-02ed-45a6-9b54-d09017e1fdd4"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="91185e9b-e9af-430d-8312-86a72d93c5df"
+                      LastKnownName="CloudDiskType"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="2c3e8c3f-6e1f-4357-b524-754019fdc029"
+            name="GetCloudDiskCapacityInfo"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="3f2ebbe3-dd65-467b-96ff-20214c267fe5"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="95ddb0d1-ac11-4e41-90da-2091713e4dc4"
+                      LastKnownName="SingleCloudDiskCapacityModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="4ab38eb9-c5b1-44c4-af2c-8906bfeaaa6a"
+            name="GetCloudFileInfo"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="58c4cd97-e3a5-4109-8560-8c19118583eb"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="811d3fb0-facf-4ed1-bac8-a64c857756dd"
+            name="UploadFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="ad0aa659-b9c8-42fb-a783-44d5ce4df6f6"
+                  name="byte[] fileContent"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="5c762f35-f549-462d-9583-7de0024faa81"
+                  name="string filePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="6e81b5b7-2c3f-41f7-b532-941c6f25b24f"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="dc312f9e-c963-4593-a8b8-1062eb6cfee1"
+            name="DownloadFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="4c778c39-2cf2-43b5-a4f1-f0b002eebfe9"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="c0dbcbdb-a483-4c39-b98b-b40685a496c6"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="20ff4ff1-9d44-42fd-9bfd-3c83e292b0af"
+                      LastKnownName="byte[]"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="cd9779a2-3bfc-4265-baab-cbcbe14b1e4d"
+            name="CreateDirectory"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="cc8a721b-55ee-43b5-a3af-3f3b8bc3ddfa"
+                  name="string dir"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="e468bd98-6acb-41e0-8bf4-c47b8fe415d3"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="154c7dc9-5ea0-41de-a9ff-fa7171b21623"
+            name="DeleteFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="1d507fd8-345e-4d46-a3af-702b87855d0c"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="a816265d-0d6f-4be0-a20a-cbe7dbaf2b92"
+            name="DeleteDirectory"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="05ad21e5-1460-43b6-82a1-5d482531cc30"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="a02da235-e941-43b0-8805-9c8c580869f1"
+            name="MoveFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="0a278ccd-c051-4a90-9e4e-afc642437720"
+                  name="string originPath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="6c29493d-631d-42ce-b290-2f0d98a1e7a7"
+                  name="string newPath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="f1157aca-f3ed-417c-9e64-1c163fdd2287"
+                  name="bool isCopy"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="23d46d33-55a8-4d94-8b99-ea1b706429df"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="a8053bb3-d584-48ac-96b2-11c11002eef2"
+        name="KingsoftDiskAPI"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="599f8070-6785-4e56-980b-36cee5ef036f">
+            <interfaceMoniker
+              Id="8ca3b8f8-9093-42f1-9d75-c43248581c9d"
+              LastKnownName="ICloudDiskAPI"
+              LastKnownLocation="BCDModelingProject.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="8ee0f00d-5185-4343-8ea6-b40534182c19"
+            name="GetDiskType"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="75d09a8e-fd45-4a61-af41-23094a93e349"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="91185e9b-e9af-430d-8312-86a72d93c5df"
+                      LastKnownName="CloudDiskType"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="2b38054d-0e55-491b-9437-3739dc51b1df"
+            name="GetCloudDiskCapacityInfo"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="a4e976b6-94a0-4b63-89b5-ad44af286ccf"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="95ddb0d1-ac11-4e41-90da-2091713e4dc4"
+                      LastKnownName="SingleCloudDiskCapacityModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="efc4348e-d50a-4326-88ba-d06b7f9db828"
+            name="GetCloudFileInfo"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="6d6fec28-2c6f-4def-9de4-5649352639f0"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="e4a7375d-c721-4fa4-a91c-3dc830b96a9f"
+            name="UploadFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="7cc6515a-e010-466b-8fe1-aeda82d5d165"
+                  name="byte[] fileContent"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="24456bcb-2640-4faa-bc67-892abfc4401a"
+                  name="string filePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="b88f36b9-886a-43fb-b6b3-6028b2b1f884"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="30a96cec-77be-404b-81ae-47a68cb8d471"
+            name="DownloadFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="c544d89f-2659-4017-beec-b7ae967015a5"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="d4685947-610e-4ae4-b1fa-393af38f6ebe"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="20ff4ff1-9d44-42fd-9bfd-3c83e292b0af"
+                      LastKnownName="byte[]"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="1a4c096a-ba20-41e8-ab6b-cc93def53390"
+            name="CreateDirectory"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="548c5100-3de9-4195-8621-a36b095cb7be"
+                  name="string dir"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="2bb46aec-fbee-470a-a36e-d52c3c850338"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="d390185f-84f0-4210-91a0-cb0c67263139"
+            name="DeleteFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="65ed905c-e169-4d03-95e6-1d2568e87542"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="d4d96013-f46b-4715-926e-690e2d84798b"
+            name="DeleteDirectory"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="a705493e-4fc0-4ed3-8e4c-29c164f0eddd"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="a1b83a8a-1647-4118-a503-b17a036c4bce"
+            name="MoveFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="01f6265c-b372-4809-900e-c89587580158"
+                  name="string originPath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="2b03479d-c01e-42bc-97f6-7ecdae34b06a"
+                  name="string newPath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="c820df70-75ed-4088-8b36-e5ddbbe89ab0"
+                  name="bool isCopy"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="bdbd4752-f795-4f1e-822c-67dc125011c2"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="003c7d44-8a33-4f31-8e40-dcb75a11f46d"
+        name="SinaDiskApi"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="fa07a183-17ec-438c-9043-cf8ce194f484">
+            <interfaceMoniker
+              Id="8ca3b8f8-9093-42f1-9d75-c43248581c9d"
+              LastKnownName="ICloudDiskAPI"
+              LastKnownLocation="BCDModelingProject.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="ae2c91ff-90ab-4769-8f7a-4b90eca8f35e"
+            name="GetDiskType"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="c8e8f56d-38ba-458a-ae89-cba8e2cc488c"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="91185e9b-e9af-430d-8312-86a72d93c5df"
+                      LastKnownName="CloudDiskType"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="5184b46c-4d17-4095-be92-b3bc72b9d336"
+            name="GetCloudDiskCapacityInfo"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="eb66f556-f039-4c44-baaa-fcc3a189242a"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="95ddb0d1-ac11-4e41-90da-2091713e4dc4"
+                      LastKnownName="SingleCloudDiskCapacityModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="36e8bb25-6c5d-4dd3-81c7-038eba2fa1d2"
+            name="GetCloudFileInfo"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="82ae2275-02f1-4dd8-8c39-c257f398c9bf"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="45774157-3bce-41d2-8e28-d593dbadd830"
+            name="UploadFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="6f324203-0a43-46f9-84d9-0cedcdf176c7"
+                  name="byte[] fileContent"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="bddd01a8-d35d-4509-82c9-798af3a48286"
+                  name="string filePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="a485d634-746c-41ab-86a3-4e6c2091b3ec"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="83891d5f-1090-453b-bc9a-9e12dea401f0"
+            name="DownloadFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="e5263b28-1be4-4113-be5f-0a91f766f086"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="0630650d-8567-4789-b468-49847926b4bb"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="20ff4ff1-9d44-42fd-9bfd-3c83e292b0af"
+                      LastKnownName="byte[]"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="c2ff25d7-4335-43b5-8a44-a8a0430b6ba5"
+            name="CreateDirectory"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="53da6b81-0d3d-4d4d-a7a4-3309b10c2d6b"
+                  name="string dir"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="ea0f1d9d-d1f1-4f10-b297-e961812e2090"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="dee15756-6a86-4268-be89-4d4b323a6325"
+            name="DeleteFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="5b6893cf-bcac-4cc0-8a18-1df3fdcdb531"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="94657f84-6087-445f-bb14-f92dbd157706"
+            name="DeleteDirectory"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="b9a4d81f-593d-48e5-8a27-aab3ca47841d"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="10f54d29-f4e5-4d6e-8018-003df3c0d631"
+            name="MoveFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="ff5d14c0-0d3d-422d-aa5b-bf46bcc1d5f4"
+                  name="string originPath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="e0fabc8f-c7b4-4327-bbb2-d384197ffbea"
+                  name="string newPath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="202c15b1-d322-4ce0-a43d-58d1168927a1"
+                  name="bool isCopy"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="d204009c-6631-4ece-9788-baff35ed3670"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="080261eb-c4bf-4e72-ad53-8e71006a528f"
+        name="CloudDiskFactory"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="5f9699dd-ab92-4d85-8f14-dc99f9bb809a"
+            isDerived="false"
+            sourceEndRoleName="CloudDiskFactory"
+            targetEndRoleName="ICloudDiskAPI"
+            isLeaf="false"
+            isAbstract="false">
+            <interfaceMoniker
+              Id="8ca3b8f8-9093-42f1-9d75-c43248581c9d"
+              LastKnownName="ICloudDiskAPI"
+              LastKnownLocation="BCDModelingProject.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="0de9b134-4007-41ad-8273-89925ac61496"
+                  name="CloudDiskFactory"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="20b95bff-1457-4e38-8709-0702e71e30cb"
+                  name="ICloudDiskAPI"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedOperationsInternal>
+          <operation
+            Id="30f0ae1a-ad38-4f83-b9da-e536314d325c"
+            name="CreateDiskAPI"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="bfce5cee-a6f9-4123-9f1e-86734a28f875"
+                  name="string diskName"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="56631d95-283a-4863-a535-e8cf7cf84e80"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <interfaceMoniker
+                      Id="8ca3b8f8-9093-42f1-9d75-c43248581c9d"
+                      LastKnownName="ICloudDiskAPI"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="ffd0f473-811b-4dfe-a399-27aa86d91f73"
+        name="CloudDiskManager"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="38bfe448-60a7-4b74-be22-dad39ec66bd5"
+            isDerived="false"
+            sourceEndRoleName="CloudDiskManager"
+            targetEndRoleName="CloudDiskFactory"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="080261eb-c4bf-4e72-ad53-8e71006a528f"
+              LastKnownName="CloudDiskFactory"
+              LastKnownLocation="BCDModelingProject.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="84647c7f-2b2f-4696-a083-894a6e0c2f1e"
+                  name="CloudDiskManager"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="d47deea9-05ff-420a-9f55-c2ce1eccc1fc"
+                  name="CloudDiskFactory"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedOperationsInternal>
+          <operation
+            Id="03ebb07e-e630-4c93-a1bb-06ea1d0b370e"
+            name="GetCloudDiskCapacityInfo"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="4a92928e-9ee7-4b69-8f63-df0c38067134"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="c63ec954-3acc-4c53-80c9-e673f183eb6d"
+                      LastKnownName="CloudDiskCapacityModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="d1d79ecb-24c3-436d-bf94-a846033d9c84"
+            name="GetCloudFileInfo"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="83ce4f94-b8ab-4327-9c0c-9877da7f20ac"
+                  name="CloudDiskType type"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="d37ebd98-2d0d-484a-b0bb-c2c9d469ab92"
+                  name="bool isGetDirectory"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="456ac2f9-06da-401c-9b71-ddaabfa26212"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="4b667a2d-84fe-46a8-92fa-12763b277991"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="56d11426-7e3a-4b39-853a-5e37ec61515f"
+            name="UploadFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="df712339-4c95-421a-ba24-0253bb46c47a"
+                  name="CloudFileUploadType type"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="2dd924f5-4cee-4d67-a4d9-49e5f4e2e13b"
+                  name="string filePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="2c5cdb9e-a1fb-4a4c-b5a8-0183173ed743"
+                  name="byte[] fileContent"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="9200a8c3-5ae9-4f86-890b-9a4349f041f5"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="47523f7f-7d70-4743-b5ba-322f6395b1e4"
+                      LastKnownName="CloudFileInfoModel"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="6c3db21e-37b6-4205-ade9-7f675df23a44"
+            name="DownloadFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="2d2326db-b520-412b-a4f4-10f7db200f9d"
+                  name="CloudDiskType type"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="156115d9-4195-4e07-8a87-6b1e550d36a0"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="661952db-959c-49e3-a70e-2a4f0b820107"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="20ff4ff1-9d44-42fd-9bfd-3c83e292b0af"
+                      LastKnownName="byte[]"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="d4c402f8-b0c4-42f0-a7f6-f232f35a14b0"
+            name="CreateDirectory"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="c05aa785-e535-4af5-a12e-16dfafe02c64"
+                  name="string dir"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="d120eaf4-da95-422f-9d5d-355ebbd9628e"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="6527bbb5-f547-4b59-8c60-f8a6e2d5d434"
+                      LastKnownName="List&lt;CloudFileInfoModel&gt;"
+                      LastKnownLocation="BCDModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="45f19605-ca43-4704-b6b7-4ad0b0f289b6"
+            name="DeleteFile"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="8ada43b0-37c6-4dd9-b5ee-c8322f85096b"
+                  name="CloudDiskType type"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="020453b4-94f7-4d41-b4ab-17cc23c16c4e"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="5336a8d8-f32a-4c44-97cc-be5755dca6d9"
+            name="DeleteDirectory"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="b44ee492-889e-40a3-9ce6-518419057b15"
+                  name="string remotePath"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="c63ec954-3acc-4c53-80c9-e673f183eb6d"
+        name="CloudDiskCapacityModel" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="6527bbb5-f547-4b59-8c60-f8a6e2d5d434"
+        name="List&lt;CloudFileInfoModel&gt;" />
+    </packageHasNamedElement>
+  </packagedElements>
+  <primitiveType
+    Id="220a3521-e091-4221-bae9-3ef9018e845c"
+    name="Integer"
+    isAbstract="false"
+    isLeaf="false" />
+  <primitiveType
+    Id="8943dc84-709e-4f62-b15a-a3273aa6f165"
+    name="Boolean"
+    isAbstract="false"
+    isLeaf="false" />
+  <primitiveType
+    Id="59259974-6d55-42c6-b7bd-763d77ac8ef9"
+    name="String"
+    isAbstract="false"
+    isLeaf="false" />
+  <primitiveType
+    Id="3ab42e7d-4969-445a-b209-471f5cb8209c"
+    name="UnlimitedNatural"
+    isAbstract="false"
+    isLeaf="false" />
+</modelStoreModel>

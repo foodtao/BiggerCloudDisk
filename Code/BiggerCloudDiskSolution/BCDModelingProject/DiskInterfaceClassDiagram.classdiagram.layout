@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<logicalClassDesignerDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="DiskInterfaceClassDiagram">
+  <logicalClassDesignerModelMoniker Id="c4f53cae-ea9d-44df-99e0-aef29c9489ab" />
+  <nestedChildShapes>
+    <interfaceShape Id="2cd044ec-c0f4-4308-a9a3-b3762f56ce20" absoluteBounds="1.625, 2.125, 4.625, 2.3437499403953552" hideQualifiedName="false" increaseHeight="0" customColor="207, 223, 191">
+      <interfaceMoniker Id="e72b4d7a-9c9f-43bf-a202-3b370e11121e" LastKnownName="ICloudDiskAPI" />
+      <nestedChildShapes>
+        <AttributeElementListCompartment Id="fb1a8a7d-32b7-4318-88d9-9e9146c266fb" absoluteBounds="1.6400000000000001, 2.515, 4.5950000000000006, 0.2011718675494194" name="AttributesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <OperationElementListCompartment Id="6189de1d-407e-4f05-b1cd-6e9255fbb3f4" absoluteBounds="1.6400000000000001, 2.7261718675494193, 4.5950000000000006, 1.6425780728459358" name="OperationsCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </interfaceShape>
+    <classShape Id="f63b1e82-ae4e-4d77-aeb1-70487c72c75a" absoluteBounds="0.75, 5.25, 2.25, 2.3437499403953552" hideQualifiedName="false" increaseHeight="0" customColor="181, 193, 223">
+      <classMoniker Id="10de147e-5e0a-487a-abd1-05ab5c5051fd" LastKnownName="BaiduDiskAPI" />
+      <nestedChildShapes>
+        <AttributeElementListCompartment Id="038d59d8-ceb8-4947-a299-4960377ca99d" absoluteBounds="0.7649999999999999, 5.64, 2.2199999999999998, 0.2011718675494194" name="AttributesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <OperationElementListCompartment Id="f3620212-c899-4de9-a691-235f2a2fd06c" absoluteBounds="0.7649999999999999, 5.85117186754942, 2.2199999999999998, 1.6425780728459358" name="OperationsCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <realizationConnector edgePoints="[(1.875 : 5.25); (1.875 : 4.84374994039536); (3.9375 : 4.84374994039536); (3.9375 : 4.46874994039536)]" fixedFrom="NotFixed" fixedTo="NotFixed" customColor="113, 111, 110" showAsLollipop="false">
+      <interfaceRealizationMoniker Id="22460984-6040-4153-9af0-08dd6cc3f1a3" />
+      <relativeChildShapes />
+      <nodes>
+        <classShapeMoniker Id="f63b1e82-ae4e-4d77-aeb1-70487c72c75a" />
+        <interfaceShapeMoniker Id="2cd044ec-c0f4-4308-a9a3-b3762f56ce20" />
+      </nodes>
+    </realizationConnector>
+    <classShape Id="a7756d77-6b70-46f0-8494-ec95da598c9f" absoluteBounds="3.125, 5.25, 1.875, 2.3437499403953552" hideQualifiedName="false" increaseHeight="0" customColor="181, 193, 223">
+      <classMoniker Id="0f4a0eaf-6fd6-44ce-aeef-9b609428cfec" LastKnownName="KingsoftDiskAPI" />
+      <nestedChildShapes>
+        <AttributeElementListCompartment Id="d24b14b3-221d-4221-83f8-d625960e6b91" absoluteBounds="3.1399999999999997, 5.64, 1.8450000000000002, 0.2011718675494194" name="AttributesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <OperationElementListCompartment Id="186bc9a2-b02a-49b0-be55-cefa4749805d" absoluteBounds="3.1399999999999997, 5.85117186754942, 1.8450000000000002, 1.6425780728459358" name="OperationsCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <realizationConnector edgePoints="[(4.0625 : 5.25); (4.0625 : 4.84374994039536); (3.9375 : 4.84374994039536); (3.9375 : 4.46874994039536)]" fixedFrom="NotFixed" fixedTo="NotFixed" customColor="113, 111, 110" showAsLollipop="false">
+      <interfaceRealizationMoniker Id="86566687-f6f8-451a-b9e1-fb3d91970eea" />
+      <relativeChildShapes />
+      <nodes>
+        <classShapeMoniker Id="a7756d77-6b70-46f0-8494-ec95da598c9f" />
+        <interfaceShapeMoniker Id="2cd044ec-c0f4-4308-a9a3-b3762f56ce20" />
+      </nodes>
+    </realizationConnector>
+    <classShape Id="dfcc82d6-0704-4e12-b126-e9d8fc75cc59" absoluteBounds="5.375, 5.25, 2.125, 2.3437499403953552" hideQualifiedName="false" increaseHeight="0" customColor="181, 193, 223">
+      <classMoniker Id="72f8ba3b-bfc9-4fa0-bf34-a508d18fcd4c" LastKnownName="SinaDiskApi" />
+      <nestedChildShapes>
+        <AttributeElementListCompartment Id="5d7b59e3-0ef3-4ca2-9079-35d1e9da07bb" absoluteBounds="5.39, 5.64, 2.0949999999999998, 0.2011718675494194" name="AttributesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <OperationElementListCompartment Id="37b31b67-787f-4a31-8f7f-452035180471" absoluteBounds="5.39, 5.85117186754942, 2.0949999999999998, 1.6425780728459358" name="OperationsCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <realizationConnector edgePoints="[(6.4375 : 5.25); (6.4375 : 4.84374994039536); (3.9375 : 4.84374994039536); (3.9375 : 4.46874994039536)]" fixedFrom="NotFixed" fixedTo="NotFixed" customColor="113, 111, 110" showAsLollipop="false">
+      <interfaceRealizationMoniker Id="ca5984b7-6441-4b73-8f70-5997527a245e" />
+      <relativeChildShapes />
+      <nodes>
+        <classShapeMoniker Id="dfcc82d6-0704-4e12-b126-e9d8fc75cc59" />
+        <interfaceShapeMoniker Id="2cd044ec-c0f4-4308-a9a3-b3762f56ce20" />
+      </nodes>
+    </realizationConnector>
+    <classShape Id="d36e4349-3b71-423e-bb6c-2e6ec29f9b0d" absoluteBounds="2.625, 0.625, 3.25, 1.0624999801317849" hideQualifiedName="false" increaseHeight="0" customColor="181, 193, 223">
+      <classMoniker Id="2f00d26d-aebf-423f-baf7-a9a7212ae3d4" LastKnownName="CloudDiskFactory" />
+      <nestedChildShapes>
+        <AttributeElementListCompartment Id="106593ec-b30b-41bd-bde2-ab8a1fbb79c8" absoluteBounds="2.6399999999999997, 1.0150000000000001, 3.2199999999999998, 0.2011718675494194" name="AttributesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <OperationElementListCompartment Id="f56bb611-a914-4362-9920-37a417a5aed6" absoluteBounds="2.6399999999999997, 1.2261718675494193, 3.2199999999999998, 0.36132811258236563" name="OperationsCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(4.25 : 1.68749998013178); (4.25 : 2.125)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="1" targetMultiplicity="1">
+      <associationMoniker Id="305cefa1-be7c-4354-8ec7-59f6fff9cbbd" />
+      <relativeChildShapes />
+      <nodes>
+        <classShapeMoniker Id="d36e4349-3b71-423e-bb6c-2e6ec29f9b0d" />
+        <interfaceShapeMoniker Id="2cd044ec-c0f4-4308-a9a3-b3762f56ce20" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="e0fac8b8-be47-4b9f-ab4e-16ba61c8c12e" absoluteBounds="7.375, 0.75, 2.875, 2.0234374503294625" hideQualifiedName="false" increaseHeight="0" customColor="181, 193, 223">
+      <classMoniker Id="0929c468-5384-4c61-a15c-bede49654037" LastKnownName="CloudDiskManager" />
+      <nestedChildShapes>
+        <AttributeElementListCompartment Id="538d1bb5-f575-4e7a-a3fc-536527800c38" absoluteBounds="7.39, 1.1400000000000001, 2.8449999999999998, 0.2011718675494194" name="AttributesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <OperationElementListCompartment Id="f33475cf-d86c-46e5-9d99-3d2816e8f929" absoluteBounds="7.39, 1.3511718675494193, 2.8449999999999998, 1.3222655827800431" name="OperationsCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(7.375 : 1.21874999006589); (5.875 : 1.21874999006589)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="1" targetMultiplicity="1">
+      <associationMoniker Id="5b426e2c-4640-4d98-8578-f529e56a70d2" />
+      <relativeChildShapes />
+      <nodes>
+        <classShapeMoniker Id="e0fac8b8-be47-4b9f-ab4e-16ba61c8c12e" />
+        <classShapeMoniker Id="d36e4349-3b71-423e-bb6c-2e6ec29f9b0d" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</logicalClassDesignerDiagram>
