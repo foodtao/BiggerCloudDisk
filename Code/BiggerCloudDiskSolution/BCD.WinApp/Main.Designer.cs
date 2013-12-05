@@ -50,7 +50,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.lblDiskSize = new System.Windows.Forms.Label();
             this.btnSetDiskPosition = new System.Windows.Forms.Button();
             this.tbDiskPostion = new System.Windows.Forms.TextBox();
             this.fbdDiskPosition = new System.Windows.Forms.FolderBrowserDialog();
@@ -70,7 +69,7 @@
             this.groupBox1.Controls.Add(this.tabControl1);
             this.groupBox1.Location = new System.Drawing.Point(3, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(420, 170);
+            this.groupBox1.Size = new System.Drawing.Size(420, 167);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "账户设置";
@@ -81,12 +80,12 @@
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Location = new System.Drawing.Point(4, 17);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(416, 147);
+            this.tabControl1.Size = new System.Drawing.Size(416, 144);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -99,7 +98,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(408, 121);
+            this.tabPage1.Size = new System.Drawing.Size(408, 118);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "新浪";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -122,6 +121,7 @@
             this.tbPwdSina.PasswordChar = '*';
             this.tbPwdSina.Size = new System.Drawing.Size(207, 21);
             this.tbPwdSina.TabIndex = 3;
+            this.tbPwdSina.Text = "**************";
             // 
             // label2
             // 
@@ -139,6 +139,7 @@
             this.tbUserNameSina.Name = "tbUserNameSina";
             this.tbUserNameSina.Size = new System.Drawing.Size(207, 21);
             this.tbUserNameSina.TabIndex = 1;
+            this.tbUserNameSina.Text = "deathcoil@gmail.com";
             // 
             // label1
             // 
@@ -159,7 +160,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(408, 121);
+            this.tabPage2.Size = new System.Drawing.Size(408, 118);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "百度";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -182,6 +183,7 @@
             this.tbPwdBaidu.PasswordChar = '*';
             this.tbPwdBaidu.Size = new System.Drawing.Size(207, 21);
             this.tbPwdBaidu.TabIndex = 8;
+            this.tbPwdBaidu.Text = "********";
             // 
             // label3
             // 
@@ -199,6 +201,7 @@
             this.tbUserNameBaidu.Name = "tbUserNameBaidu";
             this.tbUserNameBaidu.Size = new System.Drawing.Size(207, 21);
             this.tbUserNameBaidu.TabIndex = 6;
+            this.tbUserNameBaidu.Text = "deathcoil@gmail.com";
             // 
             // label4
             // 
@@ -219,7 +222,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(408, 121);
+            this.tabPage3.Size = new System.Drawing.Size(408, 118);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "金山";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -242,6 +245,7 @@
             this.tbPwdKing.PasswordChar = '*';
             this.tbPwdKing.Size = new System.Drawing.Size(207, 21);
             this.tbPwdKing.TabIndex = 13;
+            this.tbPwdKing.Text = "***********";
             // 
             // label5
             // 
@@ -259,6 +263,7 @@
             this.tbUserNameKing.Name = "tbUserNameKing";
             this.tbUserNameKing.Size = new System.Drawing.Size(207, 21);
             this.tbUserNameKing.TabIndex = 11;
+            this.tbUserNameKing.Text = "cuishengbin0212@163.com";
             // 
             // label6
             // 
@@ -275,12 +280,11 @@
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.label7);
-            this.groupBox2.Controls.Add(this.lblDiskSize);
             this.groupBox2.Controls.Add(this.btnSetDiskPosition);
             this.groupBox2.Controls.Add(this.tbDiskPostion);
             this.groupBox2.Location = new System.Drawing.Point(7, 178);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(412, 100);
+            this.groupBox2.Size = new System.Drawing.Size(412, 97);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "同步位置";
@@ -293,16 +297,6 @@
             this.label7.Size = new System.Drawing.Size(101, 12);
             this.label7.TabIndex = 3;
             this.label7.Text = "本地文件夹位置：";
-            // 
-            // lblDiskSize
-            // 
-            this.lblDiskSize.AutoSize = true;
-            this.lblDiskSize.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.lblDiskSize.Location = new System.Drawing.Point(8, 66);
-            this.lblDiskSize.Name = "lblDiskSize";
-            this.lblDiskSize.Size = new System.Drawing.Size(137, 12);
-            this.lblDiskSize.TabIndex = 2;
-            this.lblDiskSize.Text = "已占用本地磁盘500M空间";
             // 
             // btnSetDiskPosition
             // 
@@ -328,7 +322,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(430, 285);
+            this.ClientSize = new System.Drawing.Size(430, 282);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.MaximizeBox = false;
@@ -377,7 +371,6 @@
         private System.Windows.Forms.Button btnSetDiskPosition;
         private System.Windows.Forms.TextBox tbDiskPostion;
         private System.Windows.Forms.FolderBrowserDialog fbdDiskPosition;
-        private System.Windows.Forms.Label lblDiskSize;
         private System.Windows.Forms.Label label7;
 
     }

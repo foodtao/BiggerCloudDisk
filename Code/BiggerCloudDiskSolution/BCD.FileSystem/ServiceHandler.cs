@@ -98,7 +98,7 @@ namespace BCD.FileSystem
                         SysToCloud();
                     }
 
-                    Thread.Sleep(10 * 1000);
+                    Thread.Sleep(5 * 1000);
                 }
                 catch
                 {
@@ -128,7 +128,7 @@ namespace BCD.FileSystem
                         SyncCloudRemoveFileToLocal();
                     }
 
-                    Thread.Sleep(30 * 1000);
+                    Thread.Sleep(15 * 1000);
                 }
                 catch
                 {
@@ -273,61 +273,67 @@ namespace BCD.FileSystem
         /// </summary>
         public static void SyncCloudFileToLocal(CloudFileInfoModel fileInfo)
         {
-            var root = LocalDiskPathHelper.GetPath();
-
-            var cloudManager = new CloudDiskManager();
-            var cloudFile = cloudManager.GetCloudFileInfo(CloudDiskType.NOT_SPECIFIED, fileInfo.IsDir, fileInfo.Path);
-            if (cloudFile != null)
+            try
             {
-                CloudFiles.Add(cloudFile.LocalPath);
+                var root = LocalDiskPathHelper.GetPath();
 
-                var path = root + cloudFile.LocalPath;
-
-                if (fileInfo.Path != "/")
+                var cloudManager = new CloudDiskManager();
+                var cloudFile = cloudManager.GetCloudFileInfo(
+                    CloudDiskType.NOT_SPECIFIED, fileInfo.IsDir, fileInfo.Path);
+                if (cloudFile != null)
                 {
-                    if (cloudFile.IsDir)
+                    CloudFiles.Add(cloudFile.LocalPath);
+
+                    var path = root + cloudFile.LocalPath;
+
+                    if (fileInfo.Path != "/")
                     {
-                        if (!Directory.Exists(path))
+                        if (cloudFile.IsDir)
                         {
-                            Directory.CreateDirectory(path);
-                        }
-                    }
-                    else
-                    {
-                        var needCreat = false;
-                        if (!File.Exists(path))
-                        {
-                            needCreat = true;
+                            if (!Directory.Exists(path))
+                            {
+                                Directory.CreateDirectory(path);
+                            }
                         }
                         else
                         {
-                            var file = new FileInfo(path);
-                            if (cloudFile.LastModifiedDate.HasValue)
+                            var needCreat = false;
+                            if (!File.Exists(path))
                             {
-                                if (file.LastWriteTime < cloudFile.LastModifiedDate)
+                                needCreat = true;
+                            }
+                            else
+                            {
+                                var file = new FileInfo(path);
+                                if (cloudFile.LastModifiedDate.HasValue)
                                 {
-                                    File.Delete(path);
-                                    needCreat = true;
+                                    if (file.LastWriteTime < cloudFile.LastModifiedDate)
+                                    {
+                                        File.Delete(path);
+                                        needCreat = true;
+                                    }
                                 }
                             }
-                        }
-                        if (needCreat)
-                        {
-                            var fileContent = cloudManager.DownloadFile(CloudDiskType.NOT_SPECIFIED, cloudFile.Path);
-                            File.WriteAllBytes(path, fileContent);
+                            if (needCreat)
+                            {
+                                var fileContent = cloudManager.DownloadFile(CloudDiskType.NOT_SPECIFIED, cloudFile.Path);
+                                File.WriteAllBytes(path, fileContent);
+                            }
                         }
                     }
-                }
 
-                if (cloudFile != null && cloudFile.Contents != null && cloudFile.Contents.Count > 0)
-                {
-                    foreach (var subFile in cloudFile.Contents)
+                    if (cloudFile != null && cloudFile.Contents != null && cloudFile.Contents.Count > 0)
                     {
-                        if (!cloudFile.Path.EndsWith("/")) cloudFile.Path = cloudFile.Path + "/";
-                        subFile.Path = cloudFile.Path + subFile.name;
-                        SyncCloudFileToLocal(subFile);
+                        foreach (var subFile in cloudFile.Contents)
+                        {
+                            if (!cloudFile.Path.EndsWith("/")) cloudFile.Path = cloudFile.Path + "/";
+                            subFile.Path = cloudFile.Path + subFile.name;
+                            SyncCloudFileToLocal(subFile);
+                        }
                     }
                 }
+            }catch(Exception ex)
+            {
             }
         }
 
